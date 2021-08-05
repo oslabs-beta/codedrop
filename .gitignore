@@ -1,6 +1,18 @@
 # Dependency directories
 node_modules/
-build
+# compiled output
+build/
+# Logs
 npm-debug.log*
+# dotenv environment variables file
 .env
+# System Files
 .DS_Store
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+# don't package-lock.json
+package-lock.json
