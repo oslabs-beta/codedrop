@@ -1,0 +1,19 @@
+{
+  "name": "codedrop",
+  "version": "1.0.0",
+  "description": "Create and share reusable components",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oslabs-beta/codedrop.git"
+  },
+  "author": "https://github.com/orgs/oslabs-beta/teams/codedrop/members",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/oslabs-beta/codedrop/issues"
+  },
+  "homepage": "https://github.com/oslabs-beta/codedrop#readme"
+}
