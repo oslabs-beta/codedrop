@@ -3,12 +3,12 @@ import 'firebase/auth';
 import 'firebase/firestore';
 
 const clientCredentials = {
-  apiKey: "AIzaSyDHCoQ7eB6UDJk508a3Kr_KLQHVEaDnpn4",
-  authDomain: "salesforce-363a7.firebaseapp.com",
-  projectId: "salesforce-363a7",
-  storageBucket: "salesforce-363a7.appspot.com",
-  messagingSenderId: "104852192973",
-  appId: "1:104852192973:web:eb2f587de8c71327d37384"
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.FIREBASE_APP_ID,
 };
 
 if (!firebase.apps.length) {
