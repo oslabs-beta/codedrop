@@ -1,9 +1,13 @@
 import shortid from 'shortid';
 
+import { Button } from './draggableElements/Button'
+
 export const SIDEBAR_ITEM = 'sidebarItem';
 export const ROW = 'row';
 export const COLUMN = 'column';
 export const COMPONENT = 'component';
+
+const h1 = () => <h1>Heading 1</h1>;
 
 export const SIDEBAR_ITEMS = [
   {
@@ -12,6 +16,22 @@ export const SIDEBAR_ITEMS = [
     component: {
       type: 'input',
       content: 'Some input',
+    },
+  },
+  {
+    id: shortid.generate(),
+    type: SIDEBAR_ITEM,
+    component: {
+      type: 'Button',
+      content: Button()
+    },
+  },
+  {
+    id: shortid.generate(),
+    type: SIDEBAR_ITEM,
+    component: {
+      type: 'H1',
+      content: h1(),
     },
   },
   {

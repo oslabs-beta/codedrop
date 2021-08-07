@@ -8,6 +8,7 @@ const style = {
   backgroundColor: 'white',
   cursor: 'move',
 };
+
 const Component = ({ data, components, path }) => {
   const ref = useRef(null);
 
@@ -25,7 +26,7 @@ const Component = ({ data, components, path }) => {
   const component = components[data.id];
 
   return (
-    <div ref={ref} style={{ ...style, opacity }} className="component draggable">
+    <div ref={ref} style={{ ...style, opacity }}>
       <div>{data.id}</div>
       <div>{component.content}</div>
     </div>
