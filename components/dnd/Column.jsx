@@ -10,12 +10,11 @@ const Column = ({ data, components, handleDrop, path }) => {
 
   const [{ isDragging }, drag] = useDrag({
     item: {
-      type: COLUMN,
       id: data.id,
       children: data.children,
       path,
     },
-    type: COLUMN, // PLACEHOLDER
+    type: COLUMN,
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
