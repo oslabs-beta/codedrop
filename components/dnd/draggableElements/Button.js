@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const defaultData = {
-  label: 'Press me!',
+  label: 'Click me!',
   style: `
     display: inline-block;
     color: palevioletred;

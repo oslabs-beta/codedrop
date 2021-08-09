@@ -4,9 +4,10 @@ import { ROW } from './constants';
 import DropZone from './DropZone';
 import Column from './Column';
 
-const style = {};
-const Row = ({ data, components, handleDrop, path }) => {
+const Row = ({ data, components, handleDrop, path, previewMode }) => {
   const ref = useRef(null);
+
+  const style = { borderStyle: previewMode ? 'hidden' : 'dashed' };
 
   const [{ isDragging }, drag] = useDrag({
     item: {
@@ -31,13 +32,14 @@ const Row = ({ data, components, handleDrop, path }) => {
         components={components}
         handleDrop={handleDrop}
         path={currentPath}
+        previewMode={previewMode}
       />
     );
   };
 
   return (
     <div ref={ref} style={{ ...style, opacity }} className="base draggable row">
-      {data.id}
+      {previewMode ? `` : data.id}
       <div className="columns">
         {data.children.map((column, index) => {
           const currentPath = `${path}-${index}`;

@@ -4,9 +4,10 @@ import { COLUMN } from './constants';
 import DropZone from './DropZone';
 import Component from './Component';
 
-const style = {};
-const Column = ({ data, components, handleDrop, path }) => {
+const Column = ({ data, components, handleDrop, path, previewMode }) => {
   const ref = useRef(null);
+  
+  const style = { borderStyle: previewMode ? 'hidden' : 'dashed' };
 
   const [{ isDragging }, drag] = useDrag({
     item: {
@@ -25,13 +26,13 @@ const Column = ({ data, components, handleDrop, path }) => {
 
   const renderComponent = (component, currentPath) => {
     return (
-      <Component key={component.id} data={component} components={components} path={currentPath} />
+      <Component key={component.id} data={component} components={components} path={currentPath} previewMode={previewMode} />
     );
   };
 
   return (
     <div ref={ref} style={{ ...style, opacity }} className="base draggable column">
-      {data.id}
+      {previewMode ? `` : data.id}
       {data.children.map((component, index) => {
         const currentPath = `${path}-${index}`;
 

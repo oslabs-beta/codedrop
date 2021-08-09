@@ -2,15 +2,21 @@ import React, { useRef } from 'react';
 import { useDrag } from 'react-dnd';
 import { COMPONENT } from './constants';
 
-const style = {
+let style = {
   border: '1px dashed black',
   padding: '0.5rem 1rem',
   backgroundColor: 'white',
   cursor: 'move',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexDirection: 'column'
 };
 
-const Component = ({ data, components, path }) => {
+const Component = ({ data, components, path, previewMode }) => {
   const ref = useRef(null);
+
+  style.borderStyle = previewMode ? 'hidden' : 'dashed';
 
   const [{ isDragging }, drag] = useDrag({
     item: { id: data.id, path },
@@ -27,7 +33,7 @@ const Component = ({ data, components, path }) => {
 
   return (
     <div ref={ref} style={{ ...style, opacity }}>
-      <div>{data.id}</div>
+      <div>{previewMode ? `` : data.id}</div>
       <div>{component.content}</div>
     </div>
   );
