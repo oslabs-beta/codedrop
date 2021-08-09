@@ -13,7 +13,7 @@ let style = {
   flexDirection: 'column'
 };
 
-const Component = ({ data, components, path, previewMode }) => {
+const Component = ({ data, components, path, previewMode, setShowEditor }) => {
   const ref = useRef(null);
 
   style.borderStyle = previewMode ? 'hidden' : 'dashed';
@@ -34,7 +34,7 @@ const Component = ({ data, components, path, previewMode }) => {
   return (
     <div ref={ref} style={{ ...style, opacity }}>
       <div>{previewMode ? `` : data.id}</div>
-      <div>{component.content}</div>
+      <div onClick={() => setShowEditor(data.id)}>{component.content}</div>
     </div>
   );
 };

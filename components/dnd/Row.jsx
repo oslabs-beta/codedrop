@@ -4,7 +4,7 @@ import { ROW } from './constants';
 import DropZone from './DropZone';
 import Column from './Column';
 
-const Row = ({ data, components, handleDrop, path, previewMode }) => {
+const Row = ({ data, components, handleDrop, path, previewMode, setShowEditor }) => {
   const ref = useRef(null);
 
   const style = { borderStyle: previewMode ? 'hidden' : 'dashed' };
@@ -33,6 +33,7 @@ const Row = ({ data, components, handleDrop, path, previewMode }) => {
         handleDrop={handleDrop}
         path={currentPath}
         previewMode={previewMode}
+        setShowEditor={setShowEditor}
       />
     );
   };

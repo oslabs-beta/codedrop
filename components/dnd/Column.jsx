@@ -4,7 +4,7 @@ import { COLUMN } from './constants';
 import DropZone from './DropZone';
 import Component from './Component';
 
-const Column = ({ data, components, handleDrop, path, previewMode }) => {
+const Column = ({ data, components, handleDrop, path, previewMode, setShowEditor }) => {
   const ref = useRef(null);
 
   const style = { borderStyle: previewMode ? 'hidden' : 'dashed' };
@@ -32,6 +32,7 @@ const Column = ({ data, components, handleDrop, path, previewMode }) => {
         components={components}
         path={currentPath}
         previewMode={previewMode}
+        setShowEditor={setShowEditor}
       />
     );
   };

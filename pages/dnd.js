@@ -24,6 +24,7 @@ const Container = () => {
   const [layout, setLayout] = useState(initialLayout);
   const [components, setComponents] = useState(initialComponents);
   const [previewMode, setPreviewMode] = useState(false);
+  const [showEditor, setShowEditor] = useState(null);
 
   const handleDropToTrashBin = useCallback(
     (dropZone, item) => {
@@ -98,6 +99,7 @@ const Container = () => {
         components={components}
         path={currentPath}
         previewMode={previewMode}
+        setShowEditor={setShowEditor}
       />
     );
   };
@@ -158,6 +160,13 @@ const Container = () => {
           onDrop={handleDropToTrashBin}
         />
       </div>
+      {showEditor && (
+        <div className="sideBar">
+          <p>Editor Panel</p>
+          <span>Value</span>
+          <input ></input>
+        </div>
+      )}
     </div>
   );
 };
