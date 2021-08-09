@@ -6,7 +6,7 @@ import Component from './Component';
 
 const Column = ({ data, components, handleDrop, path, previewMode }) => {
   const ref = useRef(null);
-  
+
   const style = { borderStyle: previewMode ? 'hidden' : 'dashed' };
 
   const [{ isDragging }, drag] = useDrag({
@@ -26,7 +26,13 @@ const Column = ({ data, components, handleDrop, path, previewMode }) => {
 
   const renderComponent = (component, currentPath) => {
     return (
-      <Component key={component.id} data={component} components={components} path={currentPath} previewMode={previewMode} />
+      <Component
+        key={component.id}
+        data={component}
+        components={components}
+        path={currentPath}
+        previewMode={previewMode}
+      />
     );
   };
 
@@ -38,13 +44,17 @@ const Column = ({ data, components, handleDrop, path, previewMode }) => {
 
         return (
           <React.Fragment key={component.id}>
-            <DropZone
-              data={{
-                path: currentPath,
-                childrenCount: data.children.length,
-              }}
-              onDrop={handleDrop}
-            />
+            {previewMode ? (
+              ``
+            ) : (
+              <DropZone
+                data={{
+                  path: currentPath,
+                  childrenCount: data.children.length,
+                }}
+                onDrop={handleDrop}
+              />
+            )}
             {renderComponent(component, currentPath)}
           </React.Fragment>
         );
