@@ -166,25 +166,37 @@ const Container = () => {
         <div className="editorBar">
           <div className="editorBarHeader">
             <p>Editor Panel</p>
-            <CloseIcon onClick={() => setShowEditor(null)}/>
+            <CloseIcon onClick={() => setShowEditor(null)} />
           </div>
           <div className="editorBarInput">
             <span>Value</span>
             <input
-              value={showEditor.value}
+              value={showEditor.component.value}
               onChange={(e) => {
-                showEditor.setValue(e.target.value);
-                setShowEditor({ ...showEditor, value: e.target.value });
+                showEditor.setComponent({
+                  ...showEditor.component,
+                  value: e.target.value,
+                });
+                setShowEditor({
+                  component: { ...showEditor.component, value: e.target.value },
+                  setComponent: showEditor.setComponent,
+                });
               }}
             ></input>
           </div>
           <Editor
             language="css"
             displayName="CSS"
-            value={showEditor.style}
+            value={showEditor.component.style}
             onChange={(e) => {
-              showEditor.setStyle(e);
-              setShowEditor({ ...showEditor, style: e });
+              showEditor.setComponent({
+                ...showEditor.component,
+                style: e,
+              });
+              setShowEditor({
+                component: { ...showEditor.component, style: e },
+                setComponent: showEditor.setComponent,
+              });
             }}
           />
         </div>

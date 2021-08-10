@@ -21,9 +21,9 @@ let containerStyle = {
 
 const Component = ({ data, components, path, previewMode, setShowEditor }) => {
   const ref = useRef(null);
-  const [value, setValue] = useState(null);
-  const [style, setStyle] = useState(null);
-  const [src, setSrc] = useState(null);
+
+  const [component, setComponent] = useState({ id: data.id, ...components[data.id] });
+  const { src, style, type, value } = component;
 
   containerStyle.borderStyle = previewMode ? 'hidden' : 'dashed';
 
@@ -38,33 +38,27 @@ const Component = ({ data, components, path, previewMode, setShowEditor }) => {
   const opacity = isDragging ? 0 : 1;
   drag(ref);
 
-  const component = components[data.id];
-
   const componentToRender = () => {
-    if (component.type === 'Button') {
-      return <Button style={style} setStyle={setStyle} value={value} setValue={setValue} />;
+    if (type === 'Button') {
+      return <Button style={style} value={value} />;
     }
-    if (component.type === 'Input') {
-      return <Input style={style} setStyle={setStyle} value={value} setValue={setValue} />;
+    if (type === 'Input') {
+      return <Input style={style} value={value} />;
     }
-    if (component.type === 'H1') {
-      return <H1 style={style} setStyle={setStyle} value={value} setValue={setValue} />;
+    if (type === 'H1') {
+      return <H1 style={style} value={value} />;
     }
-    if (component.type === 'Image') {
-      return <Image style={style} setStyle={setStyle} alt={value} value={value} setValue={setValue} src={src} setSrc={setSrc} />;
+    if (type === 'Image') {
+      return <Image style={style} alt={value} value={value} src={src} />;
     }
-    if (component.type === 'Text') {
-      return <Text style={style} setStyle={setStyle} value={value} setValue={setValue} />;
+    if (type === 'Text') {
+      return <Text style={style} value={value} />;
     }
   };
 
   return (
     <div ref={ref} style={{ ...containerStyle, opacity }}>
-      <div>{previewMode ? `` : data.id}</div>
-      <div onClick={() => setShowEditor({ id: data.id, style, setStyle, value, setValue })}>
-        {console.log('style', style)}
-        {componentToRender()}
-      </div>
+      <div onClick={() => setShowEditor({ component, setComponent })}>{componentToRender()}</div>
     </div>
   );
 };

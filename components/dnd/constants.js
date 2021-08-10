@@ -1,10 +1,6 @@
 import shortid from 'shortid';
 
-import { Button } from './draggableElements/Button';
-import { Input } from './draggableElements/Input';
-import { H1 } from './draggableElements/H1';
-import { Image } from './draggableElements/Image';
-import { Text } from './draggableElements/Text';
+import { button, input, h1, text, image } from './draggableElements/initialData';
 
 export const SIDEBAR_ITEM = 'sidebarItem';
 export const ROW = 'row';
@@ -17,7 +13,7 @@ export const SIDEBAR_ITEMS = [
     type: SIDEBAR_ITEM,
     component: {
       type: 'Text',
-      content: Text,
+      ...text,
     },
   },
   {
@@ -25,7 +21,7 @@ export const SIDEBAR_ITEMS = [
     type: SIDEBAR_ITEM,
     component: {
       type: 'Input',
-      content: Input,
+      ...input,
     },
   },
   {
@@ -33,7 +29,7 @@ export const SIDEBAR_ITEMS = [
     type: SIDEBAR_ITEM,
     component: {
       type: 'Button',
-      content: Button,
+      ...button,
     },
   },
   {
@@ -41,7 +37,7 @@ export const SIDEBAR_ITEMS = [
     type: SIDEBAR_ITEM,
     component: {
       type: 'H1',
-      content: H1,
+      ...h1,
     },
   },
   {
@@ -49,7 +45,7 @@ export const SIDEBAR_ITEMS = [
     type: SIDEBAR_ITEM,
     component: {
       type: 'Image',
-      content: Image,
+      ...image,
     },
   },
 ];
