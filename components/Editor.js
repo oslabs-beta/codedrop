@@ -9,22 +9,22 @@ if (typeof navigator !== 'undefined') {
   require('codemirror/mode/javascript/javascript');
 }
 
+const EditorContainer = styled.div`
+  height: 50vh;
+  flex-grow: 1;
+  flex-basis: 0;
+  display: flex;
+  flex-direction: column;
+`;
+
+const EditorTitle = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0rem 0.5rem 0rem;
+`;
+
 export default function Editor({ displayName, language, onChange, value }) {
   const handleChange = (editor, data, value) => onChange(value);
-
-  const EditorContainer = styled.div`
-    height: 50vh;
-    flex-grow: 1;
-    flex-basis: 0;
-    display: flex;
-    flex-direction: column;
-  `;
-
-  const EditorTitle = styled.div`
-    display: flex;
-    justify-content: space-between;
-    padding: .5rem .0rem .5rem .0rem;
-  `;
 
   return (
     <EditorContainer>

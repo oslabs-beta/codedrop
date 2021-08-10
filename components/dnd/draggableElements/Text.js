@@ -1,9 +1,13 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+
+const StyledText = styled.span`
+  ${(props) => props.cssString};
+`;
 
 export const Text = ({ value, style }) => {
-  const StyledText = styled.span`
+  const cssString = css`
     ${style}
   `;
 
-  return <StyledText>{value}</StyledText>;
+  return <StyledText cssString={cssString}>{value}</StyledText>;
 };
