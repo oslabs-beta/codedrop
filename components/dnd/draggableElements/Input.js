@@ -2,17 +2,15 @@ import styled from 'styled-components';
 
 const defaultData = {
   label: 'Input Label',
-  style: `
-    display: inline-block;
-    color: palevioletred;
-    font-size: 1em;
-    padding: 0.25em 1em;
-    border: 2px solid palevioletred;==
-    border-radius: 3px;
-    margin-top: .25em;
-    margin-bottom: .25em;
-    display: block;
-  `,
+  style: `display: inline-block;
+color: palevioletred;
+font-size: 1em;
+padding: 0.25em 1em;
+border: 2px solid palevioletred;==
+border-radius: 3px;
+margin-top: .25em;
+margin-bottom: .25em;
+display: block;`,
   labelStyle: `
     display: inline-block;
     color: palevioletred;
@@ -22,17 +20,21 @@ const defaultData = {
   `,
 };
 
-export const Input = () => {
+export const Input = ({ style, setStyle, value, setValue }) => {
+  if (!style) setStyle(defaultData.style);
+  if (!value) setValue(defaultData.label);
+
   const StyledInput = styled.input`
-    ${defaultData.style}
+    ${style}
   `;
+
   const StyledInputLabel = styled.span`
     ${defaultData.labelStyle}
   `;
 
   return (
     <>
-      <StyledInputLabel>{defaultData.label}</StyledInputLabel>
+      <StyledInputLabel>{value}</StyledInputLabel>
       <StyledInput />
     </>
   );

@@ -1,7 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import CloseIcon from '@material-ui/icons/Close';
 
+import Editor from '../components/Editor';
 import DropZone from '../components/dnd/DropZone';
 import TrashDropZone from '../components/dnd/TrashDropZone';
 import SideBarItem from '../components/dnd/SideBarItem';
@@ -161,10 +163,30 @@ const Container = () => {
         />
       </div>
       {showEditor && (
-        <div className="sideBar">
-          <p>Editor Panel</p>
-          <span>Value</span>
-          <input ></input>
+        <div className="editorBar">
+          <div className="editorBarHeader">
+            <p>Editor Panel</p>
+            <CloseIcon onClick={() => setShowEditor(null)}/>
+          </div>
+          <div className="editorBarInput">
+            <span>Value</span>
+            <input
+              value={showEditor.value}
+              onChange={(e) => {
+                showEditor.setValue(e.target.value);
+                setShowEditor({ ...showEditor, value: e.target.value });
+              }}
+            ></input>
+          </div>
+          <Editor
+            language="css"
+            displayName="CSS"
+            value={showEditor.style}
+            onChange={(e) => {
+              showEditor.setStyle(e);
+              setShowEditor({ ...showEditor, style: e });
+            }}
+          />
         </div>
       )}
     </div>
