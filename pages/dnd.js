@@ -1,5 +1,8 @@
 import React, { useState, useCallback } from 'react';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
 
+import EditorPanel from '../components/EditorPanel';
 import DropZone from '../components/dnd/DropZone';
 import TrashDropZone from '../components/dnd/TrashDropZone';
 import SideBarItem from '../components/dnd/SideBarItem';
@@ -21,6 +24,8 @@ const Container = () => {
   const initialComponents = initialData.components;
   const [layout, setLayout] = useState(initialLayout);
   const [components, setComponents] = useState(initialComponents);
+  const [previewMode, setPreviewMode] = useState(false);
+  const [showEditor, setShowEditor] = useState(null);
 
   const handleDropToTrashBin = useCallback(
     (dropZone, item) => {
@@ -94,6 +99,8 @@ const Container = () => {
         handleDrop={handleDrop}
         components={components}
         path={currentPath}
+        previewMode={previewMode}
+        setShowEditor={setShowEditor}
       />
     );
   };
@@ -106,6 +113,17 @@ const Container = () => {
         {Object.values(SIDEBAR_ITEMS).map((sideBarItem, index) => (
           <SideBarItem key={sideBarItem.id} data={sideBarItem} />
         ))}
+        <FormControlLabel
+          control={
+            <Switch
+              checked={previewMode}
+              onChange={() => setPreviewMode(!previewMode)}
+              name="previewMode"
+              color="primary"
+            />
+          }
+          label="Preview"
+        />
       </div>
       <div className="pageContainer">
         <div className="page">
@@ -143,6 +161,13 @@ const Container = () => {
           onDrop={handleDropToTrashBin}
         />
       </div>
+      {showEditor && (
+        <EditorPanel
+          component={components[showEditor.id]}
+          components={components}
+          setComponents={setComponents}
+        />
+      )}
     </div>
   );
 };

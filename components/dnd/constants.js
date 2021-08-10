@@ -1,21 +1,27 @@
 import shortid from 'shortid';
 
-import { Button } from './draggableElements/Button'
+import { button, input, h1, text, image } from './draggableElements/initialData';
 
 export const SIDEBAR_ITEM = 'sidebarItem';
 export const ROW = 'row';
 export const COLUMN = 'column';
 export const COMPONENT = 'component';
 
-const h1 = () => <h1>Heading 1</h1>;
-
 export const SIDEBAR_ITEMS = [
   {
     id: shortid.generate(),
     type: SIDEBAR_ITEM,
     component: {
-      type: 'input',
-      content: 'Some input',
+      type: 'Text',
+      ...text,
+    },
+  },
+  {
+    id: shortid.generate(),
+    type: SIDEBAR_ITEM,
+    component: {
+      type: 'Input',
+      ...input,
     },
   },
   {
@@ -23,7 +29,7 @@ export const SIDEBAR_ITEMS = [
     type: SIDEBAR_ITEM,
     component: {
       type: 'Button',
-      content: Button()
+      ...button,
     },
   },
   {
@@ -31,39 +37,15 @@ export const SIDEBAR_ITEMS = [
     type: SIDEBAR_ITEM,
     component: {
       type: 'H1',
-      content: h1(),
+      ...h1,
     },
   },
   {
     id: shortid.generate(),
     type: SIDEBAR_ITEM,
     component: {
-      type: 'name',
-      content: 'Some name',
-    },
-  },
-  {
-    id: shortid.generate(),
-    type: SIDEBAR_ITEM,
-    component: {
-      type: 'email',
-      content: 'Some email',
-    },
-  },
-  {
-    id: shortid.generate(),
-    type: SIDEBAR_ITEM,
-    component: {
-      type: 'phone',
-      content: 'Some phone',
-    },
-  },
-  {
-    id: shortid.generate(),
-    type: SIDEBAR_ITEM,
-    component: {
-      type: 'image',
-      content: 'Some image',
+      type: 'Image',
+      ...image,
     },
   },
 ];

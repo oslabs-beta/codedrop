@@ -11,6 +11,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import theme from '../src/theme';
 import Layout from '../components/layout';
 import '../styles/globals.css';
+import 'codemirror/lib/codemirror.css'
 
 function MyApp(props) {
 
