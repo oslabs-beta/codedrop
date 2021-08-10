@@ -8,11 +8,19 @@ import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
+import { red } from '@material-ui/core/colors';
 
 const useStyles = makeStyles(() => ({
-  root: { flexGrow: 1 },
-  title: { flexGrow: 1 },
-  navbarItems: { display: 'flex', justifyContent: 'space-between' }
+  root: { 
+    flexGrow: 1,
+  },
+  title: { 
+    flexGrow: 1,
+  },
+  navbarItems: {
+     display: 'flex', 
+     justifyContent: 'space-between',
+  },
 }));
 
 export default function Navbar() {
