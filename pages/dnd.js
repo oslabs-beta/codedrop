@@ -1,9 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
-import CloseIcon from '@material-ui/icons/Close';
 
-import Editor from '../components/Editor';
+import EditorPanel from '../components/EditorPanel';
 import DropZone from '../components/dnd/DropZone';
 import TrashDropZone from '../components/dnd/TrashDropZone';
 import SideBarItem from '../components/dnd/SideBarItem';
@@ -163,43 +162,11 @@ const Container = () => {
         />
       </div>
       {showEditor && (
-        <div className="editorBar">
-          <div className="editorBarHeader">
-            <p>Editor Panel</p>
-            <CloseIcon onClick={() => setShowEditor(null)} />
-          </div>
-          <div className="editorBarInput">
-            <span>Value</span>
-            <input
-              value={showEditor.component.value}
-              onChange={(e) => {
-                showEditor.setComponent({
-                  ...showEditor.component,
-                  value: e.target.value,
-                });
-                setShowEditor({
-                  component: { ...showEditor.component, value: e.target.value },
-                  setComponent: showEditor.setComponent,
-                });
-              }}
-            ></input>
-          </div>
-          <Editor
-            language="css"
-            displayName="CSS"
-            value={showEditor.component.style}
-            onChange={(e) => {
-              showEditor.setComponent({
-                ...showEditor.component,
-                style: e,
-              });
-              setShowEditor({
-                component: { ...showEditor.component, style: e },
-                setComponent: showEditor.setComponent,
-              });
-            }}
-          />
-        </div>
+        <EditorPanel
+          component={components[showEditor.id]}
+          components={components}
+          setComponents={setComponents}
+        />
       )}
     </div>
   );

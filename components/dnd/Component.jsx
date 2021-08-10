@@ -22,7 +22,7 @@ let containerStyle = {
 const Component = ({ data, components, path, previewMode, setShowEditor }) => {
   const ref = useRef(null);
 
-  const [component, setComponent] = useState({ id: data.id, ...components[data.id] });
+  const component = components[data.id];
   const { src, style, type, value } = component;
 
   containerStyle.borderStyle = previewMode ? 'hidden' : 'dashed';
@@ -58,7 +58,7 @@ const Component = ({ data, components, path, previewMode, setShowEditor }) => {
 
   return (
     <div ref={ref} style={{ ...containerStyle, opacity }}>
-      <div onClick={() => setShowEditor({ component, setComponent })}>{componentToRender()}</div>
+      <div onClick={() => setShowEditor(component)}>{componentToRender()}</div>
     </div>
   );
 };
