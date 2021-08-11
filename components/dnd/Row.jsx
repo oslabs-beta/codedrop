@@ -40,7 +40,6 @@ const Row = ({ data, components, handleDrop, path, previewMode, setShowEditor })
 
   return (
     <div ref={ref} style={{ ...style, opacity }} className="base draggable row">
-      {previewMode ? `` : data.id}
       <div className="columns">
         {data.children.map((column, index) => {
           const currentPath = `${path}-${index}`;
