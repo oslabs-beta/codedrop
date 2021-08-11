@@ -4,9 +4,10 @@ import { COLUMN } from './constants';
 import DropZone from './DropZone';
 import Component from './Component';
 
-const style = {};
-const Column = ({ data, components, handleDrop, path }) => {
+const Column = ({ data, components, handleDrop, path, previewMode, setShowEditor }) => {
   const ref = useRef(null);
+
+  const style = { borderStyle: previewMode ? 'hidden' : 'dashed' };
 
   const [{ isDragging }, drag] = useDrag({
     item: {
@@ -25,25 +26,35 @@ const Column = ({ data, components, handleDrop, path }) => {
 
   const renderComponent = (component, currentPath) => {
     return (
-      <Component key={component.id} data={component} components={components} path={currentPath} />
+      <Component
+        key={component.id}
+        data={component}
+        components={components}
+        path={currentPath}
+        previewMode={previewMode}
+        setShowEditor={setShowEditor}
+      />
     );
   };
 
   return (
     <div ref={ref} style={{ ...style, opacity }} className="base draggable column">
-      {data.id}
       {data.children.map((component, index) => {
         const currentPath = `${path}-${index}`;
 
         return (
           <React.Fragment key={component.id}>
-            <DropZone
-              data={{
-                path: currentPath,
-                childrenCount: data.children.length,
-              }}
-              onDrop={handleDrop}
-            />
+            {previewMode ? (
+              ``
+            ) : (
+              <DropZone
+                data={{
+                  path: currentPath,
+                  childrenCount: data.children.length,
+                }}
+                onDrop={handleDrop}
+              />
+            )}
             {renderComponent(component, currentPath)}
           </React.Fragment>
         );

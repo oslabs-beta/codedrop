@@ -1,34 +1,45 @@
 import React, { useState, useCallback } from 'react';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
 
-import DropZone from '../components/dnd/DropZone';
-import TrashDropZone from '../components/dnd/TrashDropZone';
-import SideBarItem from '../components/dnd/SideBarItem';
-import Row from '../components/dnd/Row';
-import initialData from '../components/dnd/initial-data';
+import EditorPanel from '../../components/EditorPanel';
+import DropZone from '../../components/dnd/DropZone';
+import TrashDropZone from '../../components/dnd/TrashDropZone';
+import SideBarItem from '../../components/dnd/SideBarItem';
+import Row from '../../components/dnd/Row';
+import initialData from '../../components/dnd/initial-data';
 import {
   handleMoveWithinParent,
   handleMoveToDifferentParent,
   handleMoveSidebarComponentIntoParent,
   handleRemoveItemFromLayout,
-} from '../components/dnd/helpers';
+} from '../../components/dnd/helpers';
 
-import { SIDEBAR_ITEMS, SIDEBAR_ITEM, COMPONENT, COLUMN } from '../components/dnd/constants';
+import { SIDEBAR_ITEMS, SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components/dnd/constants';
 
 import shortid from 'shortid';
 
-const Container = () => {
+const Container = ({ projectData }) => {
   const initialLayout = initialData.layout;
   const initialComponents = initialData.components;
   const [layout, setLayout] = useState(initialLayout);
   const [components, setComponents] = useState(initialComponents);
+  const [previewMode, setPreviewMode] = useState(false);
+  const [showEditor, setShowEditor] = useState(null);
 
   const handleDropToTrashBin = useCallback(
     (dropZone, item) => {
+      console.log('dropZone, item', dropZone, item);
       const splitItemPath = item.path.split('-');
       setLayout(handleRemoveItemFromLayout(layout, splitItemPath));
     },
     [layout]
   );
+
+  const handleRemoveComponent = (item) => {
+    const splitItemPath = item.path.split('-');
+    setLayout(handleRemoveItemFromLayout(layout, splitItemPath));
+  };
 
   const handleDrop = useCallback(
     (dropZone, item) => {
@@ -94,6 +105,8 @@ const Container = () => {
         handleDrop={handleDrop}
         components={components}
         path={currentPath}
+        previewMode={previewMode}
+        setShowEditor={setShowEditor}
       />
     );
   };
@@ -106,6 +119,17 @@ const Container = () => {
         {Object.values(SIDEBAR_ITEMS).map((sideBarItem, index) => (
           <SideBarItem key={sideBarItem.id} data={sideBarItem} />
         ))}
+        <FormControlLabel
+          control={
+            <Switch
+              checked={previewMode}
+              onChange={() => setPreviewMode(!previewMode)}
+              name="previewMode"
+              color="primary"
+            />
+          }
+          label="Preview"
+        />
       </div>
       <div className="pageContainer">
         <div className="page">
@@ -143,7 +167,43 @@ const Container = () => {
           onDrop={handleDropToTrashBin}
         />
       </div>
+      {showEditor && (
+        <EditorPanel
+          component={components[showEditor.id]}
+          components={components}
+          setComponents={setComponents}
+          setShowEditor={setShowEditor}
+          data={{ layout }}
+          onDrop={handleDropToTrashBin}
+        />
+      )}
     </div>
   );
 };
+
+export async function getStaticPaths() {
+  const projects = [];
+
+  return {
+    fallback: 'blocking',
+    paths: projects.map((project) => ({
+      params: {
+        projectId: project.projectId,
+      },
+    })),
+  };
+}
+
+export async function getStaticProps(context) {
+  const projectId = context.params.projectId;
+
+  return {
+    props: {
+      projectData: { projectId },
+    },
+    // time before regenerating data for request
+    revalidate: 10,
+  };
+}
+
 export default Container;
