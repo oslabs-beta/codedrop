@@ -20,26 +20,26 @@ const initialData = {
             // },
           ],
         },
-        {
-          type: COLUMN,
-          id: 'column1',
-          children: [
+        // {
+        //   type: COLUMN,
+        //   id: 'column1',
+        //   children: [
             // {
             //   type: COMPONENT,
             //   id: 'component2',
             // },
-          ],
-        },
+        //   ],
+        // },
       ],
     },
-    {
-      type: ROW,
-      id: 'row1',
-      children: [
-        {
-          type: COLUMN,
-          id: 'column2',
-          children: [
+    // {
+    //   type: ROW,
+    //   id: 'row1',
+    //   children: [
+    //     {
+    //       type: COLUMN,
+    //       id: 'column2',
+    //       children: [
             // {
             //   type: COMPONENT,
             //   id: 'component3',
@@ -52,10 +52,10 @@ const initialData = {
             //   type: COMPONENT,
             //   id: 'component2',
             // },
-          ],
-        },
-      ],
-    },
+          // ],
+    //     },
+    //   ],
+    // },
   ],
   components: {
     // component0: { id: 'component0', type: 'input', content: 'Some input' },
