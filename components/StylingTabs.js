@@ -6,6 +6,9 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import AlignHorizontalLeftIcon from '@material-ui/icons/AlignHorizontalLeft';
+import AlignHorizontalCenterIcon from '@material-ui/icons/AlignHorizontalCenter';
+import AlignHorizontalRightIcon from '@material-ui/icons/AlignHorizontalRight';
 
 import Editor from './Editor';
 
@@ -60,6 +63,41 @@ export default function StylingTabs({ component, components, setComponents }) {
     setValue(newValue);
   };
 
+  const handleCreateNewStyleChange = (newStyleString) => {
+    let arr = containerStyle.split('\n');
+    const result = [];
+    for (const i of arr) {
+      const item = i.split(':')[0];
+      if (newStyleString.includes(item)) continue;
+      else result.push(i);
+    }
+    return result.join('\r') + newStyleString;
+  };
+
+  const handleConatinerStyleUpdate = ({ e, newStyleString }) => {
+    setComponents({
+      ...components,
+      [component.id]: {
+        ...component,
+        containerStyle: e ? e : handleCreateNewStyleChange(newStyleString),
+      },
+    });
+  };
+
+  const handleComponentStyleUpdate = (e) => {
+    setComponents({
+      ...components,
+      [component.id]: {
+        ...component,
+        style: e,
+      },
+    });
+  };
+
+  const leftAlignStyle = `\nalign-items: flex-start;`;
+  const centerAlignStyle = `\nalign-items: center;`;
+  const rightAlignStyle = `\nalign-items: flex-end;`;
+
   return (
     <div className={classes.root}>
       <AppBar position="static" color="default">
@@ -78,22 +116,22 @@ export default function StylingTabs({ component, components, setComponents }) {
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
-        <div>Cool features coming soon!</div>
+        <AlignHorizontalLeftIcon
+          onClick={() => handleConatinerStyleUpdate({ newStyleString: leftAlignStyle })}
+        />
+        <AlignHorizontalCenterIcon
+          onClick={() => handleConatinerStyleUpdate({ newStyleString: centerAlignStyle })}
+        />
+        <AlignHorizontalRightIcon
+          onClick={() => handleConatinerStyleUpdate({ newStyleString: rightAlignStyle })}
+        />
       </TabPanel>
       <TabPanel value={value} index={1}>
         <Editor
           language="css"
           displayName="CSS"
           value={style}
-          onChange={(e) => {
-            setComponents({
-              ...components,
-              [component.id]: {
-                ...component,
-                style: e,
-              },
-            });
-          }}
+          onChange={handleComponentStyleUpdate}
         />
       </TabPanel>
       <TabPanel value={value} index={2}>
@@ -101,15 +139,7 @@ export default function StylingTabs({ component, components, setComponents }) {
           language="css"
           displayName="CSS"
           value={containerStyle}
-          onChange={(e) => {
-            setComponents({
-              ...components,
-              [component.id]: {
-                ...component,
-                containerStyle: e,
-              },
-            });
-          }}
+          onChange={(e) => handleConatinerStyleUpdate({ e })}
         />
       </TabPanel>
     </div>
