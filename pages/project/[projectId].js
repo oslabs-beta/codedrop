@@ -15,13 +15,17 @@ import {
   handleRemoveItemFromLayout,
 } from '../../components/dnd/helpers';
 
+import {
+  PROJECT_QUERY
+} from '../../lib/apolloQueries'
+
 import { SIDEBAR_ITEMS, SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components/dnd/constants';
 
 import shortid from 'shortid';
 
 const Container = ({ projectData }) => {
-  const initialLayout = initialData.layout;
-  const initialComponents = initialData.components;
+  const initialLayout = initialData.layout; // on new project, mutate to add project with layout
+  const initialComponents = initialData.components; // on new projected mutate to add components to project
   const [layout, setLayout] = useState(initialLayout);
   const [components, setComponents] = useState(initialComponents);
   const [previewMode, setPreviewMode] = useState(false);
@@ -197,6 +201,18 @@ export async function getStaticPaths() {
 export async function getStaticProps(context) {
   const projectId = context.params.projectId;
 
+  const apolloClient = initializeApollo();
+
+  await apolloClient.query({
+    query:PROJECT_QUERY,
+    variables: projectId
+  })
+
+  return {
+    props: {
+      initialApolloState: apolloClient.cache.extract(),
+    },
+    revalidate: 1
   return {
     props: {
       projectData: { projectId },
