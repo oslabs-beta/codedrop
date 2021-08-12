@@ -9,7 +9,6 @@ border: 2px solid palevioletred;
 border-radius: 3px;
 display: block;`,
   containerStyle: `padding: 0.5rem 1rem;
-background-color: white;
 cursor: move;
 display: flex;
 align-items: center;
@@ -23,8 +22,7 @@ export const h1 = {
 color: palevioletred;
 align-item: 'center',
 display: block;`,
-containerStyle: `padding: 0.5rem 1rem;
-background-color: white;
+  containerStyle: `padding: 0.5rem 1rem;
 cursor: move;
 display: flex;
 align-items: center;
@@ -39,7 +37,6 @@ height: 300px;
 display: block;`,
   src: 'https://picsum.photos/200/300?random=1',
   containerStyle: `padding: 0.5rem 1rem;
-background-color: white;
 cursor: move;
 display: flex;
 align-items: center;
@@ -53,8 +50,7 @@ export const text = {
 color: palevioletred;
 margin-bottom: .25em;
 display: block;`,
-containerStyle: `padding: 0.5rem 1rem;
-background-color: white;
+  containerStyle: `padding: 0.5rem 1rem;
 cursor: move;
 display: flex;
 align-items: center;
@@ -73,8 +69,7 @@ border-radius: 3px;
 margin-top: .25em;
 margin-bottom: .25em;
 display: block;`,
-containerStyle: `padding: 0.5rem 1rem;
-background-color: white;
+  containerStyle: `padding: 0.5rem 1rem;
 cursor: move;
 display: flex;
 align-items: center;
