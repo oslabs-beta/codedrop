@@ -94,9 +94,10 @@ export default function StylingTabs({ component, components, setComponents }) {
     });
   };
 
-  const leftAlignStyle = `\nalign-items: flex-start;`;
-  const centerAlignStyle = `\nalign-items: center;`;
-  const rightAlignStyle = `\nalign-items: flex-end;`;
+  const flexDefaults = `\ndisplay: flex;\nflex-direction: column;`
+  const leftAlignStyle = `${flexDefaults}\nalign-items: flex-start;`;
+  const centerAlignStyle = `${flexDefaults}\nalign-items: center;`;
+  const rightAlignStyle = `${flexDefaults}\nalign-items: flex-end;`;
 
   return (
     <div className={classes.root}>
