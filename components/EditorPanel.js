@@ -1,18 +1,18 @@
 import CloseIcon from '@material-ui/icons/Close';
 
-import Editor from '../components/Editor';
+import StylingTabs from './StylingTabs'
 
-export default function EditorPanel({ component, components, setComponents }) {
-  const { value, style } = component;
+export default function EditorPanel({ component, components, setComponents, setShowEditor }) {
+  const { value } = component;
 
   return (
     <div className="editorBar">
       <div className="editorBarHeader">
-        <p>Editor Panel</p>
+        <h3>Editor Panel</h3>
         <CloseIcon onClick={() => setShowEditor(null)} />
       </div>
       <div className="editorBarInput">
-        <span>Value</span>
+        <h4>Value</h4>
         <input
           value={value}
           onChange={(e) => {
@@ -26,20 +26,8 @@ export default function EditorPanel({ component, components, setComponents }) {
           }}
         ></input>
       </div>
-      <Editor
-        language="css"
-        displayName="CSS"
-        value={style}
-        onChange={(e) => {
-          setComponents({
-            ...components,
-            [component.id]: {
-              ...component,
-              style: e,
-            },
-          });
-        }}
-      />
+      <h4>Styling</h4>
+      <StylingTabs component={component} components={components} setComponents={setComponents} />
     </div>
   );
 }

@@ -8,13 +8,28 @@ padding: 0.25em 1em;
 border: 2px solid palevioletred;
 border-radius: 3px;
 display: block;`,
+  containerStyle: `padding: 0.5rem 1rem;
+background-color: white;
+cursor: move;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-direction: column;`,
 };
 
 export const h1 = {
   value: 'Heading 1',
   style: `display: inline-block;
 color: palevioletred;
+align-item: 'center',
 display: block;`,
+containerStyle: `padding: 0.5rem 1rem;
+background-color: white;
+cursor: move;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-direction: column;`,
 };
 
 export const image = {
@@ -23,6 +38,13 @@ export const image = {
 height: 300px;
 display: block;`,
   src: 'https://picsum.photos/200/300?random=1',
+  containerStyle: `padding: 0.5rem 1rem;
+background-color: white;
+cursor: move;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-direction: column;`,
 };
 
 export const text = {
@@ -31,6 +53,13 @@ export const text = {
 color: palevioletred;
 margin-bottom: .25em;
 display: block;`,
+containerStyle: `padding: 0.5rem 1rem;
+background-color: white;
+cursor: move;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-direction: column;`,
 };
 
 export const input = {
@@ -44,6 +73,13 @@ border-radius: 3px;
 margin-top: .25em;
 margin-bottom: .25em;
 display: block;`,
+containerStyle: `padding: 0.5rem 1rem;
+background-color: white;
+cursor: move;
+display: flex;
+align-items: center;
+justify-content: center;
+flex-direction: column;`,
   labelStyle: `display: inline-block;
 color: palevioletred;
 margin-bottom: .25em;
