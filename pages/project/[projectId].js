@@ -27,6 +27,8 @@ const Container = ({ projectData }) => {
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
 
+  console.log(' setLayout ', layout)
+  
   const handleDropToTrashBin = useCallback(
     (dropZone, item) => {
       console.log('dropZone, item', dropZone, item);
