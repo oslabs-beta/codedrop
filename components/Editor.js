@@ -17,18 +17,12 @@ const EditorContainer = styled.div`
   flex-direction: column;
 `;
 
-const EditorTitle = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 0.5rem 0rem 0.5rem 0rem;
-`;
 
-export default function Editor({ displayName, language, onChange, value }) {
+export default function Editor({ language, onChange, value }) {
   const handleChange = (editor, data, value) => onChange(value);
 
   return (
     <EditorContainer>
-      <EditorTitle>{displayName}</EditorTitle>
       <ControlledEditor
         onBeforeChange={handleChange}
         value={value}
