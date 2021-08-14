@@ -1,32 +1,41 @@
 import { useState } from 'react';
-import { signOut } from 'next-auth/client';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
+import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import { red } from '@material-ui/core/colors';
+import { signIn, signOut, useSession } from 'next-auth/client';
 
-const useStyles = makeStyles(() => ({
-  root: { 
+const useStyles = makeStyles({
+  root: {
     flexGrow: 1,
   },
-  title: { 
+  title: {
     flexGrow: 1,
+    color: '#bf7472'
   },
   navbarItems: {
-     display: 'flex', 
-     justifyContent: 'space-between',
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    background: "#FFECD6",
+    boxShadow: "none",
+    color: "black",
+    height: "10vh",
+    padding: "0 30px",
   },
-}));
+});
 
 export default function Navbar() {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const [session] = useSession();
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -36,42 +45,44 @@ export default function Navbar() {
     setAnchorEl(null);
   };
 
+  const openProject = () => {
+    // load the projects component
+  };
+
   return (
     <div className={classes.root}>
-      <AppBar position="static">
-        <Toolbar className={classes.navbarItems}>
-          <Typography variant="h6" className={classes.title}>
-            CodeDrop
-          </Typography>
-          <div>
-            <IconButton
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleMenu}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={open}
-              onClose={handleClose}
-            >
-              <MenuItem onClick={() => signOut()}>Logout</MenuItem>
-            </Menu>
-          </div>
-        </Toolbar>
+      <AppBar className={classes.navbarItems} position="static">
+        <Typography variant="h4" className={classes.title}>
+          codedrop
+        </Typography>
+        <MenuRoundedIcon
+          aria-label="account of current user"
+          aria-controls="menu-appbar"
+          aria-haspopup="true"
+          onClick={handleMenu}
+          color="inherit"
+        >
+          <AccountCircle />
+        </MenuRoundedIcon>
+        <Menu
+          id="menu-appbar"
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          keepMounted
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          open={open}
+          onClose={handleClose}
+        >
+          {session && <MenuItem onClick={() => signOut()}>Logout</MenuItem>}
+          {!session && <MenuItem onClick={() => signIn()}>Sign In</MenuItem>}
+          <MenuItem onClick={() => openProject()}>Projects</MenuItem>
+        </Menu>
       </AppBar>
     </div>
   );
