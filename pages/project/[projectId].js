@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
-
+import { gql, useQuery, useMutation } from '@apollo/client';
 import EditorPanel from '../../components/EditorPanel';
 import DropZone from '../../components/dnd/DropZone';
 import TrashDropZone from '../../components/dnd/TrashDropZone';
@@ -19,6 +19,10 @@ import {
   PROJECT_QUERY
 } from '../../lib/apolloQueries'
 
+import {
+  PROJECT_MUTATION
+} from '../../lib/apolloMutations'
+
 import { SIDEBAR_ITEMS, SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components/dnd/constants';
 
 import shortid from 'shortid';
@@ -26,16 +30,24 @@ import shortid from 'shortid';
 const Container = ({ projectData }) => {
   const initialLayout = initialData.layout; // on new project, mutate to add project with layout
   const initialComponents = initialData.components; // on new projected mutate to add components to project
+  const projectId = projectData.projectId
   const [layout, setLayout] = useState(initialLayout);
   const [components, setComponents] = useState(initialComponents);
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
+  const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION//,
+  //   {
+  //     onError(err) {
+  //     console.log(err);
+  // },}
+  );
 
   const handleDropToTrashBin = useCallback(
     (dropZone, item) => {
       console.log('dropZone, item', dropZone, item);
       const splitItemPath = item.path.split('-');
       setLayout(handleRemoveItemFromLayout(layout, splitItemPath));
+      updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
     },
     [layout]
   );
@@ -43,6 +55,7 @@ const Container = ({ projectData }) => {
   const handleRemoveComponent = (item) => {
     const splitItemPath = item.path.split('-');
     setLayout(handleRemoveItemFromLayout(layout, splitItemPath));
+    updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
   };
 
   const handleDrop = useCallback(
@@ -74,6 +87,7 @@ const Container = ({ projectData }) => {
           [newComponent.id]: newComponent,
         });
         setLayout(handleMoveSidebarComponentIntoParent(layout, splitDropZonePath, newItem));
+        updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
         return;
       }
 
@@ -86,17 +100,20 @@ const Container = ({ projectData }) => {
         // 2.a. move within parent
         if (pathToItem === pathToDropZone) {
           setLayout(handleMoveWithinParent(layout, splitDropZonePath, splitItemPath));
+          updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
           return;
         }
 
         // 2.b. OR move different parent
         // TODO FIX columns. item includes children
         setLayout(handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem));
+        updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
         return;
       }
 
       // 3. Move + Create
       setLayout(handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem));
+      updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
     },
     [layout, components]
   );
@@ -201,18 +218,18 @@ export async function getStaticPaths() {
 export async function getStaticProps(context) {
   const projectId = context.params.projectId;
 
-  const apolloClient = initializeApollo();
+  // const apolloClient = initializeApollo();
 
-  await apolloClient.query({
-    query:PROJECT_QUERY,
-    variables: projectId
-  })
+  // await apolloClient.query({
+  //   query:PROJECT_QUERY,
+  //   variables: projectId
+  // })
 
-  return {
-    props: {
-      initialApolloState: apolloClient.cache.extract(),
-    },
-    revalidate: 1
+  // return {
+  //   props: {
+  //     initialApolloState: apolloClient.cache.extract(),
+  //   },
+  //   revalidate: 1
   return {
     props: {
       projectData: { projectId },
