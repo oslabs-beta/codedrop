@@ -8,13 +8,12 @@ import Head from 'next/head';
 // Stying imports
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import theme from '../src/theme';
+import theme from '../public/theme';
 import Layout from '../components/layout';
 import '../styles/globals.css';
-import 'codemirror/lib/codemirror.css'
+import 'codemirror/lib/codemirror.css';
 
 function MyApp(props) {
-
   const { Component, pageProps } = props;
 
   React.useEffect(() => {
@@ -29,7 +28,10 @@ function MyApp(props) {
     <React.Fragment>
       <Head>
         <title>CodeDrop</title>
-        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
+        <meta
+          name="viewport"
+          content="minimum-scale=1, initial-scale=1, width=device-width"
+        />
       </Head>
       <ThemeProvider theme={theme}>
         <Provider session={pageProps.session}>
@@ -40,7 +42,7 @@ function MyApp(props) {
             </DndProvider>
           </Layout>
         </Provider>
-      </ThemeProvider>  
+      </ThemeProvider>
     </React.Fragment>
   );
 }
