@@ -88,6 +88,7 @@ const Container = ({ projectData }) => {
         });
         setLayout(handleMoveSidebarComponentIntoParent(layout, splitDropZonePath, newItem));
         updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
+        console.log(data)
         return;
       }
 
