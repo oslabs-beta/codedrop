@@ -1,9 +1,8 @@
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
 import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -32,6 +31,7 @@ const useStyles = makeStyles({
 });
 
 export default function Navbar() {
+  const router = useRouter();
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -52,7 +52,7 @@ export default function Navbar() {
   return (
     <div className={classes.root}>
       <AppBar className={classes.navbarItems} position="static">
-        <Typography variant="h4" className={classes.title}>
+        <Typography variant="h4" className={classes.title} onClick={() => router.push('/')}>
           codedrop
         </Typography>
         <MenuRoundedIcon
