@@ -7,10 +7,12 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space between',
-    height: '100vh',
+    minHeight: '100vh',
   },
   mainContainer: {
-    height: '100%',
+    display: 'flex',
+    flexGrow: 1,
+    backgroundColor: 'white',
   }
 });
 

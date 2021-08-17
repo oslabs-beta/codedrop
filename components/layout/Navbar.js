@@ -10,23 +10,20 @@ import Menu from '@material-ui/core/Menu';
 import { signIn, signOut, useSession } from 'next-auth/client';
 
 const useStyles = makeStyles({
-  root: {
-    flexGrow: 1,
-  },
+  navBarContainer: {},
   title: {
-    flexGrow: 1,
-    color: '#bf7472'
+    color: '#bf7472',
   },
   navbarItems: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    background: "#FFECD6",
-    boxShadow: "none",
-    color: "black",
-    height: "10vh",
-    padding: "0 30px",
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    background: '#FFECD6',
+    boxShadow: 'none',
+    color: 'black',
+    height: '10vh',
+    padding: '0 30px',
   },
 });
 
@@ -50,7 +47,7 @@ export default function Navbar() {
   };
 
   return (
-    <div className={classes.root}>
+    <div className={classes.navBarContainer}>
       <AppBar className={classes.navbarItems} position="static">
         <Typography variant="h4" className={classes.title} onClick={() => router.push('/')}>
           codedrop
@@ -68,13 +65,13 @@ export default function Navbar() {
           id="menu-appbar"
           anchorEl={anchorEl}
           anchorOrigin={{
-            vertical: "top",
-            horizontal: "right",
+            vertical: 'top',
+            horizontal: 'right',
           }}
           keepMounted
           transformOrigin={{
-            vertical: "top",
-            horizontal: "right",
+            vertical: 'top',
+            horizontal: 'right',
           }}
           open={open}
           onClose={handleClose}

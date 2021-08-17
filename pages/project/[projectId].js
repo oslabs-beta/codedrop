@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import { makeStyles } from '@material-ui/core/styles';
 
 import EditorPanel from '../../components/EditorPanel';
 import DropZone from '../../components/dnd/DropZone';
@@ -19,7 +20,16 @@ import { SIDEBAR_ITEMS, SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components
 
 import shortid from 'shortid';
 
+const useStyles = makeStyles({
+  body: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexGrow: 1,
+  },
+});
+
 const Container = ({ projectData }) => {
+  const classes = useStyles();
   const initialLayout = initialData.layout;
   const initialComponents = initialData.components;
   const [layout, setLayout] = useState(initialLayout);
@@ -114,7 +124,7 @@ const Container = ({ projectData }) => {
   // dont use index for key when mapping over items
   // causes this issue - https://github.com/react-dnd/react-dnd/issues/342
   return (
-    <div className="body">
+    <div className={classes.body}>
       <div className="sideBar">
         {Object.values(SIDEBAR_ITEMS).map((sideBarItem, index) => (
           <SideBarItem key={sideBarItem.id} data={sideBarItem} />
