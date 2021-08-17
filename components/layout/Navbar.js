@@ -40,10 +40,6 @@ export default function Navbar() {
     setAnchorEl(null);
   };
 
-  const openProject = () => {
-    // load the projects component
-  };
-
   return (
     <AppBar className={classes.navbarItems} position="static">
       <Typography variant="h4" className={classes.title} onClick={() => router.push('/')}>
@@ -75,7 +71,7 @@ export default function Navbar() {
       >
         {session && <MenuItem onClick={() => signOut({ callbackUrl: `/signin` })}>Logout</MenuItem>}
         {!session && <MenuItem onClick={() => router.push('/signin')}>Sign In</MenuItem>}
-        <MenuItem onClick={() => openProject()}>Projects</MenuItem>
+        <MenuItem onClick={() => router.push('/projects')}>Projects</MenuItem>
       </Menu>
     </AppBar>
   );
