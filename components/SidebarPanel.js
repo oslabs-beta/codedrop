@@ -25,10 +25,7 @@ const SidebarPanel = ({ previewMode, setPreviewMode }) => {
   return (
     <div className={classes.sideBar}>
       {Object.values(SIDEBAR_ITEMS).map((sideBarItem) => (
-        <>
-        {console.log('sideBarItem', sideBarItem)}
         <SideBarItem key={sideBarItem.id} data={sideBarItem} />
-        </>
       ))}
       <FormControlLabel
         control={
