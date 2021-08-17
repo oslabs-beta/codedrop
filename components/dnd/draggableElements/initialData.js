@@ -26,6 +26,18 @@ align-items: center;
 flex-direction: column;`,
 };
 
+export const h2 = {
+  value: 'Heading 2',
+  style: `display: inline-block;
+color: palevioletred;
+align-item: 'center',
+display: block;`,
+  containerStyle: `padding: 0.5rem 1rem;
+display: flex;
+align-items: center;
+flex-direction: column;`,
+};
+
 export const image = {
   value: 'Alt label',
   style: `width: 200px;

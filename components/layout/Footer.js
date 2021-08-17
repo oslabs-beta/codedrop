@@ -1,7 +1,6 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
 
 function Copyright() {
@@ -19,17 +18,13 @@ function Copyright() {
 
 const useStyles = makeStyles({
   footer: {
-    padding: 0,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFECD6',
-    position: 'absolute',
-    height: '5vh',
-    left: 0,
-    bottom: 0,
-    right: 0,
+    minHeight: '50px',
+    boxShadow: '0px -1px 2px rgb(0 0 0 / 20%)'
   },
 });
 
