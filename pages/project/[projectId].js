@@ -47,7 +47,10 @@ const Container = ({ projectData }) => {
       console.log('dropZone, item', dropZone, item);
       const splitItemPath = item.path.split('-');
       setLayout(handleRemoveItemFromLayout(layout, splitItemPath));
-      updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
+      const variables = {variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}
+      console.log('variables', variables);
+      updateProject(variables);
+       //// INITIAL MUTATION
     },
     [layout]
   );

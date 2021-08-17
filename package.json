@@ -4,7 +4,7 @@
   "description": "Create and share reusable components",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "cross-env NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -17,6 +17,7 @@
     "@next-auth/firebase-adapter": "^0.1.2",
     "classnames": "^2.2.6",
     "codemirror": "^5.62.2",
+    "cross-env": "^7.0.3",
     "firebase": "^8.8.1",
     "graphql": "^15.5.1",
     "next": "11.0.1",
