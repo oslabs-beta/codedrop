@@ -7,7 +7,7 @@ import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import { signIn, signOut, useSession } from 'next-auth/client';
+import { signOut, useSession } from 'next-auth/client';
 
 const useStyles = makeStyles({
   title: {
@@ -73,8 +73,8 @@ export default function Navbar() {
         open={open}
         onClose={handleClose}
       >
-        {session && <MenuItem onClick={() => signOut()}>Logout</MenuItem>}
-        {!session && <MenuItem onClick={() => signIn()}>Sign In</MenuItem>}
+        {session && <MenuItem onClick={() => signOut({ callbackUrl: `/signin` })}>Logout</MenuItem>}
+        {!session && <MenuItem onClick={() => router.push('/signin')}>Sign In</MenuItem>}
         <MenuItem onClick={() => openProject()}>Projects</MenuItem>
       </Menu>
     </AppBar>
