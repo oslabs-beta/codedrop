@@ -57,7 +57,7 @@ const EnhancedTableToolbar = (props) => {
         )}
       </div>
 
-      <Button variant="contained" onClick={() => router.push('/project/9')}>
+      <Button variant="contained" color="primary" onClick={() => router.push('/project/9')}>
         New Project
       </Button>
     </Toolbar>
