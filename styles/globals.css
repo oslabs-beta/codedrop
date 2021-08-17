@@ -8,25 +8,6 @@ a {
 }
 
 /* Added from sample project */
-
-
-.sideBar {
-  width: 200px;
-  padding: 10px;
-  border-right: 1px solid #111;
-  background: #e1e1e1;
-}
-
-.sideBarItem {
-  border: 1px solid #000;
-  text-align: center;
-  border-radius: 3px;
-  height: 30px;
-  padding: 10px;
-  margin-top: 10px;
-  background: #ccc;
-}
-
 .page {
   flex: 1 1 auto;
   padding: 0 20px;

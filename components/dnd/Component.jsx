@@ -7,6 +7,7 @@ import { COMPONENT } from './constants';
 import { Button } from './draggableElements/Button';
 import { Input } from './draggableElements/Input';
 import { H1 } from './draggableElements/H1';
+import { H2 } from './draggableElements/H2';
 import { Image } from './draggableElements/Image';
 import { Text } from './draggableElements/Text';
 
@@ -45,6 +46,9 @@ const Component = ({ data, components, path, previewMode, setShowEditor }) => {
     }
     if (type === 'H1') {
       return <H1 style={style} value={value} />;
+    }
+    if (type === 'H2') {
+      return <H2 style={style} value={value} />;
     }
     if (type === 'Image') {
       return <Image style={style} alt={value} value={value} src={src} />;

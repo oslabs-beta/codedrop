@@ -10,7 +10,6 @@ import Menu from '@material-ui/core/Menu';
 import { signIn, signOut, useSession } from 'next-auth/client';
 
 const useStyles = makeStyles({
-  navBarContainer: {},
   title: {
     color: '#bf7472',
   },
@@ -20,10 +19,9 @@ const useStyles = makeStyles({
     justifyContent: 'space-between',
     alignItems: 'center',
     background: '#FFECD6',
-    boxShadow: 'none',
-    color: 'black',
-    height: '10vh',
+    height: '7vh',
     padding: '0 30px',
+    boxShadow: '0px 2px 4px -1px rgb(0 0 0 / 20%)',
   },
 });
 
@@ -47,40 +45,38 @@ export default function Navbar() {
   };
 
   return (
-    <div className={classes.navBarContainer}>
-      <AppBar className={classes.navbarItems} position="static">
-        <Typography variant="h4" className={classes.title} onClick={() => router.push('/')}>
-          codedrop
-        </Typography>
-        <MenuRoundedIcon
-          aria-label="account of current user"
-          aria-controls="menu-appbar"
-          aria-haspopup="true"
-          onClick={handleMenu}
-          color="inherit"
-        >
-          <AccountCircle />
-        </MenuRoundedIcon>
-        <Menu
-          id="menu-appbar"
-          anchorEl={anchorEl}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          keepMounted
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          open={open}
-          onClose={handleClose}
-        >
-          {session && <MenuItem onClick={() => signOut()}>Logout</MenuItem>}
-          {!session && <MenuItem onClick={() => signIn()}>Sign In</MenuItem>}
-          <MenuItem onClick={() => openProject()}>Projects</MenuItem>
-        </Menu>
-      </AppBar>
-    </div>
+    <AppBar className={classes.navbarItems} position="static">
+      <Typography variant="h4" className={classes.title} onClick={() => router.push('/')}>
+        codedrop
+      </Typography>
+      <MenuRoundedIcon
+        aria-label="account of current user"
+        aria-controls="menu-appbar"
+        aria-haspopup="true"
+        onClick={handleMenu}
+        color="inherit"
+      >
+        <AccountCircle />
+      </MenuRoundedIcon>
+      <Menu
+        id="menu-appbar"
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        keepMounted
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        open={open}
+        onClose={handleClose}
+      >
+        {session && <MenuItem onClick={() => signOut()}>Logout</MenuItem>}
+        {!session && <MenuItem onClick={() => signIn()}>Sign In</MenuItem>}
+        <MenuItem onClick={() => openProject()}>Projects</MenuItem>
+      </Menu>
+    </AppBar>
   );
 }

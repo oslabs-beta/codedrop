@@ -2,15 +2,9 @@ import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/core/styles';
 import Input from '@material-ui/core/Input';
 
-import StylingTabs from './StylingTabs';
+import { greyScheme } from './util/colorPallete'
 
-const greyScheme = {
-  lightestGray: '#EEEEEE',
-  lighterGray: '#DDDDDD',
-  gray: '#CCCCCC',
-  drankerGray: '#BBBBBB',
-  darkestGray: '#333333',
-};
+import StylingTabs from './StylingTabs';
 
 const useStyles = makeStyles({
   editorBar: {
@@ -26,7 +20,8 @@ const useStyles = makeStyles({
     justifyContent: 'space-between',
     backgroundColor: greyScheme.lighterGray,
     alignItems: 'center',
-    padding: '2px 10px',
+    padding: '1px 10px',
+    boxShadow: '0px 2px 4px -1px rgb(0 0 0 / 20%)',
   },
   editorBarInput: {
     display: 'flex',

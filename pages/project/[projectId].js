@@ -1,12 +1,10 @@
 import React, { useState, useCallback } from 'react';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
 import { makeStyles } from '@material-ui/core/styles';
 
+import SidebarPanel from '../../components/SidebarPanel';
 import EditorPanel from '../../components/EditorPanel';
 import DropZone from '../../components/dnd/DropZone';
 import TrashDropZone from '../../components/dnd/TrashDropZone';
-import SideBarItem from '../../components/dnd/SideBarItem';
 import Row from '../../components/dnd/Row';
 import initialData from '../../components/dnd/initial-data';
 import {
@@ -16,7 +14,7 @@ import {
   handleRemoveItemFromLayout,
 } from '../../components/dnd/helpers';
 
-import { SIDEBAR_ITEMS, SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components/dnd/constants';
+import { SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components/dnd/constants';
 
 import shortid from 'shortid';
 
@@ -125,22 +123,7 @@ const Container = ({ projectData }) => {
   // causes this issue - https://github.com/react-dnd/react-dnd/issues/342
   return (
     <div className={classes.body}>
-      <div className="sideBar">
-        {Object.values(SIDEBAR_ITEMS).map((sideBarItem, index) => (
-          <SideBarItem key={sideBarItem.id} data={sideBarItem} />
-        ))}
-        <FormControlLabel
-          control={
-            <Switch
-              checked={previewMode}
-              onChange={() => setPreviewMode(!previewMode)}
-              name="previewMode"
-              color="primary"
-            />
-          }
-          label="Preview"
-        />
-      </div>
+      <SidebarPanel previewMode={previewMode} setPreviewMode={setPreviewMode} />
       <div className="pageContainer">
         <div className="page">
           {layout.map((row, index) => {
