@@ -14,6 +14,7 @@ import {
   handleMoveSidebarComponentIntoParent,
   handleRemoveItemFromLayout,
 } from '../../components/dnd/helpers';
+import { initializeApollo } from '../../lib/apolloClient'
 
 import {
   PROJECT_QUERY
@@ -27,20 +28,18 @@ import { SIDEBAR_ITEMS, SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components
 
 import shortid from 'shortid';
 
-const Container = ({ projectData }) => {
+const Container = ({ projectId, projectLayout }) => {
   const initialLayout = initialData.layout; // on new project, mutate to add project with layout
   const initialComponents = initialData.components; // on new projected mutate to add components to project
-  const projectId = projectData.projectId
+  // const projectId = projectData.projectId
   const [layout, setLayout] = useState(initialLayout);
   const [components, setComponents] = useState(initialComponents);
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
-  const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION//,
-  //   {
-  //     onError(err) {
-  //     console.log(err);
-  // },}
-  );
+  const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION,{
+    awaitRefetchQueries: true,
+    refetchQueries:[{query:PROJECT_QUERY, variables:{id:projectId}}], //refetches project layout using most recent variables
+  });
 
   const handleDropToTrashBin = useCallback(
     (dropZone, item) => {
@@ -88,7 +87,7 @@ const Container = ({ projectData }) => {
         });
         setLayout(handleMoveSidebarComponentIntoParent(layout, splitDropZonePath, newItem));
         updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
-        console.log(data)
+        console.log('state layout:', layout, 'gql layout:', projectLayout, 'data:', data)// console.log(projectLayout)
         return;
       }
 
@@ -102,6 +101,7 @@ const Container = ({ projectData }) => {
         if (pathToItem === pathToDropZone) {
           setLayout(handleMoveWithinParent(layout, splitDropZonePath, splitItemPath));
           updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
+          console.log('state layout:', layout, 'gql layout:', projectLayout)
           return;
         }
 
@@ -109,12 +109,14 @@ const Container = ({ projectData }) => {
         // TODO FIX columns. item includes children
         setLayout(handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem));
         updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
+        console.log('state layout:', layout, 'gql layout:', projectLayout)
         return;
       }
 
       // 3. Move + Create
       setLayout(handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem));
       updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
+      console.log('state layout:', layout, 'gql layout:', projectLayout)
     },
     [layout, components]
   );
@@ -203,7 +205,7 @@ const Container = ({ projectData }) => {
   );
 };
 
-export async function getStaticPaths() {
+export async function getServerSidePaths() {
   const projects = [];
 
   return {
@@ -216,28 +218,50 @@ export async function getStaticPaths() {
   };
 }
 
-export async function getStaticProps(context) {
+// export async function getStaticProps(context) {
+//   const projectId = context.params.projectId;
+
+//   // const apolloClient = initializeApollo();
+
+//   // await apolloClient.query({
+//   //   query:PROJECT_QUERY,
+//   //   variables: projectId
+//   // })
+
+//   // return {
+//   //   props: {
+//   //     initialApolloState: apolloClient.cache.extract(),
+//   //   },
+//   //   revalidate: 1
+//   return {
+//     props: {
+//       projectData: { projectId },
+//     },
+//     // time before regenerating data for request
+//     revalidate: 10,
+//   };
+// };
+
+export async function getServerSideProps(context) {
+  const apolloClient = initializeApollo();
   const projectId = context.params.projectId;
 
-  // const apolloClient = initializeApollo();
+  const projectData = await apolloClient.query({
+    query:PROJECT_QUERY,
+    variables: {
+      id:projectId
+    },
+  })
 
-  // await apolloClient.query({
-  //   query:PROJECT_QUERY,
-  //   variables: projectId
-  // })
-
-  // return {
-  //   props: {
-  //     initialApolloState: apolloClient.cache.extract(),
-  //   },
-  //   revalidate: 1
   return {
     props: {
-      projectData: { projectId },
+      initialApolloState: apolloClient.cache.extract(),
+      projectLayout: JSON.parse(projectData.data.getProject.layout),
+      projectId,
+
     },
-    // time before regenerating data for request
-    revalidate: 10,
+    
   };
-}
+};
 
 export default Container;
