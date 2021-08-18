@@ -1,6 +1,6 @@
 import shortid from 'shortid';
 
-import { button, input, h1, text, image } from './draggableElements/initialData';
+import { button, input, h1, h2, text, image } from './draggableElements/initialData';
 
 export const SIDEBAR_ITEM = 'sidebarItem';
 export const ROW = 'row';
@@ -36,6 +36,14 @@ export const SIDEBAR_ITEMS = [
     id: shortid.generate(),
     type: SIDEBAR_ITEM,
     component: {
+      type: 'Image',
+      ...image,
+    },
+  },
+  {
+    id: shortid.generate(),
+    type: SIDEBAR_ITEM,
+    component: {
       type: 'H1',
       ...h1,
     },
@@ -44,8 +52,8 @@ export const SIDEBAR_ITEMS = [
     id: shortid.generate(),
     type: SIDEBAR_ITEM,
     component: {
-      type: 'Image',
-      ...image,
+      type: 'H2',
+      ...h2,
     },
   },
 ];

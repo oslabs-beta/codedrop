@@ -1,6 +1,6 @@
-import NextAuth from 'next-auth'
-import Providers from 'next-auth/providers'
-import { FirebaseAdapter } from "@next-auth/firebase-adapter"
+import NextAuth from 'next-auth';
+import Providers from 'next-auth/providers';
+import { FirebaseAdapter } from '@next-auth/firebase-adapter';
 
 import firebase from '../../../firebase/clientApp';
 
@@ -15,11 +15,11 @@ export default NextAuth({
         port: process.env.SENDGRID_PORT_TLS,
         auth: {
           user: process.env.SENDGRID_USERNAME,
-          pass: process.env.SENDGRID_PASSWORD
-        }
+          pass: process.env.SENDGRID_PASSWORD,
+        },
       },
-      from: 'CodeDrop <dyeoman2@gmail.com>'
+      from: 'CodeDrop <dyeoman2@gmail.com>',
     }),
   ],
-  adapter: FirebaseAdapter(firestore)
-})
+  adapter: FirebaseAdapter(firestore),
+});

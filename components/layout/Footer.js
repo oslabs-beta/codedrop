@@ -1,14 +1,13 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
 
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary">
       {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
+      <Link color="inherit" href="/">
         CodeDrop
       </Link>{' '}
       {new Date().getFullYear()}
@@ -17,27 +16,24 @@ function Copyright() {
   );
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles({
   footer: {
-    padding: theme.spacing(3, 2),
-    marginTop: 'auto',
-    backgroundColor: 'lightGray',
-    position: 'absolute',
-    left: 0,
-    bottom: 0,
-    right: 0,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFECD6',
+    minHeight: '50px',
+    boxShadow: '0px -1px 2px rgb(0 0 0 / 20%)'
   },
-}));
+});
 
 export default function StickyFooter() {
   const classes = useStyles();
 
   return (
     <footer className={classes.footer}>
-      <Container maxWidth="sm">
-        <Typography variant="body1">Creating and sharing resuable components.</Typography>
-        <Copyright />
-      </Container>
+      <Copyright />
     </footer>
   );
 }
