@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Typography from '@material-ui/core/Typography';
 import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
@@ -40,43 +41,47 @@ export default function Navbar() {
     setAnchorEl(null);
   };
 
-  const openProject = () => {
-    // load the projects component
-  };
-
   return (
     <AppBar className={classes.navbarItems} position="static">
       <Typography variant="h4" className={classes.title} onClick={() => router.push('/')}>
         codedrop
       </Typography>
-      <MenuRoundedIcon
-        aria-label="account of current user"
-        aria-controls="menu-appbar"
-        aria-haspopup="true"
-        onClick={handleMenu}
-        color="inherit"
-      >
-        <AccountCircle />
-      </MenuRoundedIcon>
-      <Menu
-        id="menu-appbar"
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        keepMounted
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        open={open}
-        onClose={handleClose}
-      >
-        {session && <MenuItem onClick={() => signOut({ callbackUrl: `/signin` })}>Logout</MenuItem>}
-        {!session && <MenuItem onClick={() => router.push('/signin')}>Sign In</MenuItem>}
-        <MenuItem onClick={() => openProject()}>Projects</MenuItem>
-      </Menu>
+      {session && (
+        <>
+          <MenuRoundedIcon
+            aria-label="account of current user"
+            aria-controls="menu-appbar"
+            aria-haspopup="true"
+            onClick={handleMenu}
+            color="inherit"
+          >
+            <AccountCircle />
+          </MenuRoundedIcon>
+          <Menu
+            id="menu-appbar"
+            anchorEl={anchorEl}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            open={open}
+            onClose={handleClose}
+          >
+            <MenuItem onClick={() => router.push('/projects')}>Projects</MenuItem>
+            <MenuItem onClick={() => signOut({ callbackUrl: `/signin` })}>Logout</MenuItem>
+          </Menu>
+        </>
+      )}
+      {!session && (
+        <Button variant="contained" color="primary" onClick={() => router.push('/signin')}>
+          Sign Up
+        </Button>
+      )}
     </AppBar>
   );
 }
