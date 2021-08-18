@@ -45,12 +45,12 @@ function a11yProps(index) {
   };
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   root: {
     flexGrow: 1,
     width: '100%',
     height: '365px',
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: 'white',
   },
 }));
 
