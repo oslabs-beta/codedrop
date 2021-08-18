@@ -1,14 +1,13 @@
-import sample_data from '../components/dnd/sample-layout-data';
+import sample_data_layout from '../components/dnd/sample-layout-data';
+import sample_data_comp from '../components/dnd/sample-component-data';
 // const parse = require('json-to-ast');
 import parse from 'json-to-ast';
 
-const { layout } = sample_data
+const { layout } = sample_data_layout
 
 console.log('layout ', layout)
 
 const layoutStr = JSON.stringify(layout)
-
-console.log('layoutStr ', layoutStr)
 
 const settings = {
   // Appends location information. Default is <true>
@@ -19,20 +18,51 @@ const settings = {
 
 const res = parse(layoutStr, settings);
 
-console.log('res.childres ', res.children[0])
-console.log('res.keys ', Object.keys(res))
 
-const keys = Object.keys(res)
 
-// for (let key in res) {
-//   if(Array.isArray(res[key])) console.log('child found ')
-// }
+const parseComponentsHelper = (compData) => {
+  const { id , type } = compData
+  console.log('Components elements ', sample_data_comp[id])
+}
 
-if (res.children.length !== 0) console.log('child found')
+const parseComponents = (coms) => {
+  console.log('components ', coms)
+
+  for (let i = 0; i < coms.length; i ++) {
+    console.log('Componenets ', coms[i])
+    // if ()
+    parseComponentsHelper(coms[i])
+  }
+}
+
+const parseCols = (cols) => {
+  console.log('cold ', cols)
+  for(let i = 0; i < cols.length; i++){
+    console.log('col ', cols[i])
+
+    const col = cols[i]
+    if (col.children.length !== 0 && Array.isArray(col.children)) {
+      console.log('recursive cols')
+      // parseCols(col.children)
+      parseComponents(col.children)
+    }
+    
+  }
+}
+
+
+if (Array.isArray(layout) && layout[0].children.length !== 0) {
+  console.log('child found')
+
+  parseCols(layout[0].children)
+  
+
+}
+
 
 
 const HomeTest = () => {
-  console.log('sample data ', sample_data)
+  console.log('sample data ', sample_data_layout)
   
   let data ;
 
