@@ -5,6 +5,11 @@ import sample_data_comp from '../components/dnd/sample-component-data';
  * @param {*} options 
  * @returns 
  */
+
+function remove_linebreaks( input ) {
+  return input.replace( /[\r\n]+/gm, " ").trim();
+}
+
 function Button (options) {
   this.tagName = options.type || null;
   this.id = options.id || null;
