@@ -1,6 +1,6 @@
 import { Typography, Button, Container } from '@material-ui/core';
 import { useRouter } from 'next/router';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 
 const useStyles = makeStyles({
   root: {

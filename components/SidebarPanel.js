@@ -1,8 +1,9 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 
+import CodeDrawer from './CodeDrawer';
 import SideBarItem from './dnd/SideBarItem';
 import { SIDEBAR_ITEMS } from './dnd/constants';
 import { greyScheme } from './util/colorPallete';
@@ -19,7 +20,7 @@ const useStyles = makeStyles({
   },
 });
 
-const SidebarPanel = ({ previewMode, setPreviewMode }) => {
+const SidebarPanel = ({ previewMode, setPreviewMode, codeString }) => {
   const classes = useStyles();
 
   return (
@@ -38,6 +39,7 @@ const SidebarPanel = ({ previewMode, setPreviewMode }) => {
         }
         label="Preview"
       />
+      <CodeDrawer codeString={codeString} />
     </div>
   );
 };

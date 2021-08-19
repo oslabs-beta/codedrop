@@ -1,5 +1,5 @@
 import CloseIcon from '@material-ui/icons/Close';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 import Input from '@material-ui/core/Input';
 
 import { greyScheme } from './util/colorPallete'
