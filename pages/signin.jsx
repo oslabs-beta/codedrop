@@ -1,7 +1,7 @@
 import { getCsrfToken } from 'next-auth/client';
 import { useRouter } from 'next/router';
 
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
 import Input from '@material-ui/core/Input';
 import FormLabel from '@material-ui/core/FormLabel';

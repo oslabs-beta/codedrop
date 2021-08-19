@@ -1,6 +1,7 @@
-import React, { useState, useCallback } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useState, useCallback, useEffect } from 'react';
+import { makeStyles } from '@material-ui/styles';
 
+import { prettierCode } from '../../components/api/prettierCode';
 import SidebarPanel from '../../components/SidebarPanel';
 import EditorPanel from '../../components/EditorPanel';
 import DropZone from '../../components/dnd/DropZone';
@@ -32,12 +33,15 @@ const Container = ({ projectData }) => {
   const initialComponents = initialData.components;
   const [layout, setLayout] = useState(initialLayout);
   const [components, setComponents] = useState(initialComponents);
+  const [codeString, setCodeString] = useState(``);
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
 
-  console.log(' setLayout ', layout)
-  console.log(' setComponent ', components)
-  
+  // This should be removed once we have the codegen builder created
+  useEffect(() => {
+    prettierCode(`import React from 'react'`, setCodeString);
+  }, []);
+
   const handleDropToTrashBin = useCallback(
     (dropZone, item) => {
       console.log('dropZone, item', dropZone, item);
@@ -122,11 +126,13 @@ const Container = ({ projectData }) => {
     );
   };
 
-  // dont use index for key when mapping over items
-  // causes this issue - https://github.com/react-dnd/react-dnd/issues/342
   return (
     <div className={classes.body}>
-      <SidebarPanel previewMode={previewMode} setPreviewMode={setPreviewMode} />
+      <SidebarPanel
+        previewMode={previewMode}
+        setPreviewMode={setPreviewMode}
+        codeString={codeString}
+      />
       <div className="pageContainer">
         <div className="page">
           {layout.map((row, index) => {
