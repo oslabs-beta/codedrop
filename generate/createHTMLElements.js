@@ -21,12 +21,34 @@ function Button (options) {
     this.html = `<button style="${this.style}" type=${this.type} class=${this.class} id=${this.id}> ${this.value} </button>`
   }
 
+  if (this.containerStyle) {
+    this.div = `<div style="${this.containerStyle}">${this.html}</div>`
+  }
+
+  console.log('this.style ', this.style)
   return {
 		'test': 'does this work:',
-		'html': this.html
+		'html': this.html,
+		'div': this.div
 	}
 
 }
+
+function Img (options) {
+  this.tagName = options.type || null;
+  this.id = options.id || null;
+  this.value = options.value || null;
+  this.style = remove_linebreaks(options.style) || null
+  this.src = options.src || null;
+
+  this.html = `<img class="fit-picture" src=${this.src} alt=${this.value} style=${this.style}>`
+
+  return {
+    'html': this.html
+  }
+}
+
+
 
 function Error(options) {
   return {
@@ -41,11 +63,14 @@ class HTMLElementFactory {
   createElement(options) {
 
     switch (options.type) {
-      case "button":
+      case "Button":
         this.elementClass = Button;
         break;
       case "h1":
         this.elementClass = H1;
+        break;
+      case 'Image':
+        this.elementClass = Img
         break;
     }
     // default elementClass is Error
@@ -59,11 +84,5 @@ HTMLElementFactory.prototype.elementClass = Error
 
 var eleFactory = new HTMLElementFactory()
 
-const btn = eleFactory.createElement({"id": "v8ogVvw1d",
-"type": "Button",
-"value": "Click me!",
-"style": "display: inline-block;\ncolor: palevioletred;\nfont-size: 1em;\nmargin: 1em;\npadding: 0.25em 1em;\nborder: 2px solid palevioletred;\nborder-radius: 3px;\ndisplay: block;"})
 
-console.log(btn)
-
-export default createHTMLElements;
+export default eleFactory;
