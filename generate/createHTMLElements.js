@@ -40,15 +40,39 @@ function Img (options) {
   this.value = options.value || null;
   this.style = remove_linebreaks(options.style) || null
   this.src = options.src || null;
+  this.containerStyle = options.containerStyle || null
 
-  this.html = `<img class="fit-picture" src=${this.src} alt=${this.value} style=${this.style}>`
+  this.html = `<img class="fit-picture" src=${this.src} alt=${this.value} style="${this.style}">`
+
+  if (this.containerStyle) {
+    this.div = `<div style="${this.containerStyle}">${this.html}</div>`
+  }
 
   return {
-    'html': this.html
+    'html': this.html,
+    'div': this.div
   }
 }
 
+function H1 (options) {
+  this.tagName = options.type || null;
+  this.id = options.id || null;
+  this.value = options.value || null;
+  this.style = remove_linebreaks(options.style) || null
+  this.src = options.src || null;
+  this.containerStyle = options.containerStyle || null
 
+  this.html = `<img class="fit-picture" src=${this.src} alt=${this.value} style="${this.style}">`
+  
+  if (this.containerStyle) {
+    this.div = `<div style="${this.containerStyle}">${this.html}</div>`
+  }
+
+  return {
+    'html': this.html,
+    'div': this.div
+  }
+}
 
 function Error(options) {
   return {
@@ -66,7 +90,7 @@ class HTMLElementFactory {
       case "Button":
         this.elementClass = Button;
         break;
-      case "h1":
+      case "H1":
         this.elementClass = H1;
         break;
       case 'Image':
