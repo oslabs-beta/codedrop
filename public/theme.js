@@ -1,5 +1,4 @@
-import { createTheme } from "@material-ui/core/styles";
-
+import { createTheme } from '@material-ui/core/styles';
 
 const theme = createTheme({
   palette: {
@@ -10,7 +9,7 @@ const theme = createTheme({
       light: '#fbf5ec',
       main: '#bf7472',
     },
-    tertiary:{
+    tertiary: {
       main: '#A88C89',
     },
     contrastThreshold: 3,

@@ -18,7 +18,7 @@ const EditorContainer = styled.div`
 `;
 
 
-export default function Editor({ language, onChange, value }) {
+export default function Editor({ language, onChange, value, readOnly = false }) {
   const handleChange = (editor, data, value) => onChange(value);
 
   return (
@@ -32,6 +32,7 @@ export default function Editor({ language, onChange, value }) {
           mode: language,
           theme: 'material',
           lineNumbers: true,
+          readOnly: readOnly,
         }}
       />
     </EditorContainer>
