@@ -2,10 +2,12 @@ import React, { useState, useCallback } from 'react';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import { gql, useQuery, useMutation } from '@apollo/client';
+import { makeStyles } from '@material-ui/core/styles';
+
+import SidebarPanel from '../../components/SidebarPanel';
 import EditorPanel from '../../components/EditorPanel';
 import DropZone from '../../components/dnd/DropZone';
 import TrashDropZone from '../../components/dnd/TrashDropZone';
-import SideBarItem from '../../components/dnd/SideBarItem';
 import Row from '../../components/dnd/Row';
 import initialData from '../../components/dnd/initial-data';
 import {
@@ -27,10 +29,19 @@ import { SIDEBAR_ITEMS, SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components
 
 import shortid from 'shortid';
 
+const useStyles = makeStyles({
+  body: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexGrow: 1,
+  },
+});
+
 const Container = ({ projectData }) => {
   const initialLayout = initialData.layout; // on new project, mutate to add project with layout
   const initialComponents = initialData.components; // on new projected mutate to add components to project
   const projectId = projectData.projectId
+  const classes = useStyles();
   const [layout, setLayout] = useState(initialLayout);
   const [components, setComponents] = useState(initialComponents);
   const [previewMode, setPreviewMode] = useState(false);
@@ -138,23 +149,8 @@ const Container = ({ projectData }) => {
   // dont use index for key when mapping over items
   // causes this issue - https://github.com/react-dnd/react-dnd/issues/342
   return (
-    <div className="body">
-      <div className="sideBar">
-        {Object.values(SIDEBAR_ITEMS).map((sideBarItem, index) => (
-          <SideBarItem key={sideBarItem.id} data={sideBarItem} />
-        ))}
-        <FormControlLabel
-          control={
-            <Switch
-              checked={previewMode}
-              onChange={() => setPreviewMode(!previewMode)}
-              name="previewMode"
-              color="primary"
-            />
-          }
-          label="Preview"
-        />
-      </div>
+    <div className={classes.body}>
+      <SidebarPanel previewMode={previewMode} setPreviewMode={setPreviewMode} />
       <div className="pageContainer">
         <div className="page">
           {layout.map((row, index) => {
