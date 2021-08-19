@@ -14,13 +14,12 @@ function Button (options) {
   this.tagName = options.type || null;
   this.id = options.id || null;
   this.value = options.value || null;
-  this.style = options.style || null;
+  this.style = remove_linebreaks(options.style) || null
+  this.containerStyle = options.containerStyle || null
 
   if (this.tagName) {
-    // .split('\n').join(' ')
-		this.html = 
-			`<button type=${this.type} class=${this.class} id=${this.id}> ${this.value} </button>`
-	} 
+    this.html = `<button style="${this.style}" type=${this.type} class=${this.class} id=${this.id}> ${this.value} </button>`
+  }
 
   return {
 		'test': 'does this work:',
