@@ -1,11 +1,11 @@
 import React, { useState, useCallback } from 'react';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
 import { gql, useQuery, useMutation } from '@apollo/client';
+import { makeStyles } from '@material-ui/core/styles';
+
+import SidebarPanel from '../../components/SidebarPanel';
 import EditorPanel from '../../components/EditorPanel';
 import DropZone from '../../components/dnd/DropZone';
 import TrashDropZone from '../../components/dnd/TrashDropZone';
-import SideBarItem from '../../components/dnd/SideBarItem';
 import Row from '../../components/dnd/Row';
 import initialData from '../../components/dnd/initial-data';
 import {
@@ -15,31 +15,37 @@ import {
   handleRemoveItemFromLayout,
 } from '../../components/dnd/helpers';
 
-import {
-  PROJECT_QUERY
-} from '../../lib/apolloQueries'
+import { PROJECT_QUERY } from '../../lib/apolloQueries';
 
-import {
-  PROJECT_MUTATION
-} from '../../lib/apolloMutations'
+import { PROJECT_MUTATION } from '../../lib/apolloMutations';
 
-import { SIDEBAR_ITEMS, SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components/dnd/constants';
+import { SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components/dnd/constants';
 
 import shortid from 'shortid';
+
+const useStyles = makeStyles({
+  body: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexGrow: 1,
+  },
+});
 
 const Container = ({ projectData }) => {
   const initialLayout = initialData.layout; // on new project, mutate to add project with layout
   const initialComponents = initialData.components; // on new projected mutate to add components to project
-  const projectId = projectData.projectId
+  const projectId = projectData.projectId;
+  const classes = useStyles();
   const [layout, setLayout] = useState(initialLayout);
   const [components, setComponents] = useState(initialComponents);
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
-  const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION//,
-  //   {
-  //     onError(err) {
-  //     console.log(err);
-  // },}
+  const [updateProject, { data, loading, error }] = useMutation(
+    PROJECT_MUTATION //,
+    //   {
+    //     onError(err) {
+    //     console.log(err);
+    // },}
   );
 
   const handleDropToTrashBin = useCallback(
@@ -47,7 +53,15 @@ const Container = ({ projectData }) => {
       console.log('dropZone, item', dropZone, item);
       const splitItemPath = item.path.split('-');
       setLayout(handleRemoveItemFromLayout(layout, splitItemPath));
-      updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
+      updateProject({
+        variables: {
+          project: {
+            layout: JSON.stringify(layout),
+            id: projectId.toString(),
+            projectName: 'test',
+          },
+        },
+      }); //// INITIAL MUTATION
     },
     [layout]
   );
@@ -55,7 +69,11 @@ const Container = ({ projectData }) => {
   const handleRemoveComponent = (item) => {
     const splitItemPath = item.path.split('-');
     setLayout(handleRemoveItemFromLayout(layout, splitItemPath));
-    updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
+    updateProject({
+      variables: {
+        project: { layout: JSON.stringify(layout), id: projectId.toString(), projectName: 'test' },
+      },
+    }); //// INITIAL MUTATION
   };
 
   const handleDrop = useCallback(
@@ -87,8 +105,16 @@ const Container = ({ projectData }) => {
           [newComponent.id]: newComponent,
         });
         setLayout(handleMoveSidebarComponentIntoParent(layout, splitDropZonePath, newItem));
-        updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
-        console.log(data)
+        updateProject({
+          variables: {
+            project: {
+              layout: JSON.stringify(layout),
+              id: projectId.toString(),
+              projectName: 'test',
+            },
+          },
+        }); //// INITIAL MUTATION
+        console.log(data);
         return;
       }
 
@@ -101,20 +127,44 @@ const Container = ({ projectData }) => {
         // 2.a. move within parent
         if (pathToItem === pathToDropZone) {
           setLayout(handleMoveWithinParent(layout, splitDropZonePath, splitItemPath));
-          updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
+          updateProject({
+            variables: {
+              project: {
+                layout: JSON.stringify(layout),
+                id: projectId.toString(),
+                projectName: 'test',
+              },
+            },
+          }); //// INITIAL MUTATION
           return;
         }
 
         // 2.b. OR move different parent
         // TODO FIX columns. item includes children
         setLayout(handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem));
-        updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
+        updateProject({
+          variables: {
+            project: {
+              layout: JSON.stringify(layout),
+              id: projectId.toString(),
+              projectName: 'test',
+            },
+          },
+        }); //// INITIAL MUTATION
         return;
       }
 
       // 3. Move + Create
       setLayout(handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem));
-      updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
+      updateProject({
+        variables: {
+          project: {
+            layout: JSON.stringify(layout),
+            id: projectId.toString(),
+            projectName: 'test',
+          },
+        },
+      }); //// INITIAL MUTATION
     },
     [layout, components]
   );
@@ -136,23 +186,8 @@ const Container = ({ projectData }) => {
   // dont use index for key when mapping over items
   // causes this issue - https://github.com/react-dnd/react-dnd/issues/342
   return (
-    <div className="body">
-      <div className="sideBar">
-        {Object.values(SIDEBAR_ITEMS).map((sideBarItem, index) => (
-          <SideBarItem key={sideBarItem.id} data={sideBarItem} />
-        ))}
-        <FormControlLabel
-          control={
-            <Switch
-              checked={previewMode}
-              onChange={() => setPreviewMode(!previewMode)}
-              name="previewMode"
-              color="primary"
-            />
-          }
-          label="Preview"
-        />
-      </div>
+    <div className={classes.body}>
+      <SidebarPanel previewMode={previewMode} setPreviewMode={setPreviewMode} />
       <div className="pageContainer">
         <div className="page">
           {layout.map((row, index) => {
