@@ -1,48 +1,42 @@
 import sample_data_layout from '../components/dnd/sample-layout-data';
 import sample_data_comp from '../components/dnd/sample-component-data';
-// const parse = require('json-to-ast');
-import parse from 'json-to-ast';
+
+import eleFactory from '../generate/createHTMLElements';
+
+console.log('eleFactory ', eleFactory)
 
 const { layout } = sample_data_layout
 
 console.log('layout ', layout)
 
-const layoutStr = JSON.stringify(layout)
 
-const settings = {
-  // Appends location information. Default is <true>
-  loc: true,
-  // Appends source information to node’s location. Default is <null>
-  // source: 'data.json'
-};
-
-const res = parse(layoutStr, settings);
-
-
+let res;
 
 const parseComponentsHelper = (compData) => {
   const { id , type } = compData
-  console.log('Components elements ', sample_data_comp[id])
+  console.log('parseComponentsHelper ', sample_data_comp[id])
+  res = eleFactory.createElement(sample_data_comp[id])
+
+  console.log('eleFactory result ', res)
 }
 
 const parseComponents = (coms) => {
-  console.log('components ', coms)
+  console.log('parseComponents ', coms)
 
   for (let i = 0; i < coms.length; i ++) {
-    console.log('Componenets ', coms[i])
-    // if ()
+    console.log('calling parseComponentsHelper ')
     parseComponentsHelper(coms[i])
   }
 }
 
 const parseCols = (cols) => {
-  console.log('cold ', cols)
+  console.log('cols ', cols)
   for(let i = 0; i < cols.length; i++){
     console.log('col ', cols[i])
 
     const col = cols[i]
     if (col.children.length !== 0 && Array.isArray(col.children)) {
-      console.log('recursive cols')
+      console.log('calling parseComponents')
       // parseCols(col.children)
       parseComponents(col.children)
     }
@@ -62,16 +56,22 @@ if (Array.isArray(layout) && layout[0].children.length !== 0) {
 
 
 const HomeTest = () => {
-  console.log('sample data ', sample_data_layout)
-  
-  let data ;
+  console.log('elemtn ', res)
+  // https://gomakethings.com/converting-a-string-into-markup-with-vanilla-js/
+  // native browser method
+  // var parser = new DOMParser();
 
-  for(var key in res) {
-    console.log('res key' ,res.children)
-    data = res[key]
-  }
+  // const body = parser.parseFromString(res.div, 'text/html')
+  // // let data ;
+  // const img = body.images[0]
+  // console.log(img)
 
-  return <h1>Hello!</h1>
+  return ( 
+    <>
+    <h1>Hello!</h1>
+    
+    </>
+  )
 }
 
 export default HomeTest;
