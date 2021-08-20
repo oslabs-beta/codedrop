@@ -18,9 +18,8 @@ const StyledContainer = styled.div`
 const Component = ({ data, components, path, previewMode, setShowEditor }) => {
   const ref = useRef(null);
 
-  const component = components[data.id];
-  let { src, style, type, value, containerStyle } = component;
-
+  const component = components.find(c => c.id === data.id);
+  
   let cssString = css`
     ${previewMode ? 'border: hidden' : 'border: 1px dashed black;'}
     ${containerStyle}
@@ -36,6 +35,10 @@ const Component = ({ data, components, path, previewMode, setShowEditor }) => {
 
   const opacity = isDragging ? 0 : 1;
   drag(ref);
+
+  if (!component) return <div>Component not found in the database</div>
+
+  let { src = '', style = '', type = 'Button', value = 'Test', containerStyle = '' } = component;
 
   const componentToRender = () => {
     if (type === 'Button') {

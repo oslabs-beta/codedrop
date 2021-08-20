@@ -15,7 +15,7 @@ import {
   handleRemoveItemFromLayout,
 } from '../../components/dnd/helpers';
 
-import { PROJECT_QUERY } from '../../lib/apolloQueries';
+import { PROJECT_QUERY, COMPONENTS_QUERY } from '../../lib/apolloQueries';
 
 import { PROJECT_MUTATION } from '../../lib/apolloMutations';
 
@@ -36,17 +36,34 @@ const Container = ({ projectData }) => {
   const initialComponents = initialData.components; // on new projected mutate to add components to project
   const projectId = projectData.projectId;
   const classes = useStyles();
-  const [layout, setLayout] = useState(initialLayout);
-  const [components, setComponents] = useState(initialComponents);
+  const [layout2, setLayout] = useState(initialLayout);
+  const [components2, setComponents] = useState(initialComponents);
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
-  const [updateProject, { data, loading, error }] = useMutation(
-    PROJECT_MUTATION //,
-    //   {
-    //     onError(err) {
-    //     console.log(err);
-    // },}
-  );
+
+  const {
+    loading: loadingProject,
+    error: loadingProjectError,
+    data: projectDataGql,
+  } = useQuery(PROJECT_QUERY, {
+    variables: { id: projectId },
+  });
+
+  const layout = JSON.parse(projectDataGql?.getProject?.layout || '[]');
+
+  const {
+    loading: loadingComponents,
+    error: loadingComponentsError,
+    data: componentsData,
+  } = useQuery(COMPONENTS_QUERY);
+
+  const components = componentsData?.queryComponent || '[]';
+
+  const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION, {
+    onError(err) {
+      console.log(err);
+    },
+  });
 
   const handleDropToTrashBin = useCallback(
     (dropZone, item) => {
@@ -104,11 +121,11 @@ const Container = ({ projectData }) => {
           ...components,
           [newComponent.id]: newComponent,
         });
-        setLayout(handleMoveSidebarComponentIntoParent(layout, splitDropZonePath, newItem));
+        const newLayout = handleMoveSidebarComponentIntoParent(layout, splitDropZonePath, newItem);
         updateProject({
           variables: {
             project: {
-              layout: JSON.stringify(layout),
+              layout: JSON.stringify(newLayout),
               id: projectId.toString(),
               projectName: 'test',
             },
@@ -182,6 +199,10 @@ const Container = ({ projectData }) => {
       />
     );
   };
+
+  if (loadingProject || loadingComponents) return 'Loading...';
+  if (loadingProjectError || loadingComponentsError)
+    return `Error! ${loadingProjectError?.message || ``} ${loadingComponentsError?.message || ``}`;
 
   // dont use index for key when mapping over items
   // causes this issue - https://github.com/react-dnd/react-dnd/issues/342
