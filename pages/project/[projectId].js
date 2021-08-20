@@ -28,19 +28,27 @@ import { SIDEBAR_ITEMS, SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components
 
 import shortid from 'shortid';
 
-const Container = ({ projectId, projectLayout }) => {
+const Container = ({ projectId}) => {
   const initialLayout = initialData.layout; // on new project, mutate to add project with layout
   const initialComponents = initialData.components; // on new projected mutate to add components to project
   // const projectId = projectData.projectId
+  
   const [layout, setLayout] = useState(initialLayout);
   const [components, setComponents] = useState(initialComponents);
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
-  const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION,{
+  const [updateProject, { data: mutationData}] = useMutation(PROJECT_MUTATION,{
     awaitRefetchQueries: true,
     refetchQueries:[{query:PROJECT_QUERY, variables:{id:projectId}}], //refetches project layout using most recent variables
   });
+  const {data: queryData, loading, error} = useQuery(PROJECT_QUERY,
+    {
+      variables:{
+        id:projectId,
+      },
+    });
 
+  // console.log('initial apollo:', initialApolloState.ROOT_QUERY['getProject({"id":"2"})'].layout)
   const handleDropToTrashBin = useCallback(
     (dropZone, item) => {
       console.log('dropZone, item', dropZone, item);
@@ -87,7 +95,7 @@ const Container = ({ projectId, projectLayout }) => {
         });
         setLayout(handleMoveSidebarComponentIntoParent(layout, splitDropZonePath, newItem));
         updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
-        console.log('state layout:', layout, 'gql layout:', projectLayout, 'data:', data)// console.log(projectLayout)
+        console.log('state layout:', layout, 'gql layout:', JSON.parse(queryData.getProject.layout))// console.log(projectLayout)
         return;
       }
 
@@ -101,7 +109,7 @@ const Container = ({ projectId, projectLayout }) => {
         if (pathToItem === pathToDropZone) {
           setLayout(handleMoveWithinParent(layout, splitDropZonePath, splitItemPath));
           updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
-          console.log('state layout:', layout, 'gql layout:', projectLayout)
+          console.log('state layout:', layout, 'gql layout:', JSON.parse(queryData.getProject.layout))
           return;
         }
 
@@ -109,14 +117,14 @@ const Container = ({ projectId, projectLayout }) => {
         // TODO FIX columns. item includes children
         setLayout(handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem));
         updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
-        console.log('state layout:', layout, 'gql layout:', projectLayout)
+        console.log('state layout:', layout, 'gql layout:', JSON.parse(queryData.getProject.layout))
         return;
       }
 
       // 3. Move + Create
       setLayout(handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem));
       updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
-      console.log('state layout:', layout, 'gql layout:', projectLayout)
+      console.log('state layout:', layout, 'gql layout:', JSON.stringify(queryData.getProject.layout))
     },
     [layout, components]
   );
