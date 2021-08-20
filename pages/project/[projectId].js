@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { gql, useQuery, useMutation } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import { makeStyles } from '@material-ui/core/styles';
 
 import SidebarPanel from '../../components/SidebarPanel';
@@ -7,7 +7,6 @@ import EditorPanel from '../../components/EditorPanel';
 import DropZone from '../../components/dnd/DropZone';
 import TrashDropZone from '../../components/dnd/TrashDropZone';
 import Row from '../../components/dnd/Row';
-import initialData from '../../components/dnd/initial-data';
 import {
   handleMoveWithinParent,
   handleMoveToDifferentParent,
@@ -17,7 +16,7 @@ import {
 
 import { PROJECT_QUERY, COMPONENTS_QUERY } from '../../lib/apolloQueries';
 
-import { PROJECT_MUTATION } from '../../lib/apolloMutations';
+import { PROJECT_MUTATION, ADD_COMPONENT } from '../../lib/apolloMutations';
 
 import { SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components/dnd/constants';
 
@@ -32,12 +31,8 @@ const useStyles = makeStyles({
 });
 
 const Container = ({ projectData }) => {
-  const initialLayout = initialData.layout; // on new project, mutate to add project with layout
-  const initialComponents = initialData.components; // on new projected mutate to add components to project
   const projectId = projectData.projectId;
   const classes = useStyles();
-  const [layout2, setLayout] = useState(initialLayout);
-  const [components2, setComponents] = useState(initialComponents);
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
 
@@ -65,30 +60,45 @@ const Container = ({ projectData }) => {
     },
   });
 
+  const [
+    addComponent,
+    { data: newComponentData, loading: newComponentLoading, error: newComponentError },
+  ] = useMutation(ADD_COMPONENT, {
+    refetchQueries: [COMPONENTS_QUERY, 'queryComponent'],
+    onError(err) {
+      console.log(err);
+    },
+  });
+  //
+
   const handleDropToTrashBin = useCallback(
     (dropZone, item) => {
       console.log('dropZone, item', dropZone, item);
       const splitItemPath = item.path.split('-');
-      setLayout(handleRemoveItemFromLayout(layout, splitItemPath));
+      const newLayout = handleRemoveItemFromLayout(layout, splitItemPath);
       updateProject({
         variables: {
           project: {
-            layout: JSON.stringify(layout),
+            layout: JSON.stringify(newLayout),
             id: projectId.toString(),
             projectName: 'test',
           },
         },
       }); //// INITIAL MUTATION
     },
-    [layout]
+    [layout, projectId, updateProject]
   );
 
   const handleRemoveComponent = (item) => {
     const splitItemPath = item.path.split('-');
-    setLayout(handleRemoveItemFromLayout(layout, splitItemPath));
+    const newLayout = handleRemoveItemFromLayout(layout, splitItemPath);
     updateProject({
       variables: {
-        project: { layout: JSON.stringify(layout), id: projectId.toString(), projectName: 'test' },
+        project: {
+          layout: JSON.stringify(newLayout),
+          id: projectId.toString(),
+          projectName: 'test',
+        },
       },
     }); //// INITIAL MUTATION
   };
@@ -113,14 +123,16 @@ const Container = ({ projectData }) => {
           id: shortid.generate(),
           ...item.component,
         };
+        const dbComponent = {
+          variables: {
+            component: newComponent,
+          },
+        };
+        addComponent(dbComponent);
         const newItem = {
           id: newComponent.id,
           type: COMPONENT,
         };
-        setComponents({
-          ...components,
-          [newComponent.id]: newComponent,
-        });
         const newLayout = handleMoveSidebarComponentIntoParent(layout, splitDropZonePath, newItem);
         updateProject({
           variables: {
@@ -131,7 +143,6 @@ const Container = ({ projectData }) => {
             },
           },
         }); //// INITIAL MUTATION
-        console.log(data);
         return;
       }
 
@@ -143,11 +154,11 @@ const Container = ({ projectData }) => {
       if (splitItemPath.length === splitDropZonePath.length) {
         // 2.a. move within parent
         if (pathToItem === pathToDropZone) {
-          setLayout(handleMoveWithinParent(layout, splitDropZonePath, splitItemPath));
+          const newLayout = handleMoveWithinParent(layout, splitDropZonePath, splitItemPath);
           updateProject({
             variables: {
               project: {
-                layout: JSON.stringify(layout),
+                layout: JSON.stringify(newLayout),
                 id: projectId.toString(),
                 projectName: 'test',
               },
@@ -158,11 +169,11 @@ const Container = ({ projectData }) => {
 
         // 2.b. OR move different parent
         // TODO FIX columns. item includes children
-        setLayout(handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem));
+        const newLayout = handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem);
         updateProject({
           variables: {
             project: {
-              layout: JSON.stringify(layout),
+              layout: JSON.stringify(newLayout),
               id: projectId.toString(),
               projectName: 'test',
             },
@@ -172,18 +183,18 @@ const Container = ({ projectData }) => {
       }
 
       // 3. Move + Create
-      setLayout(handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem));
+      const newLayout = handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem);
       updateProject({
         variables: {
           project: {
-            layout: JSON.stringify(layout),
+            layout: JSON.stringify(newLayout),
             id: projectId.toString(),
             projectName: 'test',
           },
         },
       }); //// INITIAL MUTATION
     },
-    [layout, components]
+    [layout, addComponent, projectId, updateProject]
   );
 
   const renderRow = (row, currentPath) => {
@@ -201,11 +212,10 @@ const Container = ({ projectData }) => {
   };
 
   if (loadingProject || loadingComponents) return 'Loading...';
-  if (loadingProjectError || loadingComponentsError)
+  if (loadingProjectError || loadingComponentsError) {
     return `Error! ${loadingProjectError?.message || ``} ${loadingComponentsError?.message || ``}`;
+  }
 
-  // dont use index for key when mapping over items
-  // causes this issue - https://github.com/react-dnd/react-dnd/issues/342
   return (
     <div className={classes.body}>
       <SidebarPanel previewMode={previewMode} setPreviewMode={setPreviewMode} />
@@ -247,9 +257,9 @@ const Container = ({ projectData }) => {
       </div>
       {showEditor && (
         <EditorPanel
-          component={components[showEditor.id]}
+          component={components.find(c => c.id === showEditor.id)}
           components={components}
-          setComponents={setComponents}
+          addComponent={addComponent}
           setShowEditor={setShowEditor}
           data={{ layout }}
           onDrop={handleDropToTrashBin}
@@ -274,19 +284,6 @@ export async function getStaticPaths() {
 
 export async function getStaticProps(context) {
   const projectId = context.params.projectId;
-
-  // const apolloClient = initializeApollo();
-
-  // await apolloClient.query({
-  //   query:PROJECT_QUERY,
-  //   variables: projectId
-  // })
-
-  // return {
-  //   props: {
-  //     initialApolloState: apolloClient.cache.extract(),
-  //   },
-  //   revalidate: 1
   return {
     props: {
       projectData: { projectId },

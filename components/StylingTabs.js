@@ -54,8 +54,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function StylingTabs({ component, components, setComponents }) {
-  const { containerStyle, style } = component;
+export default function StylingTabs({ component, components, addComponent }) {
+  const { containerStyle = '', style = '' } = component;
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
@@ -75,26 +75,30 @@ export default function StylingTabs({ component, components, setComponents }) {
   };
 
   const handleConatinerStyleUpdate = ({ e, newStyleString }) => {
-    setComponents({
-      ...components,
-      [component.id]: {
-        ...component,
-        containerStyle: e ? e : handleCreateNewStyleChange(newStyleString),
+    const updatedComponent = {
+      variables: {
+        component: {
+          ...component,
+          containerStyle: e ? e : handleCreateNewStyleChange(newStyleString),
+        },
       },
-    });
+    };
+    addComponent(updatedComponent);
   };
 
   const handleComponentStyleUpdate = (e) => {
-    setComponents({
-      ...components,
-      [component.id]: {
-        ...component,
-        style: e,
+    const updatedComponent = {
+      variables: {
+        component: {
+          ...component,
+          style: e,
+        }
       },
-    });
+    };
+    addComponent(updatedComponent);
   };
 
-  const flexDefaults = `\ndisplay: flex;\nflex-direction: column;`
+  const flexDefaults = `\ndisplay: flex;\nflex-direction: column;`;
   const leftAlignStyle = `${flexDefaults}\nalign-items: flex-start;`;
   const centerAlignStyle = `${flexDefaults}\nalign-items: center;`;
   const rightAlignStyle = `${flexDefaults}\nalign-items: flex-end;`;
