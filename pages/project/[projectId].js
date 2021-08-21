@@ -48,12 +48,14 @@ const Container = ({ projectData }) => {
     error: loadingProjectError,
     data: projectDataGql,
   } = useQuery(PROJECT_QUERY, {
-    fetchPolicy: "network-only",   // Used for first execution
+    fetchPolicy: "network-only",   // Used for first execution to ensure local data up to date with server
     nextFetchPolicy: "cache-and-network", //all subsequent calls,
     variables: { id: projectId },
   });
 
-  const layout = JSON.parse(projectDataGql?.getProject?.layout || '[]');
+  const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
+
+  let layout = JSON.parse(projectDataGql?.getProject?.layout || '[]');
 
   const {
     loading: loadingComponents,
@@ -66,7 +68,6 @@ const Container = ({ projectData }) => {
 
   const components = componentsData?.queryComponent || '[]';
 
-  const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
 
   const [
     addComponent,
