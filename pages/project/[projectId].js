@@ -41,6 +41,8 @@ const Container = ({ projectData }) => {
     error: loadingProjectError,
     data: projectDataGql,
   } = useQuery(PROJECT_QUERY, {
+    fetchPolicy: "network-only",   // Used for first execution
+    nextFetchPolicy: "cache-and-network", //all subsequent calls,
     variables: { id: projectId },
   });
 
@@ -50,26 +52,21 @@ const Container = ({ projectData }) => {
     loading: loadingComponents,
     error: loadingComponentsError,
     data: componentsData,
-  } = useQuery(COMPONENTS_QUERY);
+  } = useQuery(COMPONENTS_QUERY, {
+    fetchPolicy: "network-only",   // Used for first execution
+    nextFetchPolicy: "cache-and-network", //all subsequent calls,
+  });
 
   const components = componentsData?.queryComponent || '[]';
 
-  const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION, {
-    onError(err) {
-      console.log(err);
-    },
-  });
+  const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
 
   const [
     addComponent,
     { data: newComponentData, loading: newComponentLoading, error: newComponentError },
   ] = useMutation(ADD_COMPONENT, {
     refetchQueries: [COMPONENTS_QUERY, 'queryComponent'],
-    onError(err) {
-      console.log(err);
-    },
   });
-  //
 
   const handleDropToTrashBin = useCallback(
     (dropZone, item) => {
@@ -84,7 +81,7 @@ const Container = ({ projectData }) => {
             projectName: 'test',
           },
         },
-      }); //// INITIAL MUTATION
+      }); 
     },
     [layout, projectId, updateProject]
   );
@@ -100,7 +97,7 @@ const Container = ({ projectData }) => {
           projectName: 'test',
         },
       },
-    }); //// INITIAL MUTATION
+    }); 
   };
 
   const handleDrop = useCallback(
@@ -142,7 +139,7 @@ const Container = ({ projectData }) => {
               projectName: 'test',
             },
           },
-        }); //// INITIAL MUTATION
+        }); 
         return;
       }
 
@@ -163,7 +160,7 @@ const Container = ({ projectData }) => {
                 projectName: 'test',
               },
             },
-          }); //// INITIAL MUTATION
+          });
           return;
         }
 
@@ -178,7 +175,7 @@ const Container = ({ projectData }) => {
               projectName: 'test',
             },
           },
-        }); //// INITIAL MUTATION
+        }); 
         return;
       }
 
@@ -192,7 +189,7 @@ const Container = ({ projectData }) => {
             projectName: 'test',
           },
         },
-      }); //// INITIAL MUTATION
+      }); 
     },
     [layout, addComponent, projectId, updateProject]
   );
@@ -288,8 +285,6 @@ export async function getStaticProps(context) {
     props: {
       projectData: { projectId },
     },
-    // time before regenerating data for request
-    revalidate: 10,
   };
 }
 
