@@ -1,7 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 
+import { prettierCode } from '../../components/api/prettierCode';
 import SidebarPanel from '../../components/SidebarPanel';
 import EditorPanel from '../../components/EditorPanel';
 import DropZone from '../../components/dnd/DropZone';
@@ -35,6 +36,12 @@ const Container = ({ projectData }) => {
   const classes = useStyles();
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
+  const [codeString, setCodeString] = useState(``);
+
+  // This should be removed once we have the codegen builder created
+  useEffect(() => {
+    prettierCode(`import React from 'react'`, setCodeString);
+  }, []);
 
   const {
     loading: loadingProject,
@@ -215,7 +222,11 @@ const Container = ({ projectData }) => {
 
   return (
     <div className={classes.body}>
-      <SidebarPanel previewMode={previewMode} setPreviewMode={setPreviewMode} />
+      <SidebarPanel
+        previewMode={previewMode}
+        setPreviewMode={setPreviewMode}
+        codeString={codeString}
+      />
       <div className="pageContainer">
         <div className="page">
           {layout.map((row, index) => {

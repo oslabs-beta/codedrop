@@ -1,6 +1,6 @@
 import Navbar from './Navbar';
 import Footer from './Footer';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 
 const useStyles = makeStyles({
   container: {

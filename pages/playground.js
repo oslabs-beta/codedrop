@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/styles';
 import { useSession } from 'next-auth/client';
 import { useRouter } from 'next/router';
 import Editor from '../components/Editor';
