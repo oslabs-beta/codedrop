@@ -1,31 +1,57 @@
 import sample_data_comp from '../components/dnd/sample-component-data';
-
+import createComp from './generateCode'
 /**
  * 
  * @param {*} options 
  * @returns 
  */
 
+// console.log('crateComp ', createComp)
+
 function remove_linebreaks( input ) {
   return input.replace( /[\r\n]+/gm, " ").trim();
 }
+
+function parseCSSText(cssText) {
+	const styleObj = {}
+	
+   cssText.split('\n').forEach( item => {
+	   
+		// console.log(item.split(':'))
+	   	let temp = item.split(':')
+	   	let styleValue = temp[1].replace(';','').trim()
+	   
+	   	let styleProp = temp[0]
+	   	console.log(typeof styleProp === "string")
+	   	styleObj[styleProp] = styleValue
+	})
+	console.log(styleObj)
+	console.log(JSON.parse(JSON.stringify(styleObj)))
+
+	return JSON.stringify(styleObj)
+	// return JSON.parse(JSON.stringify(styleObj))
+} 
 
 function Button (options) {
   this.tagName = options.type || null;
   this.id = options.id || null;
   this.value = options.value || null;
   this.style = remove_linebreaks(options.style) || null
+  // this.style = parseCSSText(options.style) || null
   this.containerStyle = options.containerStyle || null
+  // parseCSSText(this.containerStyle)
 
   if (this.tagName) {
-    this.html = `<button style="${this.style}" type=${this.type} class=${this.class} id=${this.id}> ${this.value} </button>`
+    this.html = `<button style="${this.style}" type='' className='' id='${this.id}'> ${this.value} </button>`
   }
 
   if (this.containerStyle) {
-    this.div = `<div style="${this.containerStyle}">${this.html}</div>`
+    this.div = `<div style= "${this.containerStyle}" > ${this.html}</div>`
   }
 
-  console.log('this.style ', this.style)
+  // console.log('this.style ', this.style)
+
+  // createComp(this.div)
   return {
 		'test': 'does this work:',
 		'html': this.html,
@@ -39,7 +65,7 @@ function Img (options) {
   this.id = options.id || null;
   this.value = options.value || null;
   this.style = remove_linebreaks(options.style) || null
-  this.src = options.src || null;
+  this.src = options.src || '';
   this.containerStyle = options.containerStyle || null
 
   this.html = `<img class="fit-picture" src=${this.src} alt=${this.value} style="${this.style}">`
@@ -59,10 +85,30 @@ function H1 (options) {
   this.id = options.id || null;
   this.value = options.value || null;
   this.style = remove_linebreaks(options.style) || null
-  this.src = options.src || null;
+  // this.src = options.src || null;
   this.containerStyle = options.containerStyle || null
 
-  this.html = `<img class="fit-picture" src=${this.src} alt=${this.value} style="${this.style}">`
+  this.html = `<h1 style="${this.style}">${this.value}</h1>`
+  
+  if (this.containerStyle) {
+    this.div = `<div style="${this.containerStyle}">${this.html}</div>`
+  }
+
+  return {
+    'html': this.html,
+    'div': this.div
+  }
+}
+
+function Text (options) {
+  this.tagName = options.type || null;
+  this.id = options.id || null;
+  this.value = options.value || null;
+  this.style = remove_linebreaks(options.style) || null
+  this.src = options.src || null; 
+  this.containerStyle = options.containerStyle || null
+
+  this.html = `<span style="${this.style}">${this.value}</span>`
   
   if (this.containerStyle) {
     this.div = `<div style="${this.containerStyle}">${this.html}</div>`
@@ -95,6 +141,9 @@ class HTMLElementFactory {
         break;
       case 'Image':
         this.elementClass = Img
+        break;
+      case 'Text':
+        this.elementClass = Text
         break;
     }
     // default elementClass is Error
