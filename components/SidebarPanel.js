@@ -20,7 +20,7 @@ const useStyles = makeStyles({
   },
 });
 
-const SidebarPanel = ({ previewMode, setPreviewMode, codeString }) => {
+const SidebarPanel = ({ previewMode, setPreviewMode, codeString, layout, component }) => {
   const classes = useStyles();
 
   return (
@@ -39,7 +39,10 @@ const SidebarPanel = ({ previewMode, setPreviewMode, codeString }) => {
         }
         label="Preview"
       />
-      <CodeDrawer codeString={codeString} />
+      <CodeDrawer 
+        codeString={codeString}
+        layout={layout}
+      />
     </div>
   );
 };

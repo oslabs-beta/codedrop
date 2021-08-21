@@ -18,8 +18,13 @@ export default function CodeDrawer({ codeString }) {
   const toggleDrawer = (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) return;
     setShowCode(!showCode);
+    getGeneratedCode()
   };
 
+  const getGeneratedCode = () => {
+    console.log('getGeneratedCode ')
+  }
+  
   const flexContainer = {
     display: 'flex',
     flexDirection: 'row',

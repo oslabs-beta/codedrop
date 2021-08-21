@@ -16,6 +16,7 @@ import {
 } from '../../components/dnd/helpers';
 
 import { SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components/dnd/constants';
+// import generatedCodeStr from '../../pages/home'
 
 import shortid from 'shortid';
 
@@ -28,6 +29,7 @@ const useStyles = makeStyles({
 });
 
 const Container = ({ projectData }) => {
+  console.log('projectData ', projectData)
   const classes = useStyles();
   const initialLayout = initialData.layout;
   const initialComponents = initialData.components;
@@ -37,6 +39,8 @@ const Container = ({ projectData }) => {
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
 
+  console.log('layout ', layout)
+  console.log('components ', components)
   // This should be removed once we have the codegen builder created
   useEffect(() => {
     prettierCode(`import React from 'react'`, setCodeString);
@@ -132,6 +136,8 @@ const Container = ({ projectData }) => {
         previewMode={previewMode}
         setPreviewMode={setPreviewMode}
         codeString={codeString}
+        layout={layout}
+        component={component}
       />
       <div className="pageContainer">
         <div className="page">
