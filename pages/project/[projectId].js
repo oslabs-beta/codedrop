@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { useQuery, useMutation } from '@apollo/client';
 import { makeStyles } from '@material-ui/styles';
 
 import { prettierCode } from '../../components/api/prettierCode';
@@ -7,13 +8,16 @@ import EditorPanel from '../../components/EditorPanel';
 import DropZone from '../../components/dnd/DropZone';
 import TrashDropZone from '../../components/dnd/TrashDropZone';
 import Row from '../../components/dnd/Row';
-import initialData from '../../components/dnd/initial-data';
 import {
   handleMoveWithinParent,
   handleMoveToDifferentParent,
   handleMoveSidebarComponentIntoParent,
   handleRemoveItemFromLayout,
 } from '../../components/dnd/helpers';
+
+import { PROJECT_QUERY, COMPONENTS_QUERY } from '../../lib/apolloQueries';
+
+import { PROJECT_MUTATION, ADD_COMPONENT } from '../../lib/apolloMutations';
 
 import { SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components/dnd/constants';
 
@@ -28,32 +32,79 @@ const useStyles = makeStyles({
 });
 
 const Container = ({ projectData }) => {
+  const projectId = projectData.projectId;
   const classes = useStyles();
-  const initialLayout = initialData.layout;
-  const initialComponents = initialData.components;
-  const [layout, setLayout] = useState(initialLayout);
-  const [components, setComponents] = useState(initialComponents);
-  const [codeString, setCodeString] = useState(``);
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
+  const [codeString, setCodeString] = useState(``);
 
   // This should be removed once we have the codegen builder created
   useEffect(() => {
     prettierCode(`import React from 'react'`, setCodeString);
   }, []);
 
+  const {
+    loading: loadingProject,
+    error: loadingProjectError,
+    data: projectDataGql,
+  } = useQuery(PROJECT_QUERY, {
+    fetchPolicy: "network-only",   // Used for first execution
+    nextFetchPolicy: "cache-and-network", //all subsequent calls,
+    variables: { id: projectId },
+  });
+
+  const layout = JSON.parse(projectDataGql?.getProject?.layout || '[]');
+
+  const {
+    loading: loadingComponents,
+    error: loadingComponentsError,
+    data: componentsData,
+  } = useQuery(COMPONENTS_QUERY, {
+    fetchPolicy: "network-only",   // Used for first execution
+    nextFetchPolicy: "cache-and-network", //all subsequent calls,
+  });
+
+  const components = componentsData?.queryComponent || '[]';
+
+  const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
+
+  const [
+    addComponent,
+    { data: newComponentData, loading: newComponentLoading, error: newComponentError },
+  ] = useMutation(ADD_COMPONENT, {
+    refetchQueries: [COMPONENTS_QUERY, 'queryComponent'],
+  });
+
   const handleDropToTrashBin = useCallback(
     (dropZone, item) => {
       console.log('dropZone, item', dropZone, item);
       const splitItemPath = item.path.split('-');
-      setLayout(handleRemoveItemFromLayout(layout, splitItemPath));
+      const newLayout = handleRemoveItemFromLayout(layout, splitItemPath);
+      updateProject({
+        variables: {
+          project: {
+            layout: JSON.stringify(newLayout),
+            id: projectId.toString(),
+            projectName: 'test',
+          },
+        },
+      }); 
     },
-    [layout]
+    [layout, projectId, updateProject]
   );
 
   const handleRemoveComponent = (item) => {
     const splitItemPath = item.path.split('-');
-    setLayout(handleRemoveItemFromLayout(layout, splitItemPath));
+    const newLayout = handleRemoveItemFromLayout(layout, splitItemPath);
+    updateProject({
+      variables: {
+        project: {
+          layout: JSON.stringify(newLayout),
+          id: projectId.toString(),
+          projectName: 'test',
+        },
+      },
+    }); 
   };
 
   const handleDrop = useCallback(
@@ -76,15 +127,26 @@ const Container = ({ projectData }) => {
           id: shortid.generate(),
           ...item.component,
         };
+        const dbComponent = {
+          variables: {
+            component: newComponent,
+          },
+        };
+        addComponent(dbComponent);
         const newItem = {
           id: newComponent.id,
           type: COMPONENT,
         };
-        setComponents({
-          ...components,
-          [newComponent.id]: newComponent,
-        });
-        setLayout(handleMoveSidebarComponentIntoParent(layout, splitDropZonePath, newItem));
+        const newLayout = handleMoveSidebarComponentIntoParent(layout, splitDropZonePath, newItem);
+        updateProject({
+          variables: {
+            project: {
+              layout: JSON.stringify(newLayout),
+              id: projectId.toString(),
+              projectName: 'test',
+            },
+          },
+        }); 
         return;
       }
 
@@ -96,20 +158,47 @@ const Container = ({ projectData }) => {
       if (splitItemPath.length === splitDropZonePath.length) {
         // 2.a. move within parent
         if (pathToItem === pathToDropZone) {
-          setLayout(handleMoveWithinParent(layout, splitDropZonePath, splitItemPath));
+          const newLayout = handleMoveWithinParent(layout, splitDropZonePath, splitItemPath);
+          updateProject({
+            variables: {
+              project: {
+                layout: JSON.stringify(newLayout),
+                id: projectId.toString(),
+                projectName: 'test',
+              },
+            },
+          });
           return;
         }
 
         // 2.b. OR move different parent
         // TODO FIX columns. item includes children
-        setLayout(handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem));
+        const newLayout = handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem);
+        updateProject({
+          variables: {
+            project: {
+              layout: JSON.stringify(newLayout),
+              id: projectId.toString(),
+              projectName: 'test',
+            },
+          },
+        }); 
         return;
       }
 
       // 3. Move + Create
-      setLayout(handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem));
+      const newLayout = handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem);
+      updateProject({
+        variables: {
+          project: {
+            layout: JSON.stringify(newLayout),
+            id: projectId.toString(),
+            projectName: 'test',
+          },
+        },
+      }); 
     },
-    [layout, components]
+    [layout, addComponent, projectId, updateProject]
   );
 
   const renderRow = (row, currentPath) => {
@@ -125,6 +214,11 @@ const Container = ({ projectData }) => {
       />
     );
   };
+
+  if (loadingProject || loadingComponents) return 'Loading...';
+  if (loadingProjectError || loadingComponentsError) {
+    return `Error! ${loadingProjectError?.message || ``} ${loadingComponentsError?.message || ``}`;
+  }
 
   return (
     <div className={classes.body}>
@@ -171,9 +265,9 @@ const Container = ({ projectData }) => {
       </div>
       {showEditor && (
         <EditorPanel
-          component={components[showEditor.id]}
+          component={components.find(c => c.id === showEditor.id)}
           components={components}
-          setComponents={setComponents}
+          addComponent={addComponent}
           setShowEditor={setShowEditor}
           data={{ layout }}
           onDrop={handleDropToTrashBin}
@@ -198,13 +292,10 @@ export async function getStaticPaths() {
 
 export async function getStaticProps(context) {
   const projectId = context.params.projectId;
-
   return {
     props: {
       projectData: { projectId },
     },
-    // time before regenerating data for request
-    revalidate: 10,
   };
 }
 

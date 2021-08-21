@@ -5,6 +5,8 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
+import { ApolloProvider } from '@apollo/client';
+import { useApollo } from '../lib/apolloClient';
 
 // Stying imports
 import { ThemeProvider } from '@material-ui/core/styles';
@@ -17,6 +19,7 @@ import 'codemirror/lib/codemirror.css';
 function MyApp(props) {
   const router = useRouter();
   const { Component, pageProps } = props;
+  const apolloClient = useApollo(pageProps.initialApolloState);
 
   const pathsToExcludeHeaderFooter = ['/signin'];
   const showHeaderFooter = !pathsToExcludeHeaderFooter.includes(router.pathname);
@@ -36,17 +39,19 @@ function MyApp(props) {
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </Head>
       <ThemeProvider theme={theme}>
-        <Provider session={pageProps.session}>
-          {showHeaderFooter && (
-            <Layout>
-              <DndProvider backend={HTML5Backend}>
-                <CssBaseline />
-                <Component {...pageProps} />
-              </DndProvider>
-            </Layout>
-          )}
-          {!showHeaderFooter && <Component {...pageProps} />}
-        </Provider>
+        <ApolloProvider client={apolloClient}>
+          <Provider session={pageProps.session}>
+            {showHeaderFooter && (
+              <Layout>
+                <DndProvider backend={HTML5Backend}>
+                  <CssBaseline />
+                  <Component {...pageProps} />
+                </DndProvider>
+              </Layout>
+            )}
+            {!showHeaderFooter && <Component {...pageProps} />}
+          </Provider>
+        </ApolloProvider>
       </ThemeProvider>
     </Fragment>
   );

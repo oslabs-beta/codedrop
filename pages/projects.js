@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 
+import { PROJECTS_QUERY } from '../lib/apolloQueries';
+import { useQuery } from '@apollo/client';
+
 import EnhancedTableHead from '../components/util/Table/EnhancedTableHead';
 import EnhancedTableToolbar from '../components/util/Table/EnhancedTableToolbar';
 
@@ -16,52 +19,23 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Switch from '@material-ui/core/Switch';
 import Link from '@material-ui/core/Link';
 
-function createData(id, name, shared, teamMembers, updatedAt, createdAt) {
+function createData({
+  id,
+  projectName,
+  shared = true,
+  teamMembers = 'Abid, Emily, Blake and Dan',
+  updatedAt = 'Thursday, August 14th 2021',
+  createdAt = 'Thursday, August 14th 2021',
+}) {
   return {
     id,
-    name,
+    name: projectName,
     shared,
     teamMembers,
     updatedAt,
     createdAt,
   };
 }
-
-// MOCK DATA
-const rows = [
-  createData(
-    1,
-    'Sign in component',
-    true,
-    'Abid, Emily, Blake and Dan',
-    'Thursday, August 14th 2021',
-    'Thursday, August 14th 2021'
-  ),
-  createData(
-    2,
-    'Profile page',
-    true,
-    'Abid, Emily, Blake and Dan',
-    'Thursday, August 14th 2021',
-    'Thursday, August 14th 2021'
-  ),
-  createData(
-    3,
-    'Logout screen',
-    true,
-    'Abid, Emily, Blake and Dan',
-    'Thursday, August 14th 2021',
-    'Thursday, August 14th 2021'
-  ),
-  createData(
-    4,
-    'Image screen',
-    false,
-    'Abid, Emily, Blake and Dan',
-    'Thursday, August 14th 2021',
-    'Thursday, August 14th 2021'
-  ),
-];
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) return -1;
@@ -78,10 +52,18 @@ function getComparator(order, orderBy) {
 export default function EnhancedTable() {
   const router = useRouter();
   const [order, setOrder] = useState('asc');
-  const [orderBy, setOrderBy] = useState('calories');
+  const [orderBy, setOrderBy] = useState('name');
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const { loading, error, data } = useQuery(PROJECTS_QUERY, {
+    fetchPolicy: 'network-only', // Used for first execution
+    nextFetchPolicy: 'cache-and-network', //all subsequent calls,
+  });
+
+  // projectsArray is an array where each element has an id, and a projectName
+  const rows = data?.queryProject.map((row) => createData({ ...row })) || '[]';
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -130,6 +112,12 @@ export default function EnhancedTable() {
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
+  // loading and error catch for the gql query
+  if (loading) return 'Loading...';
+  if (error) {
+    return `Error! ${error?.message || ``}`;
+  }
+
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -159,7 +147,7 @@ export default function EnhancedTable() {
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.name}
+                      key={row.id}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">

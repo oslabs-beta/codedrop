@@ -2,7 +2,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/styles';
 import Input from '@material-ui/core/Input';
 
-import { greyScheme } from './util/colorPallete'
+import { greyScheme } from './util/colorPallete';
 
 import StylingTabs from './StylingTabs';
 
@@ -30,9 +30,9 @@ const useStyles = makeStyles({
   },
 });
 
-export default function EditorPanel({ component, components, setComponents, setShowEditor }) {
+export default function EditorPanel({ component, components, setShowEditor, addComponent }) {
   const classes = useStyles();
-  const { value } = component;
+  const { __typename, ...otherComponentProps } = component;
 
   return (
     <div className={classes.editorBar}>
@@ -43,19 +43,25 @@ export default function EditorPanel({ component, components, setComponents, setS
       <div className={classes.editorBarInput}>
         <h4>Value</h4>
         <Input
-          value={value}
+          value={component.value}
           onChange={(e) => {
-            setComponents({
-              ...components,
-              [component.id]: {
-                ...component,
-                value: e.target.value,
+            const updatedComponent = {
+              variables: {
+                component: {
+                  ...otherComponentProps,
+                  value: e.target.value,
+                },
               },
-            });
+            };
+            addComponent(updatedComponent);
           }}
         />
         <h4>Styling</h4>
-        <StylingTabs component={component} components={components} setComponents={setComponents} />
+        <StylingTabs
+          component={otherComponentProps}
+          components={components}
+          addComponent={addComponent}
+        />
       </div>
     </div>
   );
