@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/styles';
 import Input from '@material-ui/core/Input';
@@ -33,6 +34,35 @@ const useStyles = makeStyles({
 export default function EditorPanel({ component, components, setShowEditor, addComponent }) {
   const classes = useStyles();
   const { __typename, ...otherComponentProps } = component;
+  const [id, setId] = useState(component.id);
+  const [value, setValue] = useState(component.value);
+  const [style, setStyle] = useState(component.style);
+  const [containerStyle, setContainerStyle] = useState(component.containerStyle);
+
+  useEffect(() => {
+    if (component.id !== id) {
+      setId(component.id);
+      setValue(component.value);
+      setStyle(component.style);
+      setContainerStyle(component.containerStyle);
+    } else {
+      const timeOutId = setTimeout(
+        () =>
+          addComponent({
+            variables: {
+              component: {
+                ...otherComponentProps,
+                value: value,
+                style: style,
+                containerStyle: containerStyle,
+              },
+            },
+          }),
+        250
+      );
+      return () => clearTimeout(timeOutId);
+    }
+  }, [containerStyle, component, style, value]);
 
   return (
     <div className={classes.editorBar}>
@@ -42,25 +72,16 @@ export default function EditorPanel({ component, components, setShowEditor, addC
       </div>
       <div className={classes.editorBarInput}>
         <h4>Value</h4>
-        <Input
-          value={component.value}
-          onChange={(e) => {
-            const updatedComponent = {
-              variables: {
-                component: {
-                  ...otherComponentProps,
-                  value: e.target.value,
-                },
-              },
-            };
-            addComponent(updatedComponent);
-          }}
-        />
+        <Input value={value} onChange={(e) => setValue(e.target.value)} />
         <h4>Styling</h4>
         <StylingTabs
           component={otherComponentProps}
           components={components}
           addComponent={addComponent}
+          style={style} 
+          setStyle={setStyle}
+          containerStyle={containerStyle}
+          setContainerStyle={setContainerStyle}
         />
       </div>
     </div>

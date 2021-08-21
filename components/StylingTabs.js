@@ -54,8 +54,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function StylingTabs({ component, components, addComponent }) {
-  const { containerStyle = '', style = '' } = component;
+export default function StylingTabs({ style, setStyle, containerStyle, setContainerStyle }) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
@@ -75,27 +74,7 @@ export default function StylingTabs({ component, components, addComponent }) {
   };
 
   const handleConatinerStyleUpdate = ({ e, newStyleString }) => {
-    const updatedComponent = {
-      variables: {
-        component: {
-          ...component,
-          containerStyle: e ? e : handleCreateNewStyleChange(newStyleString),
-        },
-      },
-    };
-    addComponent(updatedComponent);
-  };
-
-  const handleComponentStyleUpdate = (e) => {
-    const updatedComponent = {
-      variables: {
-        component: {
-          ...component,
-          style: e,
-        }
-      },
-    };
-    addComponent(updatedComponent);
+    setContainerStyle(e ? e : handleCreateNewStyleChange(newStyleString));
   };
 
   const flexDefaults = `\ndisplay: flex;\nflex-direction: column;`;
@@ -132,12 +111,7 @@ export default function StylingTabs({ component, components, addComponent }) {
         />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <Editor
-          language="css"
-          displayName="CSS"
-          value={style}
-          onChange={handleComponentStyleUpdate}
-        />
+        <Editor language="css" displayName="CSS" value={style} onChange={(e) => setStyle(e)} />
       </TabPanel>
       <TabPanel value={value} index={2}>
         <Editor
