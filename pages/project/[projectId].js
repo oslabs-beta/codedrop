@@ -39,9 +39,8 @@ const Container = ({ projectData }) => {
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
 
-  console.log('layout ', layout)
-  console.log('components ', components)
-  // This should be removed once we have the codegen builder created
+  // send layout/components to generateCode
+  getData(layout, components)
   useEffect(() => {
     prettierCode(`import React from 'react'`, setCodeString);
   }, []);
