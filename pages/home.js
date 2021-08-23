@@ -101,3 +101,15 @@ const HomeTest = () => {
 }
 
 export default HomeTest;
+
+
+/**
+ * @param {Array} layout 
+ * @param {Object} components 
+ */
+export const getData = (layout, components) => {
+  console.log('layout ', layout)
+  console.log('components ', components)
+  components = components
+  layout = layout
+}
