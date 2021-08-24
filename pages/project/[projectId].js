@@ -1,8 +1,7 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { useQuery, useMutation } from '@apollo/client';
+import React, { useState, useCallback } from 'react';
+import { useQuery, useMutation, useSubscription } from '@apollo/client';
 import { makeStyles } from '@material-ui/styles';
 
-import { prettierCode } from '../../components/api/prettierCode';
 import SidebarPanel from '../../components/SidebarPanel';
 import EditorPanel from '../../components/EditorPanel';
 import DropZone from '../../components/dnd/DropZone';
@@ -36,12 +35,6 @@ const Container = ({ projectData }) => {
   const classes = useStyles();
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
-  const [codeString, setCodeString] = useState(``);
-
-  // This should be removed once we have the codegen builder created
-  useEffect(() => {
-    prettierCode(`import React from 'react'`, setCodeString);
-  }, []);
 
   const {
     loading: loadingProject,
@@ -59,10 +52,7 @@ const Container = ({ projectData }) => {
     loading: loadingComponents,
     error: loadingComponentsError,
     data: componentsData,
-  } = useQuery(COMPONENTS_QUERY, {
-    fetchPolicy: "network-only",   // Used for first execution
-    nextFetchPolicy: "cache-and-network", //all subsequent calls,
-  });
+  } = useSubscription(COMPONENTS_QUERY);
 
   const components = componentsData?.queryComponent || '[]';
 
@@ -71,9 +61,7 @@ const Container = ({ projectData }) => {
   const [
     addComponent,
     { data: newComponentData, loading: newComponentLoading, error: newComponentError },
-  ] = useMutation(ADD_COMPONENT, {
-    refetchQueries: [COMPONENTS_QUERY, 'queryComponent'],
-  });
+  ] = useMutation(ADD_COMPONENT);
 
   const handleDropToTrashBin = useCallback(
     (dropZone, item) => {
@@ -225,7 +213,8 @@ const Container = ({ projectData }) => {
       <SidebarPanel
         previewMode={previewMode}
         setPreviewMode={setPreviewMode}
-        codeString={codeString}
+        components={components}
+        layout={layout}
       />
       <div className="pageContainer">
         <div className="page">

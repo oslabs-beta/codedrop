@@ -39,7 +39,7 @@ const Column = ({ data, components, handleDrop, path, previewMode, setShowEditor
 
   return (
     <div ref={ref} style={{ ...style, opacity }} className="base draggable column">
-      {data.children.map((component, index) => {
+      {data?.children?.map((component, index) => {
         const currentPath = `${path}-${index}`;
 
         return (
@@ -58,15 +58,17 @@ const Column = ({ data, components, handleDrop, path, previewMode, setShowEditor
             {renderComponent(component, currentPath)}
           </React.Fragment>
         );
-      })}
-      <DropZone
-        data={{
-          path: `${path}-${data.children.length}`,
-          childrenCount: data.children.length,
-        }}
-        onDrop={handleDrop}
-        isLast
-      />
+      }) || ``}
+      {data?.children && (
+        <DropZone
+          data={{
+            path: `${path}-${data.children.length}`,
+            childrenCount: data.children.length,
+          }}
+          onDrop={handleDrop}
+          isLast
+        />
+      ) || ``}
     </div>
   );
 };
