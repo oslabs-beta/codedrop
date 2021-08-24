@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { useQuery, useMutation } from '@apollo/client';
+import { useQuery, useMutation, useSubscription } from '@apollo/client';
 import { makeStyles } from '@material-ui/styles';
 
 import { prettierCode } from '../../components/api/prettierCode';
@@ -61,10 +61,7 @@ const Container = ({ projectData }) => {
     loading: loadingComponents,
     error: loadingComponentsError,
     data: componentsData,
-  } = useQuery(COMPONENTS_QUERY, {
-    fetchPolicy: "network-only",   // Used for first execution
-    nextFetchPolicy: "cache-and-network", //all subsequent calls,
-  });
+  } = useSubscription(COMPONENTS_QUERY);
 
   const components = componentsData?.queryComponent || '[]';
 
@@ -72,9 +69,7 @@ const Container = ({ projectData }) => {
   const [
     addComponent,
     { data: newComponentData, loading: newComponentLoading, error: newComponentError },
-  ] = useMutation(ADD_COMPONENT, {
-    refetchQueries: [COMPONENTS_QUERY, 'queryComponent'],
-  });
+  ] = useMutation(ADD_COMPONENT);
 
   const handleDropToTrashBin = useCallback(
     (dropZone, item) => {

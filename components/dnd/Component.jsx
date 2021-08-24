@@ -22,7 +22,7 @@ const Component = ({ data, components, path, previewMode, setShowEditor }) => {
   
   let cssString = css`
     ${previewMode ? 'border: hidden' : 'border: 1px dashed black;'}
-    ${containerStyle}
+    ${component?.containerStyle || ``}
   `;
 
   const [{ isDragging }, drag] = useDrag({
