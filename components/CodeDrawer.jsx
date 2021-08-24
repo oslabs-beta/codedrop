@@ -10,7 +10,6 @@ import CodeIcon from '@material-ui/icons/Code';
 
 import Editor from './Editor';
 import ReactIcon from './util/Icons/ReactIcon';
-import { generateCode } from '../pages/home'
 
 export default function CodeDrawer({ codeString, layout, components }) {
   const [showCode, setShowCode] = useState(false);
@@ -19,15 +18,7 @@ export default function CodeDrawer({ codeString, layout, components }) {
   const toggleDrawer = (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) return;
     setShowCode(!showCode);
-    codeString = generateCode()
-    console.log('codeString ', codeString)
   };
-
-  // const getGeneratedCode = () => {
-  //   console.log('getGeneratedCode ')
-
-  // }
-  
   const flexContainer = {
     display: 'flex',
     flexDirection: 'row',
