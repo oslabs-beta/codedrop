@@ -1,13 +1,12 @@
-import React, { useState, useCallback } from 'react';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
-import { gql, useQuery, useMutation } from '@apollo/client';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useQuery, useMutation, useSubscription } from '@apollo/client';
+import { makeStyles } from '@material-ui/styles';
+import { prettierCode } from '../../components/api/prettierCode';
+import SidebarPanel from '../../components/SidebarPanel';
 import EditorPanel from '../../components/EditorPanel';
 import DropZone from '../../components/dnd/DropZone';
 import TrashDropZone from '../../components/dnd/TrashDropZone';
-import SideBarItem from '../../components/dnd/SideBarItem';
 import Row from '../../components/dnd/Row';
-import initialData from '../../components/dnd/initial-data';
 import {
   handleMoveWithinParent,
   handleMoveToDifferentParent,
@@ -16,55 +15,92 @@ import {
 } from '../../components/dnd/helpers';
 import { initializeApollo } from '../../lib/apolloClient'
 
-import {
-  PROJECT_QUERY
-} from '../../lib/apolloQueries'
+import { PROJECT_QUERY, COMPONENTS_QUERY } from '../../lib/apolloQueries';
 
-import {
-  PROJECT_MUTATION
-} from '../../lib/apolloMutations'
+import { PROJECT_MUTATION, ADD_COMPONENT } from '../../lib/apolloMutations';
 
-import { SIDEBAR_ITEMS, SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components/dnd/constants';
+import { SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components/dnd/constants';
 
 import shortid from 'shortid';
 
-const Container = ({ projectId}) => {
-  const initialLayout = initialData.layout; // on new project, mutate to add project with layout
-  const initialComponents = initialData.components; // on new projected mutate to add components to project
-  // const projectId = projectData.projectId
- 
-  const [layout, setLayout] = useState(initialLayout);
-  const [components, setComponents] = useState(initialComponents);
+const useStyles = makeStyles({
+  body: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexGrow: 1,
+  },
+});
+
+const Container = ({ projectData }) => {
+  const projectId = projectData.projectId;
+  const classes = useStyles();
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
-  const [updateProject, { data: mutationData}] = useMutation(PROJECT_MUTATION,{
-    awaitRefetchQueries: true,
-    refetchQueries:[{query:PROJECT_QUERY, variables:{id:projectId}}], //refetches project layout using most recent variables
+  const [codeString, setCodeString] = useState(``);
+
+  // This should be removed once we have the codegen builder created
+  useEffect(() => {
+    prettierCode(`import React from 'react'`, setCodeString);
+  }, []);
+
+  const {
+    loading: loadingProject,
+    error: loadingProjectError,
+    data: projectDataGql,
+  } = useQuery(PROJECT_QUERY, {
+    fetchPolicy: "network-only",   // Used for first execution to ensure local data up to date with server
+    nextFetchPolicy: "cache-and-network", //all subsequent calls,
+    variables: { id: projectId },
   });
-  const {data: queryData, loading, error} = useQuery(PROJECT_QUERY,
-    {
-      variables:{
-        id:projectId,
-      },  
-      fetchPolicy: "network-only",   // Used for first execution
-      nextFetchPolicy: "cache-and-network",
-    });
-    let projectLayout = JSON.parse(queryData.getProject.layout)
-  // console.log('initial apollo:', initialApolloState.ROOT_QUERY['getProject({"id":"2"})'].layout)
+
+  const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
+
+  let layout = JSON.parse(projectDataGql?.getProject?.layout || '[]');
+
+  const {
+    loading: loadingComponents,
+    error: loadingComponentsError,
+    data: componentsData,
+  } = useSubscription(COMPONENTS_QUERY);
+
+  const components = componentsData?.queryComponent || '[]';
+
+
+  const [
+    addComponent,
+    { data: newComponentData, loading: newComponentLoading, error: newComponentError },
+  ] = useMutation(ADD_COMPONENT);
+
   const handleDropToTrashBin = useCallback(
     (dropZone, item) => {
       console.log('dropZone, item', dropZone, item);
       const splitItemPath = item.path.split('-');
-      setLayout(handleRemoveItemFromLayout(layout, splitItemPath));
-      updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
+      const newLayout = handleRemoveItemFromLayout(layout, splitItemPath);
+      updateProject({
+        variables: {
+          project: {
+            layout: JSON.stringify(newLayout),
+            id: projectId.toString(),
+            projectName: 'test',
+          },
+        },
+      }); 
     },
-    [layout]
+    [layout, projectId, updateProject]
   );
 
   const handleRemoveComponent = (item) => {
     const splitItemPath = item.path.split('-');
-    setLayout(handleRemoveItemFromLayout(layout, splitItemPath));
-    updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
+    const newLayout = handleRemoveItemFromLayout(layout, splitItemPath);
+    updateProject({
+      variables: {
+        project: {
+          layout: JSON.stringify(newLayout),
+          id: projectId.toString(),
+          projectName: 'test',
+        },
+      },
+    }); 
   };
 
   const handleDrop = useCallback(
@@ -87,17 +123,26 @@ const Container = ({ projectId}) => {
           id: shortid.generate(),
           ...item.component,
         };
+        const dbComponent = {
+          variables: {
+            component: newComponent,
+          },
+        };
+        addComponent(dbComponent);
         const newItem = {
           id: newComponent.id,
           type: COMPONENT,
         };
-        setComponents({
-          ...components,
-          [newComponent.id]: newComponent,
-        });
-        setLayout(handleMoveSidebarComponentIntoParent(layout, splitDropZonePath, newItem));
-        updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
-        console.log('state layout:', layout, 'gql layout:', projectLayout)// console.log(projectLayout)
+        const newLayout = handleMoveSidebarComponentIntoParent(layout, splitDropZonePath, newItem);
+        updateProject({
+          variables: {
+            project: {
+              layout: JSON.stringify(newLayout),
+              id: projectId.toString(),
+              projectName: 'test',
+            },
+          },
+        }); 
         return;
       }
 
@@ -109,26 +154,47 @@ const Container = ({ projectId}) => {
       if (splitItemPath.length === splitDropZonePath.length) {
         // 2.a. move within parent
         if (pathToItem === pathToDropZone) {
-          setLayout(handleMoveWithinParent(layout, splitDropZonePath, splitItemPath));
-          updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
-          console.log('state layout:', layout, 'gql layout:', projectLayout)
+          const newLayout = handleMoveWithinParent(layout, splitDropZonePath, splitItemPath);
+          updateProject({
+            variables: {
+              project: {
+                layout: JSON.stringify(newLayout),
+                id: projectId.toString(),
+                projectName: 'test',
+              },
+            },
+          });
           return;
         }
 
         // 2.b. OR move different parent
         // TODO FIX columns. item includes children
-        setLayout(handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem));
-        updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
-        console.log('state layout:', layout, 'gql layout:', projectLayout)
+        const newLayout = handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem);
+        updateProject({
+          variables: {
+            project: {
+              layout: JSON.stringify(newLayout),
+              id: projectId.toString(),
+              projectName: 'test',
+            },
+          },
+        }); 
         return;
       }
 
       // 3. Move + Create
-      setLayout(handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem));
-      updateProject({variables:{project:{layout: JSON.stringify(layout), id: projectId.toString(), projectName:'test'}}}) //// INITIAL MUTATION
-      console.log('state layout:', layout, 'gql layout:', projectLayout)
+      const newLayout = handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem);
+      updateProject({
+        variables: {
+          project: {
+            layout: JSON.stringify(newLayout),
+            id: projectId.toString(),
+            projectName: 'test',
+          },
+        },
+      }); 
     },
-    [layout, components]
+    [layout, addComponent, projectId, updateProject]
   );
 
   const renderRow = (row, currentPath) => {
@@ -145,26 +211,18 @@ const Container = ({ projectId}) => {
     );
   };
 
-  // dont use index for key when mapping over items
-  // causes this issue - https://github.com/react-dnd/react-dnd/issues/342
+  if (loadingProject || loadingComponents) return 'Loading...';
+  if (loadingProjectError || loadingComponentsError) {
+    return `Error! ${loadingProjectError?.message || ``} ${loadingComponentsError?.message || ``}`;
+  }
+
   return (
-    <div className="body">
-      <div className="sideBar">
-        {Object.values(SIDEBAR_ITEMS).map((sideBarItem, index) => (
-          <SideBarItem key={sideBarItem.id} data={sideBarItem} />
-        ))}
-        <FormControlLabel
-          control={
-            <Switch
-              checked={previewMode}
-              onChange={() => setPreviewMode(!previewMode)}
-              name="previewMode"
-              color="primary"
-            />
-          }
-          label="Preview"
-        />
-      </div>
+    <div className={classes.body}>
+      <SidebarPanel
+        previewMode={previewMode}
+        setPreviewMode={setPreviewMode}
+        codeString={codeString}
+      />
       <div className="pageContainer">
         <div className="page">
           {layout.map((row, index) => {
@@ -203,9 +261,9 @@ const Container = ({ projectId}) => {
       </div>
       {showEditor && (
         <EditorPanel
-          component={components[showEditor.id]}
+          component={components.find(c => c.id === showEditor.id)}
           components={components}
-          setComponents={setComponents}
+          addComponent={addComponent}
           setShowEditor={setShowEditor}
           data={{ layout }}
           onDrop={handleDropToTrashBin}
@@ -228,41 +286,8 @@ export async function getServerSidePaths() {
   };
 }
 
-// export async function getStaticProps(context) {
-//   const projectId = context.params.projectId;
-
-//   // const apolloClient = initializeApollo();
-
-//   // await apolloClient.query({
-//   //   query:PROJECT_QUERY,
-//   //   variables: projectId
-//   // })
-
-//   // return {
-//   //   props: {
-//   //     initialApolloState: apolloClient.cache.extract(),
-//   //   },
-//   //   revalidate: 1
-//   return {
-//     props: {
-//       projectData: { projectId },
-//     },
-//     // time before regenerating data for request
-//     revalidate: 10,
-//   };
-// };
-
-export async function getServerSideProps(context) {
-  const apolloClient = initializeApollo();
+export async function getStaticProps(context) {
   const projectId = context.params.projectId;
-
-  const projectData = await apolloClient.query({
-    query:PROJECT_QUERY,
-    variables: {
-      id:projectId
-    },
-  })
-
   return {
     props: {
       initialApolloState: apolloClient.cache.extract(),
@@ -270,7 +295,6 @@ export async function getServerSideProps(context) {
       projectId,
 
     },
-    
   };
 };
 

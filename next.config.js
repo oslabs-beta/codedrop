@@ -1,7 +1,8 @@
 module.exports = {
   reactStrictMode: true,
-  serverRuntimeConfig: {
-
-        gqlURI: process.env.GQL_URI, //pass through db URI
+  env: {
+    dgraphApiKey: 'NjYzY2FiMTU1MTY2ZDMyZjIxMzIyYTgzYzFmMGFiZDU',
+    gqlUri: 'https://dawn-water.us-east-1.aws.cloud.dgraph.io/graphql',
+    gqlUriWs: 'ws://dawn-water.us-east-1.aws.cloud.dgraph.io/graphql',
   },
 };
