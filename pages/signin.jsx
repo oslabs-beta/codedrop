@@ -7,6 +7,9 @@ import Input from '@material-ui/core/Input';
 import FormLabel from '@material-ui/core/FormLabel';
 import Typography from '@material-ui/core/Typography';
 
+
+import getToken from '../lib/auth';
+
 const useStyles = makeStyles({
   signInPageContainer: {
     position: 'absolute',
@@ -71,9 +74,11 @@ export default function SignIn({ csrfToken }) {
   );
 }
 
+
 // This is the recommended way for Next.js 9.3 or newer
 export async function getServerSideProps(context) {
   const csrfToken = await getCsrfToken(context);
+  const token = getToken(context.req);
   return {
     props: { csrfToken },
   };

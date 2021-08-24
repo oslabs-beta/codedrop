@@ -22,4 +22,8 @@ export default NextAuth({
     }),
   ],
   adapter: FirebaseAdapter(firestore),
+  jwt: {
+    secret: process.env.NEXT_AUTH_SECRET,
+  },
+  session: { jwt: true }
 });
