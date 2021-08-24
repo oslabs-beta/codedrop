@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/styles';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
@@ -7,6 +7,8 @@ import CodeDrawer from './CodeDrawer';
 import SideBarItem from './dnd/SideBarItem';
 import { SIDEBAR_ITEMS } from './dnd/constants';
 import { greyScheme } from './util/colorPallete';
+
+import { genearteAndReturnFormattedCode } from '../pages/home';
 
 const useStyles = makeStyles({
   sideBar: {
@@ -20,8 +22,14 @@ const useStyles = makeStyles({
   },
 });
 
-const SidebarPanel = ({ previewMode, setPreviewMode, codeString, layout }) => {
+const SidebarPanel = ({ previewMode, setPreviewMode, layout, components }) => {
   const classes = useStyles();
+  const [codeString, setCodeString] = useState(``)
+
+  useEffect(() => {
+    const newCodeString = genearteAndReturnFormattedCode(layout, components)
+    setCodeString(newCodeString)
+  }, [layout, components])
 
   return (
     <div className={classes.sideBar}>
