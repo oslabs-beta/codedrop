@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useQuery, useMutation, useSubscription } from '@apollo/client';
 import { makeStyles } from '@material-ui/styles';
-
 import { prettierCode } from '../../components/api/prettierCode';
 import SidebarPanel from '../../components/SidebarPanel';
 import EditorPanel from '../../components/EditorPanel';
