@@ -19,6 +19,7 @@ import { SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components/dnd/constants'
 // import generatedCodeStr from '../../pages/home'
 
 import shortid from 'shortid';
+import { getData } from '../../pages/home';
 
 const useStyles = makeStyles({
   body: {
@@ -41,6 +42,7 @@ const Container = ({ projectData }) => {
 
   // send layout/components to generateCode
   getData(layout, components)
+  // This should be removed once we have the codegen builder created
   useEffect(() => {
     prettierCode(`import React from 'react'`, setCodeString);
   }, []);
@@ -136,7 +138,7 @@ const Container = ({ projectData }) => {
         setPreviewMode={setPreviewMode}
         codeString={codeString}
         layout={layout}
-        component={component}
+        components={components}
       />
       <div className="pageContainer">
         <div className="page">
