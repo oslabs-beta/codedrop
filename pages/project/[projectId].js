@@ -214,14 +214,8 @@ const Container = ({ projectData }) => {
       <SidebarPanel
         previewMode={previewMode}
         setPreviewMode={setPreviewMode}
-<<<<<<< HEAD
-        codeString={codeString}
-        layout={layout}
-        components={components}
-=======
         components={components}
         layout={layout}
->>>>>>> dev
       />
       <div className="pageContainer">
         <div className="page">
