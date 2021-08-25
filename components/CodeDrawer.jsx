@@ -27,7 +27,7 @@ export default function CodeDrawer({ codeString, layout, components }) {
   };
 
   const box = {
-    height: '345px',
+    height: '645px',
   };
 
   const list = (anchor) => (
@@ -41,7 +41,7 @@ export default function CodeDrawer({ codeString, layout, components }) {
         ))}
       </List>
       <Divider />
-      <Editor language="js" displayName="React" value={codeString} readOnly={true} />
+      <Editor language="js" displayName="React" value={codeString} readOnly={true} height={box.height} />
     </Box>
   );
 
