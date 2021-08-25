@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 
-import { genearteReactCodeString } from '../components/api/genearteReactCodeString';
 import CodeDrawer from './CodeDrawer';
 import SideBarItem from './dnd/SideBarItem';
 import { SIDEBAR_ITEMS } from './dnd/constants';
@@ -23,15 +21,6 @@ const useStyles = makeStyles({
 
 const SidebarPanel = ({ previewMode, setPreviewMode, components, layout }) => {
   const classes = useStyles();
-  const [codeString, setCodeString] = useState(``);
-
-  useEffect(() => {
-    genearteReactCodeString({
-      components,
-      layout,
-      callback: setCodeString,
-    });
-  }, []);
 
   return (
     <div className={classes.sideBar}>
@@ -50,7 +39,7 @@ const SidebarPanel = ({ previewMode, setPreviewMode, components, layout }) => {
         label="Preview"
       />
       <CodeDrawer 
-        codeString={codeString}
+        components={components}
         layout={layout}
       />
     </div>
