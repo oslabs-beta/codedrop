@@ -9,8 +9,6 @@ import SideBarItem from './dnd/SideBarItem';
 import { SIDEBAR_ITEMS } from './dnd/constants';
 import { greyScheme } from './util/colorPallete';
 
-import { genearteAndReturnFormattedCode } from '../pages/home';
-
 const useStyles = makeStyles({
   sideBar: {
     display: 'flex',
