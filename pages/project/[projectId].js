@@ -19,6 +19,7 @@ import { PROJECT_QUERY, COMPONENTS_QUERY } from '../../lib/apolloQueries';
 import { PROJECT_MUTATION, ADD_COMPONENT } from '../../lib/apolloMutations';
 
 import { SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components/dnd/constants';
+// import generatedCodeStr from '../../pages/home'
 
 import shortid from 'shortid';
 

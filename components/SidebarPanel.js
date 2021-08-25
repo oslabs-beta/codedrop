@@ -49,7 +49,10 @@ const SidebarPanel = ({ previewMode, setPreviewMode, components, layout }) => {
         }
         label="Preview"
       />
-      <CodeDrawer codeString={codeString} />
+      <CodeDrawer 
+        codeString={codeString}
+        layout={layout}
+      />
     </div>
   );
 };
