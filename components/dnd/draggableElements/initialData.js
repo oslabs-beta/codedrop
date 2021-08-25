@@ -18,7 +18,7 @@ export const h1 = {
   value: 'Heading 1',
   style: `display: inline-block;
 color: palevioletred;
-align-item: 'center',
+align-item: center;
 display: block;`,
   containerStyle: `padding: 0.5rem 1rem;
 display: flex;
@@ -30,7 +30,7 @@ export const h2 = {
   value: 'Heading 2',
   style: `display: inline-block;
 color: palevioletred;
-align-item: 'center',
+align-item: center;
 display: block;`,
   containerStyle: `padding: 0.5rem 1rem;
 display: flex;
