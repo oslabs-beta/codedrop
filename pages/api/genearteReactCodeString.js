@@ -4,10 +4,13 @@ export default function genearteReactCodeString(req, res) {
     const { layout, components } = req.body;
     let result = []
 
+    function remove_linebreaks(input) {
+      return input.replace(/[\r\n]+/gm, ' ').trim();
+    }
     // CSS parser to convert HTML styles to JSON object.
     function parseCSSText(cssText) {
       const styleObj = {};
-
+      cssText = remove_linebreaks(cssText)
       cssText.split('\n').forEach((item) => {
         let temp = item.split(':');
         let styleValue = temp[1].replace(';', '').trim();
@@ -15,22 +18,28 @@ export default function genearteReactCodeString(req, res) {
         styleObj[styleProp] = styleValue;
       });
 
-      return JSON.stringify(styleObj);
+      // return JSON.stringify(styleObj);
+      console.log('styleObj ', styleObj)
+      return JSON.parse(JSON.stringify(styleObj));
     }
 
-    function remove_linebreaks(input) {
-      return input.replace(/[\r\n]+/gm, ' ').trim();
-    }
 
     function Button(options) {
       this.tagName = options.type || null;
       this.id = options.id || null;
       this.value = options.value || null;
       this.style = remove_linebreaks(options.style) || null;
+      this.style1 = parseCSSText(options.style) || null;
       this.containerStyle = options.containerStyle || null;
 
+      console.log('this.style ', this.style1)
+      console.log('this.containerStyle ', this.containerStyle)
+      const temp = parseCSSText(this.containerStyle)
+      console.log('parseCSSText ', temp)
+
+      let style = { display: 'inline-block color' }
       if (this.tagName) {
-        this.html = `<button style="${this.style}" type='' className='' id='${this.id}'> ${this.value} </button>`;
+        this.html = `<button style=${style} type='' className='' id='${this.id}'> ${this.value} </button>`;
       }
 
       if (this.containerStyle) {
@@ -186,8 +195,13 @@ export default function genearteReactCodeString(req, res) {
         .join('\n');
     };
 
+    
     const generatedCodeStr = createComp(result);
-    const formattedCode = prettier.format(generatedCodeStr, { parser: 'babel' });
+
+    let style = { display: 'inline-block color' }
+    const generatedCodeStr1 = `<div style={ ${display} : ${style.display}} > Hello World!> </div>`
+
+    const formattedCode = prettier.format(generatedCodeStr1, { parser: 'babel' });
     res.status(200).json({ code: formattedCode });
   } catch (e) {
     console.log(`genearteReactCodeString api error:  ${e}`);
