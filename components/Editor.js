@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Controlled as ControlledEditor } from 'react-codemirror2';
 import 'codemirror/lib/codemirror.css';
@@ -18,14 +19,20 @@ const EditorContainer = styled.div`
 `;
 
 
-export default function Editor({ language, onChange, value, readOnly = false }) {
+export default function Editor({ language, onChange, value, readOnly = false, height = '350px' }) {
+  const codemirrorRef = useRef();
   const handleChange = (editor, data, value) => onChange(value);
+
+  useEffect(() => {
+    const current = codemirrorRef.current.editor.display.wrapper.style.height = height;
+  });
 
   return (
     <EditorContainer>
       <ControlledEditor
         onBeforeChange={handleChange}
         value={value}
+        ref={codemirrorRef}
         options={{
           lineWrapping: true,
           lint: true,

@@ -2,34 +2,31 @@ export default function genearteReactCodeString(req, res) {
   const prettier = require('prettier');
   try {
     const { layout, components } = req.body;
-    let result = []
+    console.log('layout', layout)
+    let result = [];
 
     function remove_linebreaks(input) {
       return input.replace(/[\r\n]+/gm, ' ').trim();
     }
     // CSS parser to convert HTML styles to JSON object.
     function parseCSSText(cssText) {
-      const styleObj = {};
-      cssText = remove_linebreaks(cssText)
-      cssText.split('\n').forEach((item) => {
-        let temp = item.split(':');
-        let styleValue = temp[1].replace(';', '').trim();
-        let styleProp = temp[0];
-        styleObj[styleProp] = styleValue;
-      });
+      var cssTxt = cssText.replace(/\/\*(.|\s)*?\*\//g, " ").replace(/\s+/g, " ");
+      var style = {}, [,ruleName,rule] = cssTxt.match(/ ?(.*?) ?{([^}]*)}/)||[,,cssTxt];
+      var cssToJs = s => s.replace(/\W+\w/g, match => match.slice(-1).toUpperCase());
+      var properties = rule.split(";").map(o => o.split(":").map(x => x && x.trim()));
+      for (var [property, value] of properties) style[cssToJs(property)] = value;
+      return JSON.stringify(style);
+  }
 
-      // return JSON.stringify(styleObj);
-      console.log('styleObj ', styleObj)
-      return JSON.parse(JSON.stringify(styleObj));
-    }
+    const removeLinebreaks = (input) => input.replace(/[\r\n]+/gm, ' ').trim();
 
+    const Error = (options) => ({ error: `No element found ${options.type}` });
 
     function Button(options) {
       this.tagName = options.type || null;
       this.id = options.id || null;
       this.value = options.value || null;
-      this.style = remove_linebreaks(options.style) || null;
-      this.style1 = parseCSSText(options.style) || null;
+      this.style = removeLinebreaks(options.style) || null;
       this.containerStyle = options.containerStyle || null;
 
       console.log('this.style ', this.style1)
@@ -39,11 +36,11 @@ export default function genearteReactCodeString(req, res) {
 
       let style = { display: 'inline-block color' }
       if (this.tagName) {
-        this.html = `<button style=${style} type='' className='' id='${this.id}'> ${this.value} </button>`;
+        this.html = `<button style={${parseCSSText(this.style)}} type='' className='' id='${this.id}'>${this.value}</button>`;
       }
 
       if (this.containerStyle) {
-        this.div = `<div style= "${this.containerStyle}" > ${this.html}</div>`;
+        this.div = `<div style={${parseCSSText(this.containerStyle)}}>${this.html}</div>`;
       }
       return {
         test: 'does this work:',
@@ -56,14 +53,33 @@ export default function genearteReactCodeString(req, res) {
       this.tagName = options.type || null;
       this.id = options.id || null;
       this.value = options.value || null;
-      this.style = remove_linebreaks(options.style) || null;
+      this.style = removeLinebreaks(options.style) || null;
       this.src = options.src || '';
       this.containerStyle = options.containerStyle || null;
 
-      this.html = `<img class="fit-picture" src=${this.src} alt=${this.value} style="${this.style}">`;
+      this.html = `<img class="fit-picture" src=${this.src} alt=${this.value} style={${parseCSSText(this.style)}}>`;
 
       if (this.containerStyle) {
-        this.div = `<div style="${this.containerStyle}">${this.html}</div>`;
+        this.div = `<div style={${parseCSSText(this.containerStyle)}}>${this.html}</div>`;
+      }
+
+      return {
+        html: this.html,
+        div: this.div,
+      };
+    }
+
+    function Input(options) {
+      this.tagName = options.type || null;
+      this.id = options.id || null;
+      this.value = options.value || null;
+      this.style = removeLinebreaks(options.style) || null;
+      this.containerStyle = options.containerStyle || null;
+
+      this.html = `<input style={${parseCSSText(this.style)}}>${this.value}</input>`;
+
+      if (this.containerStyle) {
+        this.div = `<div style={${parseCSSText(this.containerStyle)}}>${this.html}</div>`;
       }
 
       return {
@@ -76,13 +92,32 @@ export default function genearteReactCodeString(req, res) {
       this.tagName = options.type || null;
       this.id = options.id || null;
       this.value = options.value || null;
-      this.style = remove_linebreaks(options.style) || null;
+      this.style = removeLinebreaks(options.style) || null;
       this.containerStyle = options.containerStyle || null;
 
-      this.html = `<h1 style="${this.style}">${this.value}</h1>`;
+      this.html = `<h1 style={${parseCSSText(this.style)}}>${this.value}</h1>`;
 
       if (this.containerStyle) {
-        this.div = `<div style="${this.containerStyle}">${this.html}</div>`;
+        this.div = `<div style={${parseCSSText(this.containerStyle)}}>${this.html}</div>`;
+      }
+
+      return {
+        html: this.html,
+        div: this.div,
+      };
+    }
+
+    function H2(options) {
+      this.tagName = options.type || null;
+      this.id = options.id || null;
+      this.value = options.value || null;
+      this.style = removeLinebreaks(options.style) || null;
+      this.containerStyle = options.containerStyle || null;
+
+      this.html = `<h2 style={${parseCSSText(this.style)}}>${this.value}</h2>`;
+
+      if (this.containerStyle) {
+        this.div = `<div style={${parseCSSText(this.containerStyle)}}>${this.html}</div>`;
       }
 
       return {
@@ -95,25 +130,19 @@ export default function genearteReactCodeString(req, res) {
       this.tagName = options.type || null;
       this.id = options.id || null;
       this.value = options.value || null;
-      this.style = remove_linebreaks(options.style) || null;
+      this.style = removeLinebreaks(options.style) || null;
       this.src = options.src || null;
       this.containerStyle = options.containerStyle || null;
 
-      this.html = `<span style="${this.style}">${this.value}</span>`;
+      this.html = `<span style={${parseCSSText(this.style)}}>${this.value}</span>`;
 
       if (this.containerStyle) {
-        this.div = `<div style="${this.containerStyle}">${this.html}</div>`;
+        this.div = `<div style={${parseCSSText(this.containerStyle)}}>${this.html}</div>`;
       }
 
       return {
         html: this.html,
         div: this.div,
-      };
-    }
-
-    function Error(options) {
-      return {
-        error: `No element found ${options.type}`,
       };
     }
 
@@ -129,8 +158,14 @@ export default function genearteReactCodeString(req, res) {
           case 'H1':
             this.elementClass = H1;
             break;
+          case 'H2':
+            this.elementClass = H2;
+            break;
           case 'Image':
             this.elementClass = Img;
+            break;
+          case 'Input':
+            this.elementClass = Input;
             break;
           case 'Text':
             this.elementClass = Text;
@@ -146,27 +181,16 @@ export default function genearteReactCodeString(req, res) {
 
     const eleFactory = new HTMLElementFactory();
 
-    const parseComponentsHelper = (compData, components) => {
-      const { id, type } = compData;
-      
-      for (let i = 0; i < components.length; i++) {
-        let component = components[i];
-
-        if (component) {
-          result.push(eleFactory.createElement(component).div);
-        }
-      }
-    };
-
     const parseComponents = (coms, components) => {
-      for (let i = 0; i < coms.length; i++) {
-        parseComponentsHelper(coms[i], components);
+      for (const component of coms) {
+        const fullComponentDetails = components.find(c => c.id === component.id)
+        console.log('fullComponentDetails', fullComponentDetails)
+        if (fullComponentDetails) result.push(eleFactory.createElement(fullComponentDetails).div); 
       }
     };
 
     const parseCols = (cols, components) => {
-      for (let i = 0; i < cols.length; i++) {
-        const col = cols[i];
+      for (const col of cols) {
         if (col.children.length !== 0 && Array.isArray(col.children)) {
           parseComponents(col.children, components);
         }
@@ -175,7 +199,8 @@ export default function genearteReactCodeString(req, res) {
 
     // generateCode start point.
     if (Array.isArray(layout) && layout[0].children.length !== 0) {
-      parseCols(layout[0].children, components);
+      const firstRowsColumns = layout[0].children
+      parseCols(firstRowsColumns, components);
     }
 
     const createComp = (props) => {

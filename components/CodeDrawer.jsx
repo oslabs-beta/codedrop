@@ -1,4 +1,6 @@
 import { useState, Fragment } from 'react';
+import { genearteReactCodeString } from '../components/api/genearteReactCodeString';
+
 import Box from '@material-ui/core/Box';
 import Drawer from '@material-ui/core/Drawer';
 import Button from '@material-ui/core/Button';
@@ -11,12 +13,19 @@ import CodeIcon from '@material-ui/icons/Code';
 import Editor from './Editor';
 import ReactIcon from './util/Icons/ReactIcon';
 
-export default function CodeDrawer({ codeString, layout, components }) {
+export default function CodeDrawer({ layout, components }) {
   const [showCode, setShowCode] = useState(false);
+  const [codeString, setCodeString] = useState(``);
+
   const drawerDirection = 'bottom';
 
   const toggleDrawer = (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) return;
+    genearteReactCodeString({
+      components,
+      layout,
+      callback: setCodeString,
+    });
     setShowCode(!showCode);
   };
   const flexContainer = {
@@ -27,7 +36,7 @@ export default function CodeDrawer({ codeString, layout, components }) {
   };
 
   const box = {
-    height: '345px',
+    height: '645px',
   };
 
   const list = (anchor) => (
@@ -41,7 +50,7 @@ export default function CodeDrawer({ codeString, layout, components }) {
         ))}
       </List>
       <Divider />
-      <Editor language="js" displayName="React" value={codeString} readOnly={true} />
+      <Editor language="js" displayName="React" value={codeString} readOnly={true} height={box.height} />
     </Box>
   );
 
