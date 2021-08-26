@@ -16,7 +16,7 @@ export default function genearteReactCodeString(req, res) {
       var properties = rule.split(";").map(o => o.split(":").map(x => x && x.trim()));
       for (var [property, value] of properties) style[cssToJs(property)] = value;
       return JSON.stringify(style);
-  }
+    }
 
     const removeLinebreaks = (input) => input.replace(/[\r\n]+/gm, ' ').trim();
 
