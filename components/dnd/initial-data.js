@@ -1,6 +1,6 @@
 import { ROW, COLUMN } from './constants';
 
-const initialData = {
+const initialData =  {
   layout: [
     {
       type: ROW,
@@ -16,5 +16,6 @@ const initialData = {
   ],
   components: {},
 };
+
 
 export default initialData;
