@@ -1,7 +1,6 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useQuery, useMutation, useSubscription } from '@apollo/client';
 import { makeStyles } from '@material-ui/styles';
-import { prettierCode } from '../../components/api/prettierCode';
 import SidebarPanel from '../../components/SidebarPanel';
 import EditorPanel from '../../components/EditorPanel';
 import DropZone from '../../components/dnd/DropZone';
@@ -20,6 +19,7 @@ import { PROJECT_QUERY, COMPONENTS_QUERY } from '../../lib/apolloQueries';
 import { PROJECT_MUTATION, ADD_COMPONENT } from '../../lib/apolloMutations';
 
 import { SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components/dnd/constants';
+// import generatedCodeStr from '../../pages/home'
 
 import shortid from 'shortid';
 
@@ -36,12 +36,6 @@ const Container = ({ projectData }) => {
   const classes = useStyles();
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
-  const [codeString, setCodeString] = useState(``);
-
-  // This should be removed once we have the codegen builder created
-  useEffect(() => {
-    prettierCode(`import React from 'react'`, setCodeString);
-  }, []);
 
   const {
     loading: loadingProject,
@@ -221,7 +215,8 @@ const Container = ({ projectData }) => {
       <SidebarPanel
         previewMode={previewMode}
         setPreviewMode={setPreviewMode}
-        codeString={codeString}
+        components={components}
+        layout={layout}
       />
       <div className="pageContainer">
         <div className="page">
@@ -273,7 +268,7 @@ const Container = ({ projectData }) => {
   );
 };
 
-export async function getServerSidePaths() {
+export async function getStaticPaths() {
   const projects = [];
 
   return {
@@ -290,12 +285,9 @@ export async function getStaticProps(context) {
   const projectId = context.params.projectId;
   return {
     props: {
-      initialApolloState: apolloClient.cache.extract(),
-      projectLayout: JSON.parse(projectData.data.getProject.layout),
-      projectId,
-
+      projectData: { projectId },
     },
   };
-};
+}
 
 export default Container;
