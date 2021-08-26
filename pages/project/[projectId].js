@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useQuery, useMutation, useSubscription } from '@apollo/client';
 import { makeStyles } from '@material-ui/styles';
-
 import SidebarPanel from '../../components/SidebarPanel';
 import EditorPanel from '../../components/EditorPanel';
 import DropZone from '../../components/dnd/DropZone';
@@ -13,6 +12,7 @@ import {
   handleMoveSidebarComponentIntoParent,
   handleRemoveItemFromLayout,
 } from '../../components/dnd/helpers';
+import { initializeApollo } from '../../lib/apolloClient'
 
 import { PROJECT_QUERY, COMPONENTS_QUERY } from '../../lib/apolloQueries';
 
@@ -42,12 +42,14 @@ const Container = ({ projectData }) => {
     error: loadingProjectError,
     data: projectDataGql,
   } = useQuery(PROJECT_QUERY, {
-    fetchPolicy: "network-only",   // Used for first execution
+    fetchPolicy: "network-only",   // Used for first execution to ensure local data up to date with server
     nextFetchPolicy: "cache-and-network", //all subsequent calls,
     variables: { id: projectId },
   });
 
-  const layout = JSON.parse(projectDataGql?.getProject?.layout || '[]');
+  const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
+
+  let layout = JSON.parse(projectDataGql?.getProject?.layout || '[]');
 
   const {
     loading: loadingComponents,
@@ -57,7 +59,6 @@ const Container = ({ projectData }) => {
 
   const components = componentsData?.queryComponent || '[]';
 
-  const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
 
   const [
     addComponent,
