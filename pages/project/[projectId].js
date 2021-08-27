@@ -1,8 +1,6 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useQuery, useMutation, useSubscription } from '@apollo/client';
 import { makeStyles } from '@material-ui/styles';
-
-import { prettierCode } from '../../components/api/prettierCode';
 import SidebarPanel from '../../components/SidebarPanel';
 import EditorPanel from '../../components/EditorPanel';
 import DropZone from '../../components/dnd/DropZone';
@@ -14,12 +12,14 @@ import {
   handleMoveSidebarComponentIntoParent,
   handleRemoveItemFromLayout,
 } from '../../components/dnd/helpers';
+import { initializeApollo } from '../../lib/apolloClient'
 
 import { PROJECT_QUERY, COMPONENTS_QUERY } from '../../lib/apolloQueries';
 
 import { PROJECT_MUTATION, ADD_COMPONENT } from '../../lib/apolloMutations';
 
 import { SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components/dnd/constants';
+// import generatedCodeStr from '../../pages/home'
 
 import shortid from 'shortid';
 
@@ -36,24 +36,20 @@ const Container = ({ projectData }) => {
   const classes = useStyles();
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
-  const [codeString, setCodeString] = useState(``);
-
-  // This should be removed once we have the codegen builder created
-  useEffect(() => {
-    prettierCode(`import React from 'react'`, setCodeString);
-  }, []);
 
   const {
     loading: loadingProject,
     error: loadingProjectError,
     data: projectDataGql,
   } = useQuery(PROJECT_QUERY, {
-    fetchPolicy: "network-only",   // Used for first execution
+    fetchPolicy: "network-only",   // Used for first execution to ensure local data up to date with server
     nextFetchPolicy: "cache-and-network", //all subsequent calls,
     variables: { id: projectId },
   });
 
-  const layout = JSON.parse(projectDataGql?.getProject?.layout || '[]');
+  const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
+
+  let layout = JSON.parse(projectDataGql?.getProject?.layout || '[]');
 
   const {
     loading: loadingComponents,
@@ -63,7 +59,6 @@ const Container = ({ projectData }) => {
 
   const components = componentsData?.queryComponent || '[]';
 
-  const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
 
   const [
     addComponent,
@@ -220,7 +215,8 @@ const Container = ({ projectData }) => {
       <SidebarPanel
         previewMode={previewMode}
         setPreviewMode={setPreviewMode}
-        codeString={codeString}
+        components={components}
+        layout={layout}
       />
       <div className="pageContainer">
         <div className="page">
