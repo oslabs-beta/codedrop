@@ -2,12 +2,8 @@ export default function genearteReactCodeString(req, res) {
   const prettier = require('prettier');
   try {
     const { layout, components } = req.body;
-    console.log('layout', layout)
     let result = [];
 
-    function remove_linebreaks(input) {
-      return input.replace(/[\r\n]+/gm, ' ').trim();
-    }
     // CSS parser to convert HTML styles to JSON object.
     function parseCSSText(cssText) {
       var cssTxt = cssText.replace(/\/\*(.|\s)*?\*\//g, " ").replace(/\s+/g, " ");
@@ -29,12 +25,6 @@ export default function genearteReactCodeString(req, res) {
       this.style = removeLinebreaks(options.style) || null;
       this.containerStyle = options.containerStyle || null;
 
-      console.log('this.style ', this.style1)
-      console.log('this.containerStyle ', this.containerStyle)
-      const temp = parseCSSText(this.containerStyle)
-      console.log('parseCSSText ', temp)
-
-      let style = { display: 'inline-block color' }
       if (this.tagName) {
         this.html = `<button style={${parseCSSText(this.style)}} type='' className='' id='${this.id}'>${this.value}</button>`;
       }
@@ -57,7 +47,7 @@ export default function genearteReactCodeString(req, res) {
       this.src = options.src || '';
       this.containerStyle = options.containerStyle || null;
 
-      this.html = `<img class="fit-picture" src=${this.src} alt=${this.value} style={${parseCSSText(this.style)}}>`;
+      this.html = `<img class="fit-picture" src='${this.src}' alt='${this.value}' style={${parseCSSText(this.style)}} />`;
 
       if (this.containerStyle) {
         this.div = `<div style={${parseCSSText(this.containerStyle)}}>${this.html}</div>`;
@@ -223,10 +213,10 @@ export default function genearteReactCodeString(req, res) {
     
     const generatedCodeStr = createComp(result);
 
-    let style = { display: 'inline-block color' }
-    const generatedCodeStr1 = `<div style={ ${display} : ${style.display}} > Hello World!> </div>`
+    // let style = { display: 'inline-block color' }
+    // const generatedCodeStr1 = `<div style={ ${display} : ${style.display}} > Hello World!> </div>`
 
-    const formattedCode = prettier.format(generatedCodeStr1, { parser: 'babel' });
+    const formattedCode = prettier.format(generatedCodeStr, { parser: 'babel' });
     res.status(200).json({ code: formattedCode });
   } catch (e) {
     console.log(`genearteReactCodeString api error:  ${e}`);
