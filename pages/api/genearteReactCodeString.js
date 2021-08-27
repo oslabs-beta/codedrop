@@ -48,7 +48,7 @@ export default function genearteReactCodeString(req, res) {
       this.src = options.src || '';
       this.containerStyle = options.containerStyle || null;
 
-      this.html = `<img class="fit-picture" src=${this.src} alt=${this.value} style={${parseCSSText(this.style)}}>`;
+      this.html = `<img class="fit-picture" src='${this.src}' alt='${this.value}' style={${parseCSSText(this.style)}} />`;
 
       if (this.containerStyle) {
         this.div = `<div style={${parseCSSText(this.containerStyle)}}>${this.html}</div>`;
