@@ -22,7 +22,7 @@ export const htmlGenerator = (fullComponentDetails) => {
     if (fullComponentDetails.type === 'Text') {
       return `<span style={${inlineStyle}}>${value}</span>`;
     }
-    if (fullComponentDetauls.type === 'Input') {
+    if (fullComponentDetails.type === 'Input') {
       return `<input style={${inlineStyle}}>${value}</input>`;
     }
   };
