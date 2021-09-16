@@ -19,7 +19,6 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Switch from '@material-ui/core/Switch';
 import Link from '@material-ui/core/Link';
 
-import { useSession } from 'next-auth/client';
 
 
 //this is where data is mocked, id will be passed in here to give project access
@@ -61,11 +60,13 @@ export default function EnhancedTable() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  // import { useSession } from 'next-auth/client';
+
   // test case for useSession to grab username for dgraph
-  const { data: session, status } = useSession() 
-  if (status === "authenticated") {
-    console.log('session.user', session.user)
-  }
+  // const { data: session, status } = useSession() 
+  // if (status === "authenticated") {
+  //   console.log('session.user', session.user)
+  // }
 
   //query to pull list of projects
   const { loading, error, data } = useQuery(PROJECTS_QUERY, {
@@ -208,8 +209,10 @@ export default function EnhancedTable() {
   );
 }
 
-//export default getStaticProps (context){
-  // useSession to grab the user email from nextAtuh
+//export default getServerSideProps (context){
+  // grab the session token off the cookie
+
+  // query firestore for the user email using the session 
   
   // check if user is in dgraph
     // if it doesn't exist - add it, and return an empty projects array
