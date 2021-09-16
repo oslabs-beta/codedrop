@@ -45,6 +45,7 @@ function SplashPage() {
           layout: JSON.stringify(initialLayout),
           id: projectId.toString(),
           projectName: 'test',
+          // userid: [(user || 'guest']
         },
       },
         awaitRefetchQueries: true,
