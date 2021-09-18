@@ -30,18 +30,15 @@ export default function genearteReactCodeString(req, res) {
     const createComp = (props) => {
       const div = props !== null ? props.join('') : '<div />';
 
-      return [
-        `import React from 'react';`,
-        `export const SamplePro = () => {`,
-        `return (`,
-        `<div>`,
-        `${div}`,
-        `</div>`,
-        `);`,
-        `}`,
-      ]
-        .filter((line) => typeof line === 'string')
-        .join('\n');
+      // framework specific logic
+      const frameworks = {
+        "React": { head: `import React from 'react';export const SamplePro = () => { return (<div>`, tail: `</div>)}` },
+        "Angular": { 
+          head: "import { Component } from '@angular/core'; @Component ({ selector: 'my-app', template: `<div>", 
+          tail: "</div>`}) export class AppComponent { appTitle: string = 'Welcome';}" },
+      }
+      // generate framework specific code string
+      return `${frameworks[framework].head}${div}${frameworks[framework].tail}`
     };
 
     const generatedCodeStr = createComp(result);
