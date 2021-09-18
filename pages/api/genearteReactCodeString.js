@@ -3,7 +3,7 @@ import { htmlGenerator } from '../../helpers/codeGen/htmlGenerator';
 export default function genearteReactCodeString(req, res) {
   const prettier = require('prettier');
   try {
-    const { layout, components } = req.body;
+    const { layout, components, framework } = req.body;
     let result = [];
     
     const parseComponents = (coms, components) => {
