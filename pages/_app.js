@@ -1,5 +1,9 @@
 import React, { Fragment, useEffect } from 'react';
-import { Provider } from 'next-auth/client';
+
+import { AmplifyAuthenticator } from "@aws-amplify/ui-react";
+import { Amplify, API, Auth, withSSRContext } from "aws-amplify";
+import awsExports from "../src/aws-exports";
+
 import { useRouter } from 'next/router';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -15,6 +19,8 @@ import theme from '../public/theme';
 import Layout from '../components/layout';
 import '../styles/globals.css';
 import 'codemirror/lib/codemirror.css';
+
+Amplify.configure({ ...awsExports, ssr: true });
 
 function MyApp(props) {
   const router = useRouter();
@@ -40,7 +46,7 @@ function MyApp(props) {
       </Head>
       <ThemeProvider theme={theme}>
         <ApolloProvider client={apolloClient}>
-          <Provider session={pageProps.session}>
+          {/* <AmplifyAuthenticator> */}
             {showHeaderFooter && (
               <Layout>
                 <DndProvider backend={HTML5Backend}>
@@ -50,7 +56,7 @@ function MyApp(props) {
               </Layout>
             )}
             {!showHeaderFooter && <Component {...pageProps} />}
-          </Provider>
+          {/* </AmplifyAuthenticator> */}
         </ApolloProvider>
       </ThemeProvider>
     </Fragment>

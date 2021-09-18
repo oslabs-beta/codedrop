@@ -1,5 +1,11 @@
 import React, { useState, useCallback } from 'react';
+
 import { useQuery, useMutation, useSubscription } from '@apollo/client';
+import { API, DataStore, graphqlOperation, withSSRContext } from 'aws-amplify';
+import { getProject, listComponents, listProjects } from '../../src/graphql/queries';
+import { createComponent, updateProject } from '../../src/graphql/mutations';
+import { onCreateComponent, onUpdateProject } from '../../src/graphql/subscriptions';
+
 import { makeStyles } from '@material-ui/styles';
 import SidebarPanel from '../../components/SidebarPanel';
 import EditorPanel from '../../components/EditorPanel';
@@ -12,14 +18,10 @@ import {
   handleMoveSidebarComponentIntoParent,
   handleRemoveItemFromLayout,
 } from '../../components/dnd/helpers';
-import { initializeApollo } from '../../lib/apolloClient'
 
 import { PROJECT_QUERY, COMPONENTS_QUERY } from '../../lib/apolloQueries';
-
 import { PROJECT_MUTATION, ADD_COMPONENT } from '../../lib/apolloMutations';
-
 import { SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components/dnd/constants';
-// import generatedCodeStr from '../../pages/home'
 
 import shortid from 'shortid';
 
@@ -31,71 +33,86 @@ const useStyles = makeStyles({
   },
 });
 
-const Container = ({ projectData }) => {
-  const projectId = projectData.projectId;
+const componentCreationSubscription = API.graphql(graphqlOperation(onCreateComponent)).subscribe({
+  next: ({ provider, value }) => console.log({ provider, value }),
+  error: (error) => console.warn(error),
+});
+
+const projectUpdateSubscription = API.graphql(graphqlOperation(onUpdateProject)).subscribe({
+  next: ({ provider, value }) => console.log({ provider, value }),
+  error: (error) => console.warn(error),
+});
+
+async function handleCreateComponent(newComponent) {
+  try {
+    const { data } = await API.graphql({
+      query: createComponent,
+      variables: {
+        input: newComponent,
+      },
+      refetchQueries: [{ query: listComponents }],
+    });
+    console.log('new component', data);
+  } catch ({ errors }) {
+    console.error(...errors);
+    throw new Error(errors[0].message);
+  }
+}
+
+async function handleUpdateProject(updatedProject) {
+  try {
+    const { data } = await API.graphql({
+      query: updateProject,
+      variables: {
+        input: updatedProject,
+      },
+      refetchQueries: [
+        {
+          query: getProject,
+          variables: {
+            id: updatedProject.id,
+          },
+        },
+      ],
+    });
+    console.log('updated project', data);
+  } catch ({ errors }) {
+    console.error(...errors);
+    throw new Error(errors[0].message);
+  }
+}
+
+const Container = ({ project, components = [] }) => {
+  const projectId = project.id;
   const classes = useStyles();
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
 
-  const {
-    loading: loadingProject,
-    error: loadingProjectError,
-    data: projectDataGql,
-  } = useQuery(PROJECT_QUERY, {
-    fetchPolicy: "network-only",   // Used for first execution to ensure local data up to date with server
-    nextFetchPolicy: "cache-and-network", //all subsequent calls,
-    variables: { id: projectId },
-  });
+  let layout = JSON.parse(project?.layout || '[]');
 
-  const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
-
-  let layout = JSON.parse(projectDataGql?.getProject?.layout || '[]');
-
-  const {
-    loading: loadingComponents,
-    error: loadingComponentsError,
-    data: componentsData,
-  } = useSubscription(COMPONENTS_QUERY);
-
-  const components = componentsData?.queryComponent || '[]';
-
-
-  const [
-    addComponent,
-    { data: newComponentData, loading: newComponentLoading, error: newComponentError },
-  ] = useMutation(ADD_COMPONENT);
+  useEffect(() => {
+    fetchPosts();
+    async function fetchPosts() {
+      const postData = await DataStore.query(Post);
+      setPosts(postData);
+    }
+    const subscription = DataStore.observe(Post).subscribe(() => fetchPosts());
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleDropToTrashBin = useCallback(
     (dropZone, item) => {
       console.log('dropZone, item', dropZone, item);
       const splitItemPath = item.path.split('-');
       const newLayout = handleRemoveItemFromLayout(layout, splitItemPath);
-      updateProject({
-        variables: {
-          project: {
-            layout: JSON.stringify(newLayout),
-            id: projectId.toString(),
-            projectName: 'test',
-          },
-        },
-      }); 
+      handleUpdateProject({
+        layout: JSON.stringify(newLayout),
+        id: projectId.toString(),
+        projectName: 'test',
+      });
     },
-    [layout, projectId, updateProject]
+    [layout, projectId]
   );
-
-  const handleRemoveComponent = (item) => {
-    const splitItemPath = item.path.split('-');
-    const newLayout = handleRemoveItemFromLayout(layout, splitItemPath);
-    updateProject({
-      variables: {
-        project: {
-          layout: JSON.stringify(newLayout),
-          id: projectId.toString(),
-          projectName: 'test',
-        },
-      },
-    }); 
-  };
 
   const handleDrop = useCallback(
     (dropZone, item) => {
@@ -117,26 +134,13 @@ const Container = ({ projectData }) => {
           id: shortid.generate(),
           ...item.component,
         };
-        const dbComponent = {
-          variables: {
-            component: newComponent,
-          },
-        };
-        addComponent(dbComponent);
-        const newItem = {
-          id: newComponent.id,
-          type: COMPONENT,
-        };
+        handleCreateComponent(newComponent);
         const newLayout = handleMoveSidebarComponentIntoParent(layout, splitDropZonePath, newItem);
-        updateProject({
-          variables: {
-            project: {
-              layout: JSON.stringify(newLayout),
-              id: projectId.toString(),
-              projectName: 'test',
-            },
-          },
-        }); 
+        handleUpdateProject({
+          layout: JSON.stringify(newLayout),
+          id: projectId.toString(),
+          projectName: 'test',
+        });
         return;
       }
 
@@ -149,46 +153,44 @@ const Container = ({ projectData }) => {
         // 2.a. move within parent
         if (pathToItem === pathToDropZone) {
           const newLayout = handleMoveWithinParent(layout, splitDropZonePath, splitItemPath);
-          updateProject({
-            variables: {
-              project: {
-                layout: JSON.stringify(newLayout),
-                id: projectId.toString(),
-                projectName: 'test',
-              },
-            },
+          handleUpdateProject({
+            layout: JSON.stringify(newLayout),
+            id: projectId.toString(),
+            projectName: 'test',
           });
           return;
         }
 
         // 2.b. OR move different parent
         // TODO FIX columns. item includes children
-        const newLayout = handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem);
-        updateProject({
-          variables: {
-            project: {
-              layout: JSON.stringify(newLayout),
-              id: projectId.toString(),
-              projectName: 'test',
-            },
-          },
-        }); 
+        const newLayout = handleMoveToDifferentParent(
+          layout,
+          splitDropZonePath,
+          splitItemPath,
+          newItem
+        );
+        handleUpdateProject({
+          layout: JSON.stringify(newLayout),
+          id: projectId.toString(),
+          projectName: 'test',
+        });
         return;
       }
 
       // 3. Move + Create
-      const newLayout = handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem);
-      updateProject({
-        variables: {
-          project: {
-            layout: JSON.stringify(newLayout),
-            id: projectId.toString(),
-            projectName: 'test',
-          },
-        },
-      }); 
+      const newLayout = handleMoveToDifferentParent(
+        layout,
+        splitDropZonePath,
+        splitItemPath,
+        newItem
+      );
+      handleUpdateProject({
+        layout: JSON.stringify(newLayout),
+        id: projectId.toString(),
+        projectName: 'test',
+      });
     },
-    [layout, addComponent, projectId, updateProject]
+    [layout, projectId]
   );
 
   const renderRow = (row, currentPath) => {
@@ -204,11 +206,6 @@ const Container = ({ projectData }) => {
       />
     );
   };
-
-  if (loadingProject || loadingComponents) return 'Loading...';
-  if (loadingProjectError || loadingComponentsError) {
-    return `Error! ${loadingProjectError?.message || ``} ${loadingComponentsError?.message || ``}`;
-  }
 
   return (
     <div className={classes.body}>
@@ -256,9 +253,9 @@ const Container = ({ projectData }) => {
       </div>
       {showEditor && (
         <EditorPanel
-          component={components.find(c => c.id === showEditor.id)}
+          component={components.find((c) => c.id === showEditor.id)}
           components={components}
-          addComponent={addComponent}
+          addComponent={handleCreateComponent}
           setShowEditor={setShowEditor}
           data={{ layout }}
           onDrop={handleDropToTrashBin}
@@ -268,24 +265,35 @@ const Container = ({ projectData }) => {
   );
 };
 
+// Get the project from the db
 export async function getStaticPaths() {
-  const projects = [];
+  const SSR = withSSRContext();
+  const { data } = await SSR.API.graphql({ query: listProjects });
+  const paths = data.listProjects.items.map((project) => ({
+    params: { id: project.id },
+  }));
 
   return {
-    fallback: 'blocking',
-    paths: projects.map((project) => ({
-      params: {
-        projectId: project.projectId,
-      },
-    })),
+    fallback: true,
+    paths,
   };
 }
 
-export async function getStaticProps(context) {
-  const projectId = context.params.projectId;
+// Get the project from the db
+export async function getStaticProps({ params }) {
+  const SSR = withSSRContext();
+  const components = await SSR.API.graphql({ query: listComponents });
+  const { data } = await SSR.API.graphql({
+    query: getProject,
+    variables: {
+      id: params.id,
+    },
+  });
+
   return {
     props: {
-      projectData: { projectId },
+      project: data.getProject,
+      components: components.data.listComponents.items,
     },
   };
 }

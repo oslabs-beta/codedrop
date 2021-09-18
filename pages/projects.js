@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 
-import { PROJECTS_QUERY } from '../lib/apolloQueries';
-import { useQuery } from '@apollo/client';
+import { withSSRContext } from 'aws-amplify';
+import { listProjects } from '../src/graphql/queries';
 
 import EnhancedTableHead from '../components/util/Table/EnhancedTableHead';
 import EnhancedTableToolbar from '../components/util/Table/EnhancedTableToolbar';
@@ -19,6 +19,14 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Switch from '@material-ui/core/Switch';
 import Link from '@material-ui/core/Link';
 
+// Get the list of projects from the db
+export async function getServerSideProps({ req }) {
+  const SSR = withSSRContext({ req });
+  const response = await SSR.API.graphql({ query: listProjects });
+  return { props: { projects: response.data.listProjects.items } };
+}
+
+// Supplement DB data with dummy data until the extra fields are added to the db
 function createData({
   id,
   projectName,
@@ -49,7 +57,7 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-export default function EnhancedTable() {
+export default function EnhancedTable({ projects = [] }) {
   const router = useRouter();
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
@@ -57,13 +65,7 @@ export default function EnhancedTable() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const { loading, error, data } = useQuery(PROJECTS_QUERY, {
-    fetchPolicy: 'network-only', // Used for first execution
-    nextFetchPolicy: 'cache-and-network', //all subsequent calls,
-  });
-
-  // projectsArray is an array where each element has an id, and a projectName
-  const rows = data?.queryProject.map((row) => createData({ ...row })) || '[]';
+  const rows = projects.map((row) => createData({ ...row })) || '[]';
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -111,12 +113,6 @@ export default function EnhancedTable() {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-
-  // loading and error catch for the gql query
-  if (loading) return 'Loading...';
-  if (error) {
-    return `Error! ${error?.message || ``}`;
-  }
 
   return (
     <Box sx={{ width: '100%' }}>

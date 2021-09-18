@@ -1,0 +1,28 @@
+type Todo @model {
+  id: ID!
+  name: String!
+  description: String
+}
+
+type User @model {
+	id: ID!
+	username: String!
+	projects: [Project]
+}
+
+type Project @model {
+	id: ID!
+	projectName: String 
+	user: [User] 
+	layout: String! 
+}
+
+type Component @model {
+	id: ID!
+  containerStyle: String
+	type: String!
+	src: String
+	style: String
+  value: String
+  labelStyle: String
+}

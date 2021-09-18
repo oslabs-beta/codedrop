@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-codedrop-dev-145442-authRole",
+      "UnauthRoleArn": "arn:aws:iam::868537494308:role/amplify-codedrop-dev-145442-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::868537494308:role/amplify-codedrop-dev-145442-authRole",
+      "Region": "us-west-2",
+      "DeploymentBucketName": "amplify-codedrop-dev-145442-deployment",
+      "UnauthRoleName": "amplify-codedrop-dev-145442-unauthRole",
+      "StackName": "amplify-codedrop-dev-145442",
+      "StackId": "arn:aws:cloudformation:us-west-2:868537494308:stack/amplify-codedrop-dev-145442/b500d1e0-1738-11ec-b19a-0261592c5e0f",
+      "AmplifyAppId": "d1qxoyblwc5ene"
+    }
+  }
+}
