@@ -1,6 +1,5 @@
 import { useState, Fragment } from 'react';
 import { genearteReactCodeString } from '../components/api/genearteReactCodeString';
-
 import Box from '@material-ui/core/Box';
 import Drawer from '@material-ui/core/Drawer';
 import Button from '@material-ui/core/Button';
@@ -24,6 +23,10 @@ export default function CodeDrawer({ layout, components }) {
     padding: 0,
     margin: 0,
   };
+
+  const box = {
+    height: '645px',
+  };
   
   const drawerDirection = 'bottom';
 
@@ -34,20 +37,26 @@ export default function CodeDrawer({ layout, components }) {
     genearteReactCodeString({
       components,
       layout,
+      framework: 'React',
       callback: setCodeString,
     });
     setShowCode(!showCode);
   };
 
-  const box = {
-    height: '645px',
-  };
+  const selectFrameworkType = (event) => {
+    genearteReactCodeString({
+      components,
+      layout,
+      framework: event.target.innerText,
+      callback: setCodeString,
+    });
+  }
 
   const list = (anchor) => (
     <Box role="presentation" style={box}>
       <List style={flexContainer}>
         {frameworks.map((framework, index) => (
-          <ListItem button key={framework.name}>
+          <ListItem button key={framework.name} onClick={(e) => selectFrameworkType(e)}>
             {framework.icon}
             <ListItemText primary={framework.name} />
           </ListItem>
