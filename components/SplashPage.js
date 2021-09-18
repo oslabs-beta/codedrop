@@ -4,7 +4,8 @@ import { makeStyles } from '@material-ui/styles';
 import { v4 as uuidv4 } from 'uuid';
 import { useMutation } from '@apollo/client';
 import initialData  from '../components/dnd/initial-data';
-import { PROJECT_MUTATION} from '../lib/apolloMutations';
+import { PROJECT_MUTATION, ADD_USER } from '../lib/apolloMutations';
+
 
 const useStyles = makeStyles({
   root: {
@@ -29,15 +30,24 @@ const useStyles = makeStyles({
   },
 });
 
-function SplashPage() {
+function SplashPage({ session }) {
   const router = useRouter();
   const classes = useStyles();
   const initialLayout = initialData.layout
   const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
+  const [addUser, { data: userData, loading: userLoading, error: userError }] = useMutation(ADD_USER);
+
+  const username = ( session ? session.email : 'guest')
   
   const newProject = () => {
 
     const projectId = uuidv4();
+
+    addUser({
+      variables: {
+        username
+      },
+    }); 
 
     updateProject({
       variables: {
