@@ -61,6 +61,9 @@ export const createUser = /* GraphQL */ `
           updatedAt
         }
         layout
+        components {
+          nextToken
+        }
         createdAt
         updatedAt
       }
@@ -87,6 +90,9 @@ export const updateUser = /* GraphQL */ `
           updatedAt
         }
         layout
+        components {
+          nextToken
+        }
         createdAt
         updatedAt
       }
@@ -113,6 +119,9 @@ export const deleteUser = /* GraphQL */ `
           updatedAt
         }
         layout
+        components {
+          nextToken
+        }
         createdAt
         updatedAt
       }
@@ -143,6 +152,16 @@ export const createProject = /* GraphQL */ `
         updatedAt
       }
       layout
+      components {
+        items {
+          id
+          projectID
+          componentID
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -170,6 +189,16 @@ export const updateProject = /* GraphQL */ `
         updatedAt
       }
       layout
+      components {
+        items {
+          id
+          projectID
+          componentID
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -197,6 +226,148 @@ export const deleteProject = /* GraphQL */ `
         updatedAt
       }
       layout
+      components {
+        items {
+          id
+          projectID
+          componentID
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createProjectComponents = /* GraphQL */ `
+  mutation CreateProjectComponents(
+    $input: CreateProjectComponentsInput!
+    $condition: ModelProjectComponentsConditionInput
+  ) {
+    createProjectComponents(input: $input, condition: $condition) {
+      id
+      projectID
+      componentID
+      project {
+        id
+        projectName
+        user {
+          id
+          username
+          createdAt
+          updatedAt
+        }
+        layout
+        components {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      component {
+        id
+        containerStyle
+        type
+        src
+        style
+        value
+        labelStyle
+        createdAt
+        updatedAt
+        projects {
+          nextToken
+        }
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateProjectComponents = /* GraphQL */ `
+  mutation UpdateProjectComponents(
+    $input: UpdateProjectComponentsInput!
+    $condition: ModelProjectComponentsConditionInput
+  ) {
+    updateProjectComponents(input: $input, condition: $condition) {
+      id
+      projectID
+      componentID
+      project {
+        id
+        projectName
+        user {
+          id
+          username
+          createdAt
+          updatedAt
+        }
+        layout
+        components {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      component {
+        id
+        containerStyle
+        type
+        src
+        style
+        value
+        labelStyle
+        createdAt
+        updatedAt
+        projects {
+          nextToken
+        }
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteProjectComponents = /* GraphQL */ `
+  mutation DeleteProjectComponents(
+    $input: DeleteProjectComponentsInput!
+    $condition: ModelProjectComponentsConditionInput
+  ) {
+    deleteProjectComponents(input: $input, condition: $condition) {
+      id
+      projectID
+      componentID
+      project {
+        id
+        projectName
+        user {
+          id
+          username
+          createdAt
+          updatedAt
+        }
+        layout
+        components {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      component {
+        id
+        containerStyle
+        type
+        src
+        style
+        value
+        labelStyle
+        createdAt
+        updatedAt
+        projects {
+          nextToken
+        }
+      }
       createdAt
       updatedAt
     }
@@ -217,6 +388,16 @@ export const createComponent = /* GraphQL */ `
       labelStyle
       createdAt
       updatedAt
+      projects {
+        items {
+          id
+          projectID
+          componentID
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
     }
   }
 `;
@@ -235,6 +416,16 @@ export const updateComponent = /* GraphQL */ `
       labelStyle
       createdAt
       updatedAt
+      projects {
+        items {
+          id
+          projectID
+          componentID
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
     }
   }
 `;
@@ -253,6 +444,16 @@ export const deleteComponent = /* GraphQL */ `
       labelStyle
       createdAt
       updatedAt
+      projects {
+        items {
+          id
+          projectID
+          componentID
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
     }
   }
 `;

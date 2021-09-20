@@ -15,6 +15,18 @@ type Project @model {
 	projectName: String 
 	user: [User] 
 	layout: String! 
+	components: [ProjectComponents] @connection(keyName: "byProject", fields: ["id"])
+}
+
+type ProjectComponents
+  @model(queries: null)
+  @key(name: "byProject", fields: ["projectID", "componentID"])
+  @key(name: "byComponent", fields: ["componentID", "projectID"]) {
+  id: ID!
+  projectID: ID!
+  componentID: ID!
+  project: Project! @connection(fields: ["projectID"])
+  component: Component! @connection(fields: ["componentID"])
 }
 
 type Component @model {
@@ -27,4 +39,5 @@ type Component @model {
   labelStyle: String
 	createdAt: AWSDateTime
 	updatedAt: AWSDateTime
+	projects: [ProjectComponents] @connection(keyName: "byComponent", fields: ["id"])
 }

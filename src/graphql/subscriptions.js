@@ -49,6 +49,9 @@ export const onCreateUser = /* GraphQL */ `
           updatedAt
         }
         layout
+        components {
+          nextToken
+        }
         createdAt
         updatedAt
       }
@@ -72,6 +75,9 @@ export const onUpdateUser = /* GraphQL */ `
           updatedAt
         }
         layout
+        components {
+          nextToken
+        }
         createdAt
         updatedAt
       }
@@ -95,6 +101,9 @@ export const onDeleteUser = /* GraphQL */ `
           updatedAt
         }
         layout
+        components {
+          nextToken
+        }
         createdAt
         updatedAt
       }
@@ -122,6 +131,16 @@ export const onCreateProject = /* GraphQL */ `
         updatedAt
       }
       layout
+      components {
+        items {
+          id
+          projectID
+          componentID
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -146,6 +165,16 @@ export const onUpdateProject = /* GraphQL */ `
         updatedAt
       }
       layout
+      components {
+        items {
+          id
+          projectID
+          componentID
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -170,6 +199,139 @@ export const onDeleteProject = /* GraphQL */ `
         updatedAt
       }
       layout
+      components {
+        items {
+          id
+          projectID
+          componentID
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateProjectComponents = /* GraphQL */ `
+  subscription OnCreateProjectComponents {
+    onCreateProjectComponents {
+      id
+      projectID
+      componentID
+      project {
+        id
+        projectName
+        user {
+          id
+          username
+          createdAt
+          updatedAt
+        }
+        layout
+        components {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      component {
+        id
+        containerStyle
+        type
+        src
+        style
+        value
+        labelStyle
+        createdAt
+        updatedAt
+        projects {
+          nextToken
+        }
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateProjectComponents = /* GraphQL */ `
+  subscription OnUpdateProjectComponents {
+    onUpdateProjectComponents {
+      id
+      projectID
+      componentID
+      project {
+        id
+        projectName
+        user {
+          id
+          username
+          createdAt
+          updatedAt
+        }
+        layout
+        components {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      component {
+        id
+        containerStyle
+        type
+        src
+        style
+        value
+        labelStyle
+        createdAt
+        updatedAt
+        projects {
+          nextToken
+        }
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteProjectComponents = /* GraphQL */ `
+  subscription OnDeleteProjectComponents {
+    onDeleteProjectComponents {
+      id
+      projectID
+      componentID
+      project {
+        id
+        projectName
+        user {
+          id
+          username
+          createdAt
+          updatedAt
+        }
+        layout
+        components {
+          nextToken
+        }
+        createdAt
+        updatedAt
+      }
+      component {
+        id
+        containerStyle
+        type
+        src
+        style
+        value
+        labelStyle
+        createdAt
+        updatedAt
+        projects {
+          nextToken
+        }
+      }
       createdAt
       updatedAt
     }
@@ -187,6 +349,16 @@ export const onCreateComponent = /* GraphQL */ `
       labelStyle
       createdAt
       updatedAt
+      projects {
+        items {
+          id
+          projectID
+          componentID
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
     }
   }
 `;
@@ -202,6 +374,16 @@ export const onUpdateComponent = /* GraphQL */ `
       labelStyle
       createdAt
       updatedAt
+      projects {
+        items {
+          id
+          projectID
+          componentID
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
     }
   }
 `;
@@ -217,6 +399,16 @@ export const onDeleteComponent = /* GraphQL */ `
       labelStyle
       createdAt
       updatedAt
+      projects {
+        items {
+          id
+          projectID
+          componentID
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
     }
   }
 `;

@@ -37,7 +37,6 @@ export default function EditorPanel({
   handleUpdateComponent,
 }) {
   const classes = useStyles();
-  const { __typename, ...otherComponentProps } = component;
   const [id, setId] = useState(component.id);
   const [value, setValue] = useState(component.value);
   const [style, setStyle] = useState(component.style);
@@ -53,7 +52,7 @@ export default function EditorPanel({
       const timeOutId = setTimeout(
         () =>
           handleUpdateComponent({
-            ...otherComponentProps,
+            ...component,
             value: value,
             style: style,
             containerStyle: containerStyle,
@@ -62,7 +61,7 @@ export default function EditorPanel({
       );
       return () => clearTimeout(timeOutId);
     }
-  }, [id, otherComponentProps, containerStyle, component, style, value, handleUpdateComponent]);
+  }, [id, containerStyle, component, style, value, handleUpdateComponent]);
 
   return (
     <div className={classes.editorBar}>

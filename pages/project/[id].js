@@ -1,8 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
 
 import { API, withSSRContext } from 'aws-amplify';
-import { getProject, listComponents, listProjects } from '../../src/graphql/queries';
-import { createComponent, updateProject, updateComponent } from '../../src/graphql/mutations';
+import { listProjects } from '../../src/graphql/queries';
+import { getProject } from '../../src/graphql/customQueries';
+
+import { createComponent, updateProject, updateComponent, createProjectComponents } from '../../src/graphql/mutations';
+
 import {
   onCreateComponent,
   onUpdateComponent,
@@ -36,7 +39,7 @@ const useStyles = makeStyles({
 
 async function handleUpdateComponent(updatedComponent) {
   try {
-    const { data } = await API.graphql({
+    await API.graphql({
       query: updateComponent,
       variables: {
         input: updatedComponent,
@@ -48,12 +51,21 @@ async function handleUpdateComponent(updatedComponent) {
   }
 }
 
-async function handleCreateComponent(newComponent) {
+async function handleCreateComponent(newComponent, projectId) {
   try {
-    const { data } = await API.graphql({
+    await API.graphql({
       query: createComponent,
       variables: {
         input: newComponent,
+      },
+    });
+    await API.graphql({
+      query: createProjectComponents,
+      variables: {
+        input: {
+          componentID: newComponent.id,
+          projectID: projectId,
+        },
       },
     });
   } catch ({ errors }) {
@@ -64,7 +76,7 @@ async function handleCreateComponent(newComponent) {
 
 async function handleUpdateProject(updatedProject) {
   try {
-    const { data } = await API.graphql({
+    await API.graphql({
       query: updateProject,
       variables: {
         input: updatedProject,
@@ -155,7 +167,7 @@ const Container = ({ initialProject, initialComponents = [] }) => {
           id: shortid.generate(),
           ...item.component,
         };
-        handleCreateComponent(newComponent);
+        handleCreateComponent(newComponent, projectId);
         const newItem = {
           id: newComponent.id,
           type: COMPONENT,
@@ -304,18 +316,17 @@ export async function getStaticPaths() {
 // Get the project from the db
 export async function getStaticProps({ params }) {
   const SSR = withSSRContext();
-  const components = await SSR.API.graphql({ query: listComponents });
   const { data } = await SSR.API.graphql({
     query: getProject,
     variables: {
       id: params.id,
     },
   });
-
+  const components = data.getProject.components.items.map(c => c.component)
   return {
     props: {
       initialProject: data.getProject,
-      initialComponents: components.data.listComponents.items,
+      initialComponents: components,
     },
   };
 }

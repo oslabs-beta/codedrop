@@ -45,6 +45,9 @@ export const getUser = /* GraphQL */ `
           updatedAt
         }
         layout
+        components {
+          nextToken
+        }
         createdAt
         updatedAt
       }
@@ -96,6 +99,16 @@ export const getProject = /* GraphQL */ `
         updatedAt
       }
       layout
+      components {
+        items {
+          id
+          projectID
+          componentID
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -118,6 +131,9 @@ export const listProjects = /* GraphQL */ `
           updatedAt
         }
         layout
+        components {
+          nextToken
+        }
         createdAt
         updatedAt
       }
@@ -137,6 +153,16 @@ export const getComponent = /* GraphQL */ `
       labelStyle
       createdAt
       updatedAt
+      projects {
+        items {
+          id
+          projectID
+          componentID
+          createdAt
+          updatedAt
+        }
+        nextToken
+      }
     }
   }
 `;
@@ -157,6 +183,9 @@ export const listComponents = /* GraphQL */ `
         labelStyle
         createdAt
         updatedAt
+        projects {
+          nextToken
+        }
       }
       nextToken
     }

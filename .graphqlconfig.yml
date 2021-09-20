@@ -1,6 +1,6 @@
 projects:
   codedrop:
-    schemaPath: src/graphql/schema.json
+    schemaPath: amplify/backend/api/codedrop/build/schema.graphql
     includes:
       - src/graphql/**/*.js
     excludes:
