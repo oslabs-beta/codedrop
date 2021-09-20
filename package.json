@@ -21,6 +21,7 @@
     "@next-auth/firebase-adapter": "^0.1.2",
     "aws-amplify": "^4.2.9",
     "axios": "^0.21.1",
+    "babel-plugin-styled-components": "^1.13.2",
     "babel-preset-next": "^1.4.0",
     "classnames": "^2.2.6",
     "codemirror": "^5.62.2",
