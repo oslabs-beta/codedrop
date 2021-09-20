@@ -9,7 +9,7 @@ export default function genearteReactCodeString(req, res) {
     const parseComponents = (coms, components) => {
       for (const component of coms) {
         const fullComponentDetails = components.find((c) => c.id === component.id);
-        if (fullComponentDetails) result.push(htmlGenerator(fullComponentDetails))
+        if (fullComponentDetails) result.push(htmlGenerator(fullComponentDetails, framework))
       }
     };
 

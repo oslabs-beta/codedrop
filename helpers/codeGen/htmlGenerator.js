@@ -1,7 +1,7 @@
 import { parseCSSText } from './parseCSSText';
 import { removeLinebreaks } from './removeLinebreaks';
 
-export const htmlGenerator = (fullComponentDetails) => {
+export const htmlGenerator = (fullComponentDetails, framework) => {
   const { containerStyle, id, style, value } = fullComponentDetails;
   const inlineContainerStyle = parseCSSText(removeLinebreaks(containerStyle));
   const inlineStyle = parseCSSText(removeLinebreaks(style));
@@ -27,5 +27,8 @@ export const htmlGenerator = (fullComponentDetails) => {
     }
   };
 
+  if (framework === "Angular") return `<div style="${inlineContainerStyle}">${generateChildHtml()}</div>`;
+
   return `<div style={${inlineContainerStyle}}>${generateChildHtml()}</div>`;
 };
+
