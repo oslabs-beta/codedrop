@@ -31,7 +31,11 @@ const useStyles = makeStyles({
   },
 });
 
-export default function EditorPanel({ component, components, setShowEditor, addComponent }) {
+export default function EditorPanel({
+  component,
+  setShowEditor,
+  handleUpdateComponent,
+}) {
   const classes = useStyles();
   const { __typename, ...otherComponentProps } = component;
   const [id, setId] = useState(component.id);
@@ -45,24 +49,20 @@ export default function EditorPanel({ component, components, setShowEditor, addC
       setValue(component.value);
       setStyle(component.style);
       setContainerStyle(component.containerStyle);
-    } else {
+    } else if(value !== component.value || style !== component.style || containerStyle !== component.containerStyle) {
       const timeOutId = setTimeout(
         () =>
-          addComponent({
-            variables: {
-              component: {
-                ...otherComponentProps,
-                value: value,
-                style: style,
-                containerStyle: containerStyle,
-              },
-            },
+          handleUpdateComponent({
+            ...otherComponentProps,
+            value: value,
+            style: style,
+            containerStyle: containerStyle,
           }),
         250
       );
       return () => clearTimeout(timeOutId);
     }
-  }, [containerStyle, component, style, value]);
+  }, [id, otherComponentProps, containerStyle, component, style, value, handleUpdateComponent]);
 
   return (
     <div className={classes.editorBar}>
@@ -75,10 +75,7 @@ export default function EditorPanel({ component, components, setShowEditor, addC
         <Input value={value} onChange={(e) => setValue(e.target.value)} />
         <h4>Styling</h4>
         <StylingTabs
-          component={otherComponentProps}
-          components={components}
-          addComponent={addComponent}
-          style={style} 
+          style={style}
           setStyle={setStyle}
           containerStyle={containerStyle}
           setContainerStyle={setContainerStyle}

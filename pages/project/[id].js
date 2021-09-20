@@ -1,10 +1,13 @@
-import React, { useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
-import { useQuery, useMutation, useSubscription } from '@apollo/client';
-import { API, DataStore, graphqlOperation, withSSRContext } from 'aws-amplify';
+import { API, withSSRContext } from 'aws-amplify';
 import { getProject, listComponents, listProjects } from '../../src/graphql/queries';
-import { createComponent, updateProject } from '../../src/graphql/mutations';
-import { onCreateComponent, onUpdateProject } from '../../src/graphql/subscriptions';
+import { createComponent, updateProject, updateComponent } from '../../src/graphql/mutations';
+import {
+  onCreateComponent,
+  onUpdateComponent,
+  onUpdateProject,
+} from '../../src/graphql/subscriptions';
 
 import { makeStyles } from '@material-ui/styles';
 import SidebarPanel from '../../components/SidebarPanel';
@@ -19,8 +22,6 @@ import {
   handleRemoveItemFromLayout,
 } from '../../components/dnd/helpers';
 
-import { PROJECT_QUERY, COMPONENTS_QUERY } from '../../lib/apolloQueries';
-import { PROJECT_MUTATION, ADD_COMPONENT } from '../../lib/apolloMutations';
 import { SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components/dnd/constants';
 
 import shortid from 'shortid';
@@ -33,15 +34,19 @@ const useStyles = makeStyles({
   },
 });
 
-const componentCreationSubscription = API.graphql(graphqlOperation(onCreateComponent)).subscribe({
-  next: ({ provider, value }) => console.log({ provider, value }),
-  error: (error) => console.warn(error),
-});
-
-const projectUpdateSubscription = API.graphql(graphqlOperation(onUpdateProject)).subscribe({
-  next: ({ provider, value }) => console.log({ provider, value }),
-  error: (error) => console.warn(error),
-});
+async function handleUpdateComponent(updatedComponent) {
+  try {
+    const { data } = await API.graphql({
+      query: updateComponent,
+      variables: {
+        input: updatedComponent,
+      },
+    });
+  } catch ({ errors }) {
+    console.error(...errors);
+    throw new Error(errors[0].message);
+  }
+}
 
 async function handleCreateComponent(newComponent) {
   try {
@@ -50,9 +55,7 @@ async function handleCreateComponent(newComponent) {
       variables: {
         input: newComponent,
       },
-      refetchQueries: [{ query: listComponents }],
     });
-    console.log('new component', data);
   } catch ({ errors }) {
     console.error(...errors);
     throw new Error(errors[0].message);
@@ -66,39 +69,57 @@ async function handleUpdateProject(updatedProject) {
       variables: {
         input: updatedProject,
       },
-      refetchQueries: [
-        {
-          query: getProject,
-          variables: {
-            id: updatedProject.id,
-          },
-        },
-      ],
     });
-    console.log('updated project', data);
   } catch ({ errors }) {
     console.error(...errors);
     throw new Error(errors[0].message);
   }
 }
 
-const Container = ({ project, components = [] }) => {
-  const projectId = project.id;
+const Container = ({ initialProject, initialComponents = [] }) => {
   const classes = useStyles();
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
+  const [components, setComponents] = useState(initialComponents);
+  const [project, setProject] = useState(initialProject);
+  const projectId = initialProject.id;
 
   let layout = JSON.parse(project?.layout || '[]');
 
   useEffect(() => {
-    fetchPosts();
-    async function fetchPosts() {
-      const postData = await DataStore.query(Post);
-      setPosts(postData);
-    }
-    const subscription = DataStore.observe(Post).subscribe(() => fetchPosts());
-    return () => subscription.unsubscribe();
+    subscribeComponentCreation();
+    subscribeComponentUpdate();
+    subscribeProjectUpdate();
   }, []);
+
+  const subscribeComponentCreation = () => {
+    API.graphql({ query: onCreateComponent }).subscribe({
+      next: (componentData) => {
+        const newComponent = componentData.value.data.onCreateComponent;
+        setComponents([...components, newComponent]);
+      },
+    });
+  };
+
+  const subscribeProjectUpdate = () => {
+    API.graphql({ query: onUpdateProject }).subscribe({
+      next: (projectData) => setProject(projectData.value.data.onUpdateProject),
+    });
+  };
+
+  const subscribeComponentUpdate = () => {
+    API.graphql({ query: onUpdateComponent }).subscribe({
+      next: (componentData) => {
+        const updatedComponent = componentData.value.data.onUpdateComponent;
+        const updatedComponents = components.map(c => {
+          if (c.id === updatedComponent.id) return updatedComponent
+          return c
+        })
+        setShowEditor(updatedComponent)
+        setComponents(updatedComponents);
+      },
+    });
+  };
 
   const handleDropToTrashBin = useCallback(
     (dropZone, item) => {
@@ -135,6 +156,10 @@ const Container = ({ project, components = [] }) => {
           ...item.component,
         };
         handleCreateComponent(newComponent);
+        const newItem = {
+          id: newComponent.id,
+          type: COMPONENT,
+        };
         const newLayout = handleMoveSidebarComponentIntoParent(layout, splitDropZonePath, newItem);
         handleUpdateProject({
           layout: JSON.stringify(newLayout),
@@ -253,12 +278,9 @@ const Container = ({ project, components = [] }) => {
       </div>
       {showEditor && (
         <EditorPanel
-          component={components.find((c) => c.id === showEditor.id)}
-          components={components}
-          addComponent={handleCreateComponent}
+          component={showEditor}
+          handleUpdateComponent={handleUpdateComponent}
           setShowEditor={setShowEditor}
-          data={{ layout }}
-          onDrop={handleDropToTrashBin}
         />
       )}
     </div>
@@ -292,8 +314,8 @@ export async function getStaticProps({ params }) {
 
   return {
     props: {
-      project: data.getProject,
-      components: components.data.listComponents.items,
+      initialProject: data.getProject,
+      initialComponents: components.data.listComponents.items,
     },
   };
 }

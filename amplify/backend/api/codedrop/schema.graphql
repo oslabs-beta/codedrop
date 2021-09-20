@@ -25,4 +25,6 @@ type Component @model {
 	style: String
   value: String
   labelStyle: String
+	createdAt: AWSDateTime
+	updatedAt: AWSDateTime
 }

@@ -9,5 +9,6 @@
     "amplify/backend/awscloudformation": true
   },
   "editor.tabSize": 2,
-  "javascript.preferences.quoteStyle": "single"
+  "javascript.preferences.quoteStyle": "single",
+  "bloop.openOnSuggestionsAvailable": false
 }
