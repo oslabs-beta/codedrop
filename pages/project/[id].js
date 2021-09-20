@@ -38,11 +38,12 @@ const useStyles = makeStyles({
 });
 
 async function handleUpdateComponent(updatedComponent) {
+  const { projects, ...componentToUpdate } = updatedComponent;
   try {
     await API.graphql({
       query: updateComponent,
       variables: {
-        input: updatedComponent,
+        input: componentToUpdate,
       },
     });
   } catch ({ errors }) {
