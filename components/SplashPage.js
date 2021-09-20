@@ -2,9 +2,10 @@ import { Typography, Button, Container } from '@material-ui/core';
 import { useRouter } from 'next/router';
 import { makeStyles } from '@material-ui/styles';
 import { v4 as uuidv4 } from 'uuid';
-import { useMutation } from '@apollo/client';
-import initialData  from '../components/dnd/initial-data';
-import { PROJECT_MUTATION} from '../lib/apolloMutations';
+import initialData from '../components/dnd/initial-data';
+
+import { API } from 'aws-amplify';
+import { createProject } from '../src/graphql/mutations';
 
 const useStyles = makeStyles({
   root: {
@@ -29,29 +30,36 @@ const useStyles = makeStyles({
   },
 });
 
+async function handleCreateProject(newProject) {
+  try {
+    await API.graphql({
+      query: createProject,
+      variables: {
+        input: newProject,
+      },
+    });
+  } catch ({ errors }) {
+    console.error(...errors);
+    throw new Error(errors[0].message);
+  }
+}
+
 function SplashPage() {
   const router = useRouter();
   const classes = useStyles();
-  const initialLayout = initialData.layout
-  const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
-  
+  const initialLayout = initialData.layout;
+
   const newProject = () => {
+    const projectId = uuidv4().toString();
 
-    const projectId = uuidv4();
-
-    updateProject({
-      variables: {
-        project: {
-          layout: JSON.stringify(initialLayout),
-          id: projectId.toString(),
-          projectName: 'test',
-        },
-      },
-        awaitRefetchQueries: true,
-    }); 
-
+    handleCreateProject({
+      id: projectId,
+      layout: JSON.stringify(initialLayout),
+      projectName: 'test2',
+    });
+    
     router.push(`/project/${projectId}`)
-  }
+  };
 
   return (
     <>
