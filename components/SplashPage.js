@@ -36,8 +36,10 @@ function SplashPage({ session }) {
   const initialLayout = initialData.layout
   const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
   const [addUser, { data: userData, loading: userLoading, error: userError }] = useMutation(ADD_USER);
+
   
-  const username = ( session.user.email ? session.user.email : 'guest')
+  const username = ( session ? session.user.email : 'guest')
+  console.log('username, ', username);
   
   const newProject = () => {
     console.log(username)
@@ -48,6 +50,10 @@ function SplashPage({ session }) {
         username
       },
     }); 
+
+    if(userError) {
+      console.log('userError ', userError);
+    }
 
     updateProject({
       variables: {
