@@ -60,8 +60,10 @@ function SplashPage({ session }) {
         project: {
           layout: JSON.stringify(initialLayout),
           id: projectId.toString(),
-          projectName: 'test',
-          // userid: [(user || 'guest']
+          projectName: 'default',
+          user: {
+            username: username
+          }
         },
       },
         awaitRefetchQueries: true,
