@@ -3,34 +3,27 @@ import { genearteReactCodeString } from '../components/api/genearteReactCodeStri
 import Box from '@material-ui/core/Box';
 import Drawer from '@material-ui/core/Drawer';
 import Button from '@material-ui/core/Button';
-import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
+import Tab from '@material-ui/core/Tab';
+import Tabs from '@material-ui/core/Tabs';
 import CodeIcon from '@material-ui/icons/Code';
+import { FaAngular } from 'react-icons/fa';
 
 import Editor from './Editor';
 import ReactIcon from './util/Icons/ReactIcon';
-// import AngularIcon from './util/Icons/AngularIcon';
 
 export default function CodeDrawer({ layout, components }) {
   const [showCode, setShowCode] = useState(false);
   const [codeString, setCodeString] = useState(``);
+  const [value, setValue] = useState(0);
 
-  const flexContainer = {
-    display: 'flex',
-    flexDirection: 'row',
-    padding: 0,
-    margin: 0,
-  };
+  const handleChangeTabs = () => setValue(value === 0 ? 1 : 0)
 
-  const box = {
-    height: '645px',
-  };
+  const box = { height: '645px' };
   
   const drawerDirection = 'bottom';
 
-  const frameworks = [{ name: 'React', icon: <ReactIcon /> }, { name: 'Angular', icon: <ReactIcon /> }];
+  const frameworks = [{ name: 'React', icon: <ReactIcon /> }, { name: 'Angular', icon: <FaAngular /> }];
 
   const toggleDrawer = (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) return;
@@ -43,25 +36,32 @@ export default function CodeDrawer({ layout, components }) {
     setShowCode(!showCode);
   };
 
-  const selectFrameworkType = (event) => {
+  const selectFrameworkType = (frameworkName) => {
     genearteReactCodeString({
       components,
       layout,
-      framework: event.target.innerText,
+      framework: frameworkName,
       callback: setCodeString,
     });
   }
 
   const list = (anchor) => (
     <Box role="presentation" style={box}>
-      <List style={flexContainer}>
+    <div>
+      <Tabs 
+        value={value}
+        onChange={handleChangeTabs}
+        aria-label="select framework tab">
         {frameworks.map((framework, index) => (
-          <ListItem button key={framework.name} onClick={(e) => selectFrameworkType(e)}>
-            {framework.icon}
-            <ListItemText primary={framework.name} />
-          </ListItem>
+          <Tab
+            key={index}
+            icon={framework.icon}
+            label={framework.name}
+            onClick={(e) => selectFrameworkType(framework.name)}>
+          </Tab>
         ))}
-      </List>
+      </Tabs>
+    </div>
       <Divider />
       <Editor
         language="js"

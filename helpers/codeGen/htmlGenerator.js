@@ -24,6 +24,7 @@ export const htmlGenerator = (fullComponentDetails, framework) => {
       return `<div style={${inlineContainerStyle}}>${generateChildHtml()}</div>`;
     }
   }
+
   const AngularElements = {
     H1: `<h1 style="${inlineStyleWoLineBreaks}">${value}</h1>`,
     H2: `<h2 style="${inlineStyleWoLineBreaks}">${value}</h1>`,
