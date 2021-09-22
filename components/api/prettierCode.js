@@ -13,7 +13,6 @@ export const prettierCode = async (codeToFormat, callback = null) => {
     )
     .then((body) => body.data.code);
   if (callback) {
-    console.log('callback ', callback)
     return callback(formattedCode);
   }
   return formattedCode;

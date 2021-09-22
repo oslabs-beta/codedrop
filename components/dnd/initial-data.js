@@ -17,5 +17,4 @@ const initialData =  {
   components: {},
 };
 
-
 export default initialData;
