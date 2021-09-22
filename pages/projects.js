@@ -59,16 +59,24 @@ export default function EnhancedTable({ session }) {
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  
+  //check if session exists, if so pull out username
+  const username = ( session ? session.user.email : 'guest')
 
   //query to pull list of projects
-  const { loading, error, data } = useQuery(PROJECTS_QUERY, {
-    fetchPolicy: 'network-only', // Used for first execution
-    nextFetchPolicy: 'cache-and-network', //all subsequent calls,
+  const { loading, error, data } = useQuery(PROJECTS_QUERY,
+    
+    {
+      variables:{
+        username
+      },
+      fetchPolicy: 'network-only', // Used for first execution
+      nextFetchPolicy: 'cache-and-network', //all subsequent calls,
 
   });
 
   // projectsArray is an array where each element has an id, and a projectName
-  const rows = data?.queryProject.map((row) => createData({ ...row })) || '[]';
+  const rows = data?.getUser.projects.map((row) => createData({ ...row })) || '[]';
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
