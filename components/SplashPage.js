@@ -37,12 +37,9 @@ function SplashPage({ session }) {
   const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
   const [addUser, { data: userData, loading: userLoading, error: userError }] = useMutation(ADD_USER);
 
-  
   const username = ( session ? session.user.email : 'guest')
-  console.log('username, ', username);
   
   const newProject = () => {
-    console.log(username)
     const projectId = uuidv4();
 
     addUser({
@@ -50,10 +47,6 @@ function SplashPage({ session }) {
         username
       },
     }); 
-
-    if(userError) {
-      console.log('userError ', userError);
-    }
 
     updateProject({
       variables: {
