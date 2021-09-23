@@ -21,24 +21,37 @@ import Link from '@material-ui/core/Link';
 
 import { useSession, getSession } from 'next-auth/client';
 
+// this is needed to receive and format the array of users returned the projectsQuery
+const parseUser = (user) => {
+  const userArray = [];
+  user.forEach(userObj => {
+    userArray.push(userObj.username)
+  })
+  //return comma separated usernames as string
+  return userArray.join(', ');
+}
+
 //this is where data is mocked, id will be passed in here to give project access
 function createData({
   id,
   projectName,
   shared = true,
-  teamMembers = 'Abid, Emily, Blake and Dan',
-  updatedAt = 'Thursday, August 14th 2021',
-  createdAt = 'Thursday, August 14th 2021',
+  user,
+  created,
+  modified,
 }) {
   return {
     id,
     name: projectName,
     shared,
-    teamMembers,
-    updatedAt,
-    createdAt,
+    teamMembers: parseUser(user),
+    updatedAt: modified,
+    createdAt: created,
   };
 }
+
+
+
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) return -1;

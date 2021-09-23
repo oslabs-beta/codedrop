@@ -45,6 +45,10 @@ function SplashPage({ session }) {
     console.log(username)
     const projectId = uuidv4();
 
+    const date = new Date();
+    let currentDate = date.toDateString();    
+    console.log(currentDate);
+
     addUser({
       variables: {
         username
@@ -61,6 +65,8 @@ function SplashPage({ session }) {
           layout: JSON.stringify(initialLayout),
           id: projectId.toString(),
           projectName: 'default',
+          modified: currentDate,
+          created: currentDate,
           user: {
             username: username
           }

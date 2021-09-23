@@ -47,6 +47,9 @@ const Container = ({ projectData }) => {
     variables: { id: projectId },
   });
 
+  const date = new Date();
+  let currentDate = date.toDateString();    
+
   const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
 
   let layout = JSON.parse(projectDataGql?.getProject?.layout || '[]');
@@ -76,6 +79,7 @@ const Container = ({ projectData }) => {
             layout: JSON.stringify(newLayout),
             id: projectId.toString(),
             projectName: 'test',
+            modified: currentDate,
           },
         },
       }); 
@@ -92,6 +96,7 @@ const Container = ({ projectData }) => {
           layout: JSON.stringify(newLayout),
           id: projectId.toString(),
           projectName: 'test',
+          modified: currentDate,
         },
       },
     }); 
@@ -134,6 +139,7 @@ const Container = ({ projectData }) => {
               layout: JSON.stringify(newLayout),
               id: projectId.toString(),
               projectName: 'test',
+              modified: currentDate,
             },
           },
         }); 
@@ -155,6 +161,7 @@ const Container = ({ projectData }) => {
                 layout: JSON.stringify(newLayout),
                 id: projectId.toString(),
                 projectName: 'test',
+                modified: currentDate,
               },
             },
           });
@@ -170,6 +177,7 @@ const Container = ({ projectData }) => {
               layout: JSON.stringify(newLayout),
               id: projectId.toString(),
               projectName: 'test',
+              modified: currentDate,
             },
           },
         }); 
@@ -184,6 +192,7 @@ const Container = ({ projectData }) => {
             layout: JSON.stringify(newLayout),
             id: projectId.toString(),
             projectName: 'test',
+            modified: currentDate,
           },
         },
       }); 
