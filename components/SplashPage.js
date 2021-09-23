@@ -41,7 +41,7 @@ function SplashPage({ session }) {
   const username = ( session ? session.user.email : 'guest')
   console.log('username, ', username);
   
-  const newProject = () => {
+  const newProject = async () => {
     console.log(username)
     const projectId = uuidv4();
 
@@ -49,7 +49,7 @@ function SplashPage({ session }) {
     let currentDate = date.toDateString();    
     console.log(currentDate);
 
-    addUser({
+    await addUser({
       variables: {
         username
       },
@@ -59,7 +59,7 @@ function SplashPage({ session }) {
       console.log('userError ', userError);
     }
 
-    updateProject({
+    await updateProject({
       variables: {
         project: {
           layout: JSON.stringify(initialLayout),

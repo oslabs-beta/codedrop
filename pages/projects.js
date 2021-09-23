@@ -147,7 +147,7 @@ export default function EnhancedTable({ session }) {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar numSelected={selected.length} username={username} />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
             <EnhancedTableHead
@@ -187,7 +187,7 @@ export default function EnhancedTable({ session }) {
                         />
                       </TableCell>
                       <TableCell component="th" id={labelId} scope="row" padding="none">
-                        <Link color="#333333" onClick={() => router.push(`/project/${row.id}`)}>
+                        <Link color="#333333" underline="hover" onClick={() => router.push(`/project/${row.id}`)}>
                           {row.name}
                         </Link>
                       </TableCell>
