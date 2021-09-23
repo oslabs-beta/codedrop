@@ -12,7 +12,7 @@ import {
   handleMoveSidebarComponentIntoParent,
   handleRemoveItemFromLayout,
 } from '../../components/dnd/helpers';
-import { initializeApollo } from '../../lib/apolloClient'
+import { initializeApollo } from '../../lib/apolloClient';
 
 import { PROJECT_QUERY, COMPONENTS_QUERY } from '../../lib/apolloQueries';
 
@@ -42,14 +42,16 @@ const Container = ({ projectData }) => {
     error: loadingProjectError,
     data: projectDataGql,
   } = useQuery(PROJECT_QUERY, {
-    fetchPolicy: "network-only",   // Used for first execution to ensure local data up to date with server
-    nextFetchPolicy: "cache-and-network", //all subsequent calls,
+    fetchPolicy: 'network-only', // Used for first execution to ensure local data up to date with server
+    nextFetchPolicy: 'cache-and-network', //all subsequent calls,
     variables: { id: projectId },
   });
 
   const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
+  console.log('projectDataGql', projectDataGql);
 
   let layout = JSON.parse(projectDataGql?.getProject?.layout || '[]');
+  let projectName = projectDataGql?.projectName || '';
 
   const {
     loading: loadingComponents,
@@ -57,13 +59,16 @@ const Container = ({ projectData }) => {
     data: componentsData,
   } = useSubscription(COMPONENTS_QUERY);
 
-  const components = componentsData?.queryComponent || '[]';
-
+  //WIP
+  // const components = componentsData?.queryComponent || '[]';
+  const components = projectDataGql?.getProject.components || [];
 
   const [
     addComponent,
     { data: newComponentData, loading: newComponentLoading, error: newComponentError },
   ] = useMutation(ADD_COMPONENT);
+
+  console.log('newComponentData', newComponentData);
 
   const handleDropToTrashBin = useCallback(
     (dropZone, item) => {
@@ -78,7 +83,7 @@ const Container = ({ projectData }) => {
             projectName: 'test',
           },
         },
-      }); 
+      });
     },
     [layout, projectId, updateProject]
   );
@@ -94,7 +99,7 @@ const Container = ({ projectData }) => {
           projectName: 'test',
         },
       },
-    }); 
+    });
   };
 
   const handleDrop = useCallback(
@@ -116,6 +121,11 @@ const Container = ({ projectData }) => {
         const newComponent = {
           id: shortid.generate(),
           ...item.component,
+          projects: {
+            id: projectId,
+            layout: JSON.stringify(layout),
+            projectName,
+          },
         };
         const dbComponent = {
           variables: {
@@ -136,7 +146,7 @@ const Container = ({ projectData }) => {
               projectName: 'test',
             },
           },
-        }); 
+        });
         return;
       }
 
@@ -163,7 +173,12 @@ const Container = ({ projectData }) => {
 
         // 2.b. OR move different parent
         // TODO FIX columns. item includes children
-        const newLayout = handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem);
+        const newLayout = handleMoveToDifferentParent(
+          layout,
+          splitDropZonePath,
+          splitItemPath,
+          newItem
+        );
         updateProject({
           variables: {
             project: {
@@ -172,12 +187,17 @@ const Container = ({ projectData }) => {
               projectName: 'test',
             },
           },
-        }); 
+        });
         return;
       }
 
       // 3. Move + Create
-      const newLayout = handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem);
+      const newLayout = handleMoveToDifferentParent(
+        layout,
+        splitDropZonePath,
+        splitItemPath,
+        newItem
+      );
       updateProject({
         variables: {
           project: {
@@ -186,7 +206,7 @@ const Container = ({ projectData }) => {
             projectName: 'test',
           },
         },
-      }); 
+      });
     },
     [layout, addComponent, projectId, updateProject]
   );
@@ -256,7 +276,7 @@ const Container = ({ projectData }) => {
       </div>
       {showEditor && (
         <EditorPanel
-          component={components.find(c => c.id === showEditor.id)}
+          component={components.find((c) => c.id === showEditor.id)}
           components={components}
           addComponent={addComponent}
           setShowEditor={setShowEditor}
