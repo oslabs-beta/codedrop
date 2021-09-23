@@ -10,6 +10,11 @@
       "StackName": "amplify-codedrop-dev-145442",
       "StackId": "arn:aws:cloudformation:us-west-2:868537494308:stack/amplify-codedrop-dev-145442/b500d1e0-1738-11ec-b19a-0261592c5e0f",
       "AmplifyAppId": "d1qxoyblwc5ene"
+    },
+    "categories": {
+      "auth": {
+        "codedropc979b16e": {}
+      }
     }
   }
 }

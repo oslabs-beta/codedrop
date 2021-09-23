@@ -1,8 +1,14 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 
-import { AmplifyAuthenticator } from "@aws-amplify/ui-react";
-import { Amplify, API, Auth, withSSRContext } from "aws-amplify";
-import awsExports from "../src/aws-exports";
+import {
+  AmplifyAuthenticator,
+  AmplifySignUp,
+  AmplifySignIn,
+  AmplifySignOut,
+} from '@aws-amplify/ui-react';
+import { AuthState, onAuthUIStateChange } from '@aws-amplify/ui-components';
+import { Amplify } from 'aws-amplify';
+import awsExports from '../src/aws-exports';
 
 import { useRouter } from 'next/router';
 import { DndProvider } from 'react-dnd';
@@ -24,6 +30,9 @@ Amplify.configure({ ...awsExports, ssr: true });
 
 function MyApp(props) {
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [authState, setAuthState] = useState(null);
+  const [user, setUser] = useState(null);
   const { Component, pageProps } = props;
   const apolloClient = useApollo(pageProps.initialApolloState);
 
@@ -32,11 +41,19 @@ function MyApp(props) {
 
   useEffect(() => {
     // Remove the server-side injected CSS.
-    const jssStyles = document.querySelector('#jss-server-side');
-    if (jssStyles) {
-      jssStyles.parentElement.removeChild(jssStyles);
-    }
+    // if (!loading) {
+      return onAuthUIStateChange((nextAuthState, authData) => {
+        const jssStyles = document.querySelector('#jss-server-side');
+        if (jssStyles) {
+          jssStyles.parentElement.removeChild(jssStyles);
+        }
+        setAuthState(nextAuthState);
+        setUser(authData);
+      });
+    // }
   }, []);
+
+  const authenticated = authState === AuthState.SignedIn && user;
 
   return (
     <Fragment>
@@ -46,17 +63,42 @@ function MyApp(props) {
       </Head>
       <ThemeProvider theme={theme}>
         <ApolloProvider client={apolloClient}>
-          {/* <AmplifyAuthenticator> */}
-            {showHeaderFooter && (
-              <Layout>
-                <DndProvider backend={HTML5Backend}>
-                  <CssBaseline />
-                  <Component {...pageProps} />
-                </DndProvider>
-              </Layout>
-            )}
-            {!showHeaderFooter && <Component {...pageProps} />}
-          {/* </AmplifyAuthenticator> */}
+          {authenticated && (
+            <>
+              {showHeaderFooter && (
+                <Layout>
+                  <DndProvider backend={HTML5Backend}>
+                    <CssBaseline />
+                    <Component {...pageProps} />
+                  </DndProvider>
+                </Layout>
+              )}
+              {!showHeaderFooter && <Component {...pageProps} />}
+            </>
+          )}
+          {!authenticated && (
+            <AmplifyAuthenticator usernameAlias="email">
+              <AmplifySignUp
+                slot="sign-up"
+                usernameAlias="email"
+                formFields={[
+                  {
+                    type: 'email',
+                    label: 'Custom Email Label',
+                    placeholder: 'Custom email placeholder',
+                    inputProps: { required: true, autocomplete: 'username' },
+                  },
+                  {
+                    type: 'password',
+                    label: 'Custom Password Label',
+                    placeholder: 'Custom password placeholder',
+                    inputProps: { required: true, autocomplete: 'new-password' },
+                  },
+                ]}
+              />
+              <AmplifySignIn slot="sign-in" usernameAlias="email" />
+            </AmplifyAuthenticator>
+          )}
         </ApolloProvider>
       </ThemeProvider>
     </Fragment>
