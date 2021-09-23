@@ -4,7 +4,8 @@ import { makeStyles } from '@material-ui/styles';
 import { v4 as uuidv4 } from 'uuid';
 import { useMutation } from '@apollo/client';
 import initialData  from '../components/dnd/initial-data';
-import { PROJECT_MUTATION} from '../lib/apolloMutations';
+import { PROJECT_MUTATION, ADD_USER } from '../lib/apolloMutations';
+
 
 const useStyles = makeStyles({
   root: {
@@ -29,22 +30,40 @@ const useStyles = makeStyles({
   },
 });
 
-function SplashPage() {
+function SplashPage({ session }) {
   const router = useRouter();
   const classes = useStyles();
   const initialLayout = initialData.layout
   const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
+  const [addUser, { data: userData, loading: userLoading, error: userError }] = useMutation(ADD_USER);
+
+  
+  const username = ( session ? session.user.email : 'guest')
+  console.log('username, ', username);
   
   const newProject = () => {
-
+    console.log(username)
     const projectId = uuidv4();
+
+    addUser({
+      variables: {
+        username
+      },
+    }); 
+
+    if(userError) {
+      console.log('userError ', userError);
+    }
 
     updateProject({
       variables: {
         project: {
           layout: JSON.stringify(initialLayout),
           id: projectId.toString(),
-          projectName: 'test',
+          projectName: 'default',
+          user: {
+            username: username
+          }
         },
       },
         awaitRefetchQueries: true,

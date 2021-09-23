@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import Head from 'next/head';
 import { ApolloProvider } from '@apollo/client';
 import { useApollo } from '../lib/apolloClient';
+// import { SessionProvider } from 'next-auth/react';
 
 // Stying imports
 import { ThemeProvider } from '@material-ui/core/styles';
@@ -15,6 +16,7 @@ import theme from '../public/theme';
 import Layout from '../components/layout';
 import '../styles/globals.css';
 import 'codemirror/lib/codemirror.css';
+import { session } from 'next-auth/client';
 
 function MyApp(props) {
   const router = useRouter();
@@ -41,6 +43,7 @@ function MyApp(props) {
       <ThemeProvider theme={theme}>
         <ApolloProvider client={apolloClient}>
           <Provider session={pageProps.session}>
+          {/* <SessionProvider session={pageProps.session}> */}
             {showHeaderFooter && (
               <Layout>
                 <DndProvider backend={HTML5Backend}>
@@ -51,6 +54,7 @@ function MyApp(props) {
             )}
             {!showHeaderFooter && <Component {...pageProps} />}
           </Provider>
+          {/* </SessionProvider> */}
         </ApolloProvider>
       </ThemeProvider>
     </Fragment>

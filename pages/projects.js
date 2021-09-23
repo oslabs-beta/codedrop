@@ -19,6 +19,9 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Switch from '@material-ui/core/Switch';
 import Link from '@material-ui/core/Link';
 
+import { useSession, getSession } from 'next-auth/client';
+
+//this is where data is mocked, id will be passed in here to give project access
 function createData({
   id,
   projectName,
@@ -49,21 +52,31 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-export default function EnhancedTable() {
+export default function EnhancedTable({ session }) {
   const router = useRouter();
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('name');
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  
+  //check if session exists, if so pull out username
+  const username = ( session ? session.user.email : 'guest')
 
-  const { loading, error, data } = useQuery(PROJECTS_QUERY, {
-    fetchPolicy: 'network-only', // Used for first execution
-    nextFetchPolicy: 'cache-and-network', //all subsequent calls,
+  //query to pull list of projects
+  const { loading, error, data } = useQuery(PROJECTS_QUERY,
+    
+    {
+      variables:{
+        username
+      },
+      fetchPolicy: 'network-only', // Used for first execution
+      nextFetchPolicy: 'cache-and-network', //all subsequent calls,
+
   });
 
   // projectsArray is an array where each element has an id, and a projectName
-  const rows = data?.queryProject.map((row) => createData({ ...row })) || '[]';
+  const rows = data?.getUser.projects.map((row) => createData({ ...row })) || '[]';
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -194,4 +207,15 @@ export default function EnhancedTable() {
       </Paper>
     </Box>
   );
+}
+
+export async function getServerSideProps(context) {
+  
+  const sessionUser = await getSession(context)
+ 
+  return {
+    props: {
+      session: sessionUser
+    },
+  }
 }
