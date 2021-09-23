@@ -48,7 +48,7 @@ const Container = ({ projectData }) => {
   });
 
   const date = new Date();
-  let currentDate = date.toDateString();    
+  let currentDate = date.toDateString() + ' - ' + date.toLocaleTimeString('en-US');    
 
   const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
 
