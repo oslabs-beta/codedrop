@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { useQuery, useMutation, useSubscription } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import { makeStyles } from '@material-ui/styles';
 import SidebarPanel from '../../components/SidebarPanel';
 import EditorPanel from '../../components/EditorPanel';
@@ -12,14 +12,10 @@ import {
   handleMoveSidebarComponentIntoParent,
   handleRemoveItemFromLayout,
 } from '../../components/dnd/helpers';
-import { initializeApollo } from '../../lib/apolloClient';
 
-import { PROJECT_QUERY, COMPONENTS_QUERY } from '../../lib/apolloQueries';
-
+import { PROJECT_QUERY } from '../../lib/apolloQueries';
 import { PROJECT_MUTATION, ADD_COMPONENT } from '../../lib/apolloMutations';
-
 import { SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components/dnd/constants';
-// import generatedCodeStr from '../../pages/home'
 
 import shortid from 'shortid';
 
@@ -48,27 +44,17 @@ const Container = ({ projectData }) => {
   });
 
   const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
-  console.log('projectDataGql', projectDataGql);
 
   let layout = JSON.parse(projectDataGql?.getProject?.layout || '[]');
   let projectName = projectDataGql?.projectName || '';
-
-  const {
-    loading: loadingComponents,
-    error: loadingComponentsError,
-    data: componentsData,
-  } = useSubscription(COMPONENTS_QUERY);
-
-  //WIP
-  // const components = componentsData?.queryComponent || '[]';
-  const components = projectDataGql?.getProject.components || [];
+  const project = projectDataGql?.getProject || {};
+  const components = project?.components || [];
 
   const [
     addComponent,
     { data: newComponentData, loading: newComponentLoading, error: newComponentError },
   ] = useMutation(ADD_COMPONENT);
 
-  console.log('newComponentData', newComponentData);
 
   const handleDropToTrashBin = useCallback(
     (dropZone, item) => {
@@ -88,20 +74,6 @@ const Container = ({ projectData }) => {
     [layout, projectId, updateProject]
   );
 
-  const handleRemoveComponent = (item) => {
-    const splitItemPath = item.path.split('-');
-    const newLayout = handleRemoveItemFromLayout(layout, splitItemPath);
-    updateProject({
-      variables: {
-        project: {
-          layout: JSON.stringify(newLayout),
-          id: projectId.toString(),
-          projectName: 'test',
-        },
-      },
-    });
-  };
-
   const handleDrop = useCallback(
     (dropZone, item) => {
       console.log('dropZone', dropZone);
@@ -118,31 +90,31 @@ const Container = ({ projectData }) => {
       // sidebar into
       if (item.type === SIDEBAR_ITEM) {
         // 1. Move sidebar item into page
-        const newComponent = {
-          id: shortid.generate(),
-          ...item.component,
-          projects: {
-            id: projectId,
-            layout: JSON.stringify(layout),
-            projectName,
-          },
-        };
-        const dbComponent = {
-          variables: {
-            component: newComponent,
-          },
-        };
-        addComponent(dbComponent);
+        const newComponentId = shortid.generate();
         const newItem = {
-          id: newComponent.id,
+          id: newComponentId,
           type: COMPONENT,
         };
         const newLayout = handleMoveSidebarComponentIntoParent(layout, splitDropZonePath, newItem);
+        const newComponent = {
+          variables: {
+            component: {
+              id: newComponentId,
+              ...item.component,
+              projects: {
+                id: projectId,
+                layout: JSON.stringify(newLayout),
+                projectName,
+              },
+            },
+          },
+        };
+        addComponent(newComponent);
         updateProject({
           variables: {
             project: {
-              layout: JSON.stringify(newLayout),
               id: projectId.toString(),
+              layout: JSON.stringify(newLayout),
               projectName: 'test',
             },
           },
@@ -208,7 +180,7 @@ const Container = ({ projectData }) => {
         },
       });
     },
-    [layout, addComponent, projectId, updateProject]
+    [layout, addComponent, projectId, updateProject, projectName]
   );
 
   const renderRow = (row, currentPath) => {
@@ -225,10 +197,13 @@ const Container = ({ projectData }) => {
     );
   };
 
-  if (loadingProject || loadingComponents) return 'Loading...';
-  if (loadingProjectError || loadingComponentsError) {
-    return `Error! ${loadingProjectError?.message || ``} ${loadingComponentsError?.message || ``}`;
+  if (loadingProject) return 'Loading...';
+  if (loadingProjectError) {
+    return `Error! ${loadingProjectError?.message || ``}}`;
   }
+
+  console.log('projectDataGql', projectDataGql);
+  console.log('newComponentData', newComponentData);
 
   return (
     <div className={classes.body}>
@@ -276,12 +251,10 @@ const Container = ({ projectData }) => {
       </div>
       {showEditor && (
         <EditorPanel
-          component={components.find((c) => c.id === showEditor.id)}
-          components={components}
+          project={project}
+          component={showEditor}
           addComponent={addComponent}
           setShowEditor={setShowEditor}
-          data={{ layout }}
-          onDrop={handleDropToTrashBin}
         />
       )}
     </div>
