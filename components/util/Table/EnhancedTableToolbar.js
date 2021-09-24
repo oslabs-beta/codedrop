@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { useMutation } from '@apollo/client';
 import initialData  from '../../../components/dnd/initial-data';
 import { PROJECT_MUTATION, ADD_USER } from '../../../lib/apolloMutations';
-
 import PropTypes from 'prop-types';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -13,7 +12,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/styles';
-// import newProject from '../newProject';
+import createNewProject from '../createNewProject';
 
 
 const useStyles = makeStyles({
@@ -36,48 +35,10 @@ function EnhancedTableToolbar(props){
   
   const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
   const [addUser, { data: userData, loading: userLoading, error: userError }] = useMutation(ADD_USER);
-  // const router = useRouter();
+  const router = useRouter();
   const classes = useStyles();
   const { numSelected, username } = props;
   
-  const newProject = async () => {
-  
-    const initialLayout = initialData.layout;
-    const projectId = uuidv4();
-    const router = useRouter();
-    
-    const date = new Date();
-    let currentDate = date.toDateString();    
-    console.log(currentDate);
-    
-    await addUser({
-      variables: {
-        username
-      },
-    }); 
-    
-    if(userError) {
-      console.log('userError ', userError);
-    }
-    
-    await updateProject({
-      variables: {
-        project: {
-          layout: JSON.stringify(initialLayout),
-          id: projectId.toString(),
-          projectName: 'default',
-          modified: currentDate,
-          created: currentDate,
-          user: {
-            username: username
-          }
-        },
-      },
-      awaitRefetchQueries: true,
-    }); 
-    
-    router.push(`/project/${projectId}`)
-  }
   return (
     <Toolbar className={classes.toolbar}>
       <div className={classes.leftToolbar}>
@@ -106,7 +67,7 @@ function EnhancedTableToolbar(props){
         )}
       </div>
 
-      <Button variant="contained" color="primary" onClick={() => newProject()}>
+      <Button variant="contained" color="primary" onClick={() => createNewProject(router, addUser, updateProject, username)}>
         New Project
       </Button>
     </Toolbar>

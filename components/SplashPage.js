@@ -1,10 +1,9 @@
 import { Typography, Button, Container } from '@material-ui/core';
 import { useRouter } from 'next/router';
 import { makeStyles } from '@material-ui/styles';
-import { v4 as uuidv4 } from 'uuid';
 import { useMutation } from '@apollo/client';
-import initialData  from '../components/dnd/initial-data';
 import { PROJECT_MUTATION, ADD_USER } from '../lib/apolloMutations';
+import createNewProject from './util/createNewProject'
 
 
 const useStyles = makeStyles({
@@ -33,51 +32,12 @@ const useStyles = makeStyles({
 function SplashPage({ session }) {
   const router = useRouter();
   const classes = useStyles();
-  const initialLayout = initialData.layout
   const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
   const [addUser, { data: userData, loading: userLoading, error: userError }] = useMutation(ADD_USER);
 
   
-  const username = ( session ? session.user.email : 'guest')
-  console.log('username, ', username);
+  const username = session ? session.user.email : 'guest';
   
-  const newProject = async () => {
-    console.log(username)
-    const projectId = uuidv4();
-
-    const date = new Date();
-    let currentDate = date.toDateString();    
-    console.log(currentDate);
-
-    await addUser({
-      variables: {
-        username
-      },
-    }); 
-
-    if(userError) {
-      console.log('userError ', userError);
-    }
-
-    await updateProject({
-      variables: {
-        project: {
-          layout: JSON.stringify(initialLayout),
-          id: projectId.toString(),
-          projectName: 'default',
-          modified: currentDate,
-          created: currentDate,
-          user: {
-            username: username
-          }
-        },
-      },
-        awaitRefetchQueries: true,
-    }); 
-
-    router.push(`/project/${projectId}`)
-  }
-
   return (
     <>
       <Container className={classes.root}>
@@ -91,7 +51,7 @@ function SplashPage({ session }) {
           className={classes.roundButton}
           variant="contained"
           color="primary"
-          onClick={() => newProject()}
+          onClick={() => createNewProject(router, addUser, updateProject, username)}
         >
           Get Started
         </Button>
