@@ -1,21 +1,16 @@
 import SplashPage from '../components/SplashPage';
-import { useSession, getSession } from 'next-auth/client';
+import { getSession } from 'next-auth/client';
 
 export default function Home({ session }) {
-  return (
-    <>
-      <SplashPage session={session} />
-    </>
-  );
+  return <SplashPage session={session} />;
 }
 
 export async function getServerSideProps(context) {
-  
-  const sessionUser = await getSession(context)
- 
+  const sessionUser = await getSession(context);
+
   return {
     props: {
-      session: sessionUser
+      session: sessionUser,
     },
-  }
+  };
 }

@@ -3,9 +3,8 @@ import { useRouter } from 'next/router';
 import { makeStyles } from '@material-ui/styles';
 import { v4 as uuidv4 } from 'uuid';
 import { useMutation } from '@apollo/client';
-import initialData  from '../components/dnd/initial-data';
+import initialData from '../components/dnd/initial-data';
 import { PROJECT_MUTATION, ADD_USER } from '../lib/apolloMutations';
-
 
 const useStyles = makeStyles({
   root: {
@@ -33,27 +32,21 @@ const useStyles = makeStyles({
 function SplashPage({ session }) {
   const router = useRouter();
   const classes = useStyles();
-  const initialLayout = initialData.layout
+  const initialLayout = initialData.layout;
   const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
-  const [addUser, { data: userData, loading: userLoading, error: userError }] = useMutation(ADD_USER);
+  const [addUser, { data: userData, loading: userLoading, error: userError }] =
+    useMutation(ADD_USER);
 
-  
-  const username = ( session ? session.user.email : 'guest')
-  console.log('username, ', username);
-  
+  const username = session ? session.user.email : 'guest';
+
   const newProject = () => {
-    console.log(username)
     const projectId = uuidv4();
 
     addUser({
       variables: {
-        username
+        username,
       },
-    }); 
-
-    if(userError) {
-      console.log('userError ', userError);
-    }
+    });
 
     updateProject({
       variables: {
@@ -62,15 +55,15 @@ function SplashPage({ session }) {
           id: projectId.toString(),
           projectName: 'default',
           user: {
-            username: username
-          }
+            username: username,
+          },
         },
       },
-        awaitRefetchQueries: true,
-    }); 
+      awaitRefetchQueries: true,
+    });
 
-    router.push(`/project/${projectId}`)
-  }
+    router.push(`/project/${projectId}`);
+  };
 
   return (
     <>
