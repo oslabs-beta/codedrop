@@ -55,22 +55,20 @@ export default function CodeDrawer({ layout, components }) {
       </Button>
       <Drawer anchor={drawerDirection} open={showCode} onClose={toggleDrawer}>
         <Box role="presentation" style={box}>
-          <div>
-            <Tabs
-              value={currentFrameworkTab}
-              onChange={handleChangeTabs}
-              aria-label="select framework tab"
-            >
-              {frameworks.map((framework, index) => (
-                <Tab
-                  key={index}
-                  icon={framework.icon}
-                  label={framework.name}
-                  onClick={(e) => selectFrameworkType(framework.name)}
-                />
-              ))}
-            </Tabs>
-          </div>
+          <Tabs
+            value={currentFrameworkTab}
+            onChange={handleChangeTabs}
+            aria-label="select framework tab"
+          >
+            {frameworks.map((framework, index) => (
+              <Tab
+                key={index}
+                icon={framework.icon}
+                label={framework.name}
+                onClick={(e) => selectFrameworkType(framework.name)}
+              />
+            ))}
+          </Tabs>
           <Divider />
           <Editor
             language="js"
