@@ -1,3 +1,5 @@
+/* See the docks at next-auth.js.org/providers/email for an explanation on nextAuth and this file path */
+
 import NextAuth from 'next-auth';
 import Providers from 'next-auth/providers';
 import { FirebaseAdapter } from '@next-auth/firebase-adapter';
