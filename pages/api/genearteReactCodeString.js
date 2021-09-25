@@ -4,12 +4,14 @@ export default function genearteReactCodeString(req, res) {
   const prettier = require('prettier');
   try {
     const { layout, components, framework } = req.body;
-    let result = [];
+    const result = [];
     
     const parseComponents = (coms, components) => {
       for (const component of coms) {
         const fullComponentDetails = components.find((c) => c.id === component.id);
-        if (fullComponentDetails) result.push(htmlGenerator(fullComponentDetails, framework))
+        if (fullComponentDetails) {
+          result.push(htmlGenerator(fullComponentDetails, framework))
+        }
       }
     };
 

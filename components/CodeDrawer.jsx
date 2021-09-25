@@ -15,15 +15,18 @@ import ReactIcon from './util/Icons/ReactIcon';
 export default function CodeDrawer({ layout, components }) {
   const [showCode, setShowCode] = useState(false);
   const [codeString, setCodeString] = useState(``);
-  const [value, setValue] = useState(0);
+  const [currentFrameworkTab, setCurrentFrameworkTab] = useState(0);
 
-  const handleChangeTabs = () => setValue(value === 0 ? 1 : 0)
+  const handleChangeTabs = () => setCurrentFrameworkTab(currentFrameworkTab === 0 ? 1 : 0);
 
   const box = { height: '645px' };
-  
+
   const drawerDirection = 'bottom';
 
-  const frameworks = [{ name: 'React', icon: <ReactIcon /> }, { name: 'Angular', icon: <FaAngular /> }];
+  const frameworks = [
+    { name: 'React', icon: <ReactIcon /> },
+    { name: 'Angular', icon: <FaAngular /> },
+  ];
 
   const toggleDrawer = (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) return;
@@ -43,35 +46,7 @@ export default function CodeDrawer({ layout, components }) {
       framework: frameworkName,
       callback: setCodeString,
     });
-  }
-
-  const list = (anchor) => (
-    <Box role="presentation" style={box}>
-    <div>
-      <Tabs 
-        value={value}
-        onChange={handleChangeTabs}
-        aria-label="select framework tab">
-        {frameworks.map((framework, index) => (
-          <Tab
-            key={index}
-            icon={framework.icon}
-            label={framework.name}
-            onClick={(e) => selectFrameworkType(framework.name)}>
-          </Tab>
-        ))}
-      </Tabs>
-    </div>
-      <Divider />
-      <Editor
-        language="js"
-        displayName="React"
-        value={codeString}
-        readOnly={true}
-        height={box.height}
-      />
-    </Box>
-  );
+  };
 
   return (
     <Fragment key={drawerDirection}>
@@ -79,7 +54,32 @@ export default function CodeDrawer({ layout, components }) {
         View Code
       </Button>
       <Drawer anchor={drawerDirection} open={showCode} onClose={toggleDrawer}>
-        {list(drawerDirection)}
+        <Box role="presentation" style={box}>
+          <div>
+            <Tabs
+              value={currentFrameworkTab}
+              onChange={handleChangeTabs}
+              aria-label="select framework tab"
+            >
+              {frameworks.map((framework, index) => (
+                <Tab
+                  key={index}
+                  icon={framework.icon}
+                  label={framework.name}
+                  onClick={(e) => selectFrameworkType(framework.name)}
+                />
+              ))}
+            </Tabs>
+          </div>
+          <Divider />
+          <Editor
+            language="js"
+            displayName="React"
+            value={codeString}
+            readOnly={true}
+            height={box.height}
+          />
+        </Box>
       </Drawer>
     </Fragment>
   );

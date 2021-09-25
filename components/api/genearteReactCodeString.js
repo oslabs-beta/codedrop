@@ -3,7 +3,7 @@ import axios from 'axios';
 export const genearteReactCodeString = async ({ components, layout, framework, callback = null}) => {
   const formattedCode = await axios
     .post(
-      'http://localhost:3000/api/genearteReactCodeString',
+      '/api/genearteReactCodeString',
       { components, layout, framework},
       {
         headers: {
@@ -11,7 +11,6 @@ export const genearteReactCodeString = async ({ components, layout, framework, c
         },
       }
     )
-    .then((body) => body.data.code);
-  if (callback) return callback(formattedCode);
+  if (callback) return callback(formattedCode.data.code);
   return formattedCode;
 };
