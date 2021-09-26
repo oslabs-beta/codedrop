@@ -34,8 +34,6 @@ function SplashPage({ session }) {
   const classes = useStyles();
   const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
   const [addUser, { data: userData, loading: userLoading, error: userError }] = useMutation(ADD_USER);
-
-  
   const username = session ? session.user.email : 'guest';
   
   return (

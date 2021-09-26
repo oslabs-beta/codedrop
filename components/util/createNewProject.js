@@ -35,4 +35,4 @@ const createNewProject = async (router, addUser, updateProject, username ) => {
   router.push(`/project/${projectId}`)
 };
 
-export default createNewProject
+export default createNewProject;
