@@ -56,7 +56,6 @@ export default function EditorPanel({ component, setShowEditor, addComponent }) 
         style: style,
         containerStyle: containerStyle,
       };
-      console.log('updatedComponent', updatedComponent);
       const timeOutId = setTimeout(
         () => addComponent({ variables: { component: updatedComponent } }),
         500

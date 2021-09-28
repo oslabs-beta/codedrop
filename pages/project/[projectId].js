@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { makeStyles } from '@material-ui/styles';
 import SidebarPanel from '../../components/SidebarPanel';
@@ -27,11 +27,11 @@ const useStyles = makeStyles({
   },
 });
 
-const Container = ({ projectData }) => {
-  const projectId = projectData.projectId;
+const Container = ({ projectId }) => {
   const classes = useStyles();
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
+  const [project, setProject] = useState({ layout: [], projectName: '', components: [] });
 
   const {
     loading: loadingProject,
@@ -39,26 +39,25 @@ const Container = ({ projectData }) => {
     data: projectDataGql,
   } = useQuery(PROJECT_QUERY, {
     fetchPolicy: 'network-only', // Used for first execution to ensure local data up to date with server
-    nextFetchPolicy: 'cache-and-network', //all subsequent calls,
     variables: { id: projectId },
   });
 
   const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
+  const [addComponent] = useMutation(ADD_COMPONENT);
 
-  let layout = JSON.parse(projectDataGql?.getProject?.layout || '[]');
-  let projectName = projectDataGql?.projectName || '';
-  const project = projectDataGql?.getProject || {};
-  const components = project?.components || [];
+  useEffect(() => {
+    if (loadingProject) return;
+    const updatedProject = {
+      ...projectDataGql.getProject,
+      layout: JSON.parse(projectDataGql.getProject.layout),
+    };
+    setProject(updatedProject);
+  }, [projectDataGql, loadingProject, data]);
 
-  const [
-    addComponent,
-    { data: newComponentData, loading: newComponentLoading, error: newComponentError },
-  ] = useMutation(ADD_COMPONENT);
-
+  const { components, layout, projectName } = project;
 
   const handleDropToTrashBin = useCallback(
     (dropZone, item) => {
-      console.log('dropZone, item', dropZone, item);
       const splitItemPath = item.path.split('-');
       const newLayout = handleRemoveItemFromLayout(layout, splitItemPath);
       updateProject({
@@ -76,9 +75,6 @@ const Container = ({ projectData }) => {
 
   const handleDrop = useCallback(
     (dropZone, item) => {
-      console.log('dropZone', dropZone);
-      console.log('item', item);
-
       const splitDropZonePath = dropZone.path.split('-');
       const pathToDropZone = splitDropZonePath.slice(0, -1).join('-');
 
@@ -202,9 +198,6 @@ const Container = ({ projectData }) => {
     return `Error! ${loadingProjectError?.message || ``}}`;
   }
 
-  console.log('projectDataGql', projectDataGql);
-  console.log('newComponentData', newComponentData);
-
   return (
     <div className={classes.body}>
       <SidebarPanel
@@ -278,7 +271,7 @@ export async function getStaticProps(context) {
   const projectId = context.params.projectId;
   return {
     props: {
-      projectData: { projectId },
+      projectId,
     },
   };
 }
