@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import shortid from 'shortid';
 import SidebarPanel from '../../components/SidebarPanel';
@@ -6,6 +6,7 @@ import EditorPanel from '../../components/EditorPanel';
 import DropZone from '../../components/dnd/DropZone';
 import TrashDropZone from '../../components/dnd/TrashDropZone';
 import Row from '../../components/dnd/Row';
+import ProjectNameOrInput from '../../components/ProjectNameOrInput';
 import {
   handleMoveWithinParent,
   handleMoveToDifferentParent,
@@ -27,7 +28,7 @@ const useStyles = makeStyles({
     flexDirection: 'row',
     flexGrow: 1,
   },
-    title: {
+    projectName: {
       textAlign: 'center',
       color: '#bf7472',
     },
@@ -38,7 +39,6 @@ const Container = ({ projectData }) => {
   const classes = useStyles();
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
-  const [toggleName, setToggleName] = useState(true);
   
   // fetch the project from the db using graphql
   const {
@@ -58,7 +58,11 @@ const Container = ({ projectData }) => {
   const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
   
   const layout = JSON.parse(projectDataGql?.getProject?.layout || '[]');
-  const [projectName, setProjectName] = useState(projectDataGql?.getProject?.projectName || 'Name')
+
+  // This state allows the user to change the project title by double clicking on it
+  const [newProjectName, setNewProjectName] = useState(projectDataGql?.getProject?.projectName || 'project name')
+  const [newProjectNameInput, setNewProjectNameInput] = useState(false);
+  
   
   const {
     loading: loadingComponents,
@@ -191,18 +195,18 @@ const Container = ({ projectData }) => {
     );
   };
 
-  // const renameProject = (newProjectName) => {
-
-  //   alert('doubleClicked')
-  //   console.log(event.target.value)
-    // updateProject({
-    //   variables: {
-    //     project: {
-    //       id: projectId.toString(),
-    //       projectName: newProjectName,
-    //     },
-    //   },
-    // }); 
+  // const doubleClickHandler = (newProjectName) => {
+  //   // change the state and conditional rendering
+  //   setProjectNameInput(true)
+  //   // send a mutation to the database to update the project name
+  //   updateProject({
+  //     variables: {
+  //       project: {
+  //         id: projectId.toString(),
+  //         projectName: newProjectName,
+  //       },
+  //     },
+  //   }); 
   // };
 
   // handle loading and error states from graphQL queries
@@ -220,28 +224,13 @@ const Container = ({ projectData }) => {
         layout={layout}
       />
       <div className="pageContainer">
-        {toggleName ? 
-          (<h4 className={classes.title} onDoubleClick={() => setToggleName(false)}>
-            {projectDataGql.getProject.projectName}
-          </h4> ) : (
-          <input
-            type="text"
-            value={projectName}
-            onChange={e => setProjectName(e.value)}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === 'Escape') {
-                console.log(projectName)
-                setToggleName(true)
-                e.preventDefault()
-                e.stopPropagation()
-              }
-            }}
-          
-            />
-          
-          
-          )
-        }
+      <ProjectNameOrInput 
+          value={newProjectName}
+          inputChange={(event) => setNewProjectName(event.target.value)}
+          doubleClick={() => setNewProjectNameInput(true)}
+          blur={() => setNewProjectNameInput(false)}
+          active = {newProjectNameInput}>Double-click to enter a new Title
+        </ProjectNameOrInput >
         <div className="page">
           {layout.map((row, index) => {
             const currentPath = `${index}`;
