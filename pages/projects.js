@@ -19,7 +19,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Switch from '@material-ui/core/Switch';
 import Link from '@material-ui/core/Link';
 
-import { useSession, getSession } from 'next-auth/client';
+import { getSession } from 'next-auth/client';
 
 // this is needed to receive and format the array of users returned the projectsQuery
 const parseUser = (user) => {
@@ -72,21 +72,21 @@ export default function EnhancedTable({ session }) {
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  
+
   //check if session exists, if so pull out username
-  const username = ( session ? session.user.email : 'guest')
+  const username = session ? session.user.email : 'guest';
 
   //query to pull list of projects
-  const { loading, error, data } = useQuery(PROJECTS_QUERY,
-    
+  const { loading, error, data } = useQuery(
+    PROJECTS_QUERY,
     {
-      variables:{
-        username
+      variables: {
+        username,
       },
       fetchPolicy: 'network-only', // Used for first execution
       nextFetchPolicy: 'cache-and-network', //all subsequent calls,
-
-  });
+    }
+  );
 
   // projectsArray is an array where each element has an id, and a projectName
   const rows = data?.getUser.projects.map((row) => createData({ ...row })) || '[]';
@@ -223,12 +223,11 @@ export default function EnhancedTable({ session }) {
 }
 
 export async function getServerSideProps(context) {
-  
-  const sessionUser = await getSession(context)
- 
+  const sessionUser = await getSession(context);
+
   return {
     props: {
-      session: sessionUser
+      session: sessionUser,
     },
-  }
+  };
 }

@@ -5,7 +5,6 @@ import { useMutation } from '@apollo/client';
 import { PROJECT_MUTATION, ADD_USER } from '../lib/apolloMutations';
 import createNewProject from './util/createNewProject'
 
-
 const useStyles = makeStyles({
   root: {
     maxWidth: '100%',
@@ -32,10 +31,39 @@ const useStyles = makeStyles({
 function SplashPage({ session }) {
   const router = useRouter();
   const classes = useStyles();
+  const initialLayout = initialData.layout;
   const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
-  const [addUser, { data: userData, loading: userLoading, error: userError }] = useMutation(ADD_USER);
+  const [addUser, { data: userData, loading: userLoading, error: userError }] =
+    useMutation(ADD_USER);
+
   const username = session ? session.user.email : 'guest';
-  
+
+  const newProject = () => {
+    const projectId = uuidv4();
+
+    addUser({
+      variables: {
+        username,
+      },
+    });
+
+    updateProject({
+      variables: {
+        project: {
+          layout: JSON.stringify(initialLayout),
+          id: projectId.toString(),
+          projectName: 'default',
+          user: {
+            username: username,
+          },
+        },
+      },
+      awaitRefetchQueries: true,
+    });
+
+    router.push(`/project/${projectId}`);
+  };
+
   return (
     <>
       <Container className={classes.root}>

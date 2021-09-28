@@ -19,11 +19,6 @@ const Component = ({ data, components, path, previewMode, setShowEditor }) => {
   const ref = useRef(null);
 
   const component = components.find(c => c.id === data.id);
-  
-  let cssString = css`
-    ${previewMode ? 'border: hidden' : 'border: 1px dashed black;'}
-    ${component?.containerStyle || ``}
-  `;
 
   const [{ isDragging }, drag] = useDrag({
     item: { id: data.id, path },
@@ -33,37 +28,29 @@ const Component = ({ data, components, path, previewMode, setShowEditor }) => {
     }),
   });
 
-  const opacity = isDragging ? 0 : 1;
   drag(ref);
 
   if (!component) return <div>Component not found in the database</div>
 
   let { src = '', style = '', type = 'Button', value = 'Test', containerStyle = '' } = component;
+  
+  let cssString = css`
+    ${previewMode ? 'border: hidden' : 'border: 1px dashed black;'}
+    ${containerStyle}
+  `;
 
-  const componentToRender = () => {
-    if (type === 'Button') {
-      return <Button style={style} value={value} />;
-    }
-    if (type === 'Input') {
-      return <Input style={style} value={value} />;
-    }
-    if (type === 'H1') {
-      return <H1 style={style} value={value} />;
-    }
-    if (type === 'H2') {
-      return <H2 style={style} value={value} />;
-    }
-    if (type === 'Image') {
-      return <Image style={style} alt={value} value={value} src={src} />;
-    }
-    if (type === 'Text') {
-      return <Text style={style} value={value} />;
-    }
-  };
+  const elementComponents = {
+    'Button': <Button style={style} value={value} />, 
+    'Input': <Input style={style} value={value} />,
+    'H1': <H1 style={style} value={value} />,
+    'H2': <H2 style={style} value={value} />,
+    'Image': <Image style={style} alt={value} value={value} src={src} />,
+    'Text': <Text style={style} value={value} />
+  }
 
   return (
     <StyledContainer ref={ref} cssString={cssString}>
-      <div onClick={() => setShowEditor(component)}>{componentToRender()}</div>
+      <div onClick={() => setShowEditor(component)}>{elementComponents[type]}</div>
     </StyledContainer>
   );
 };
