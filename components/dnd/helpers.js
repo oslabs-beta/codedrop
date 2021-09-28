@@ -196,13 +196,14 @@ export const handleMoveSidebarComponentIntoParent = (layout, splitDropZonePath, 
   return addChildToChildren(layout, splitDropZonePath, newLayoutStructure);
 };
 
-export const handleRemoveItemFromLayout = (layout, splitItemPath, updateProject, projectId) => {
+export const handleRemoveItemFromLayout = (layout, splitItemPath, updateProject, projectId, currentDate) => {
   const newLayout = removeChildFromChildren(layout, splitItemPath);
   updateProject({
     variables: {
       project: {
         id: projectId.toString(),
         layout: JSON.stringify(newLayout),
+        modified: currentDate,
       },
     },
   }); 

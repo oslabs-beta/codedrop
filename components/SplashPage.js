@@ -31,39 +31,22 @@ const useStyles = makeStyles({
 function SplashPage({ session }) {
   const router = useRouter();
   const classes = useStyles();
-  const initialLayout = initialData.layout;
-  const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
+
+  // use updateProject to change all/any properties ona project
+  const [updateProject, { data: projectData, loading: projectLoading, error: projectError }] = useMutation(PROJECT_MUTATION);
+
+  // use addUser to add/check user in database
   const [addUser, { data: userData, loading: userLoading, error: userError }] =
     useMutation(ADD_USER);
 
   const username = session ? session.user.email : 'guest';
 
-  const newProject = () => {
-    const projectId = uuidv4();
-
-    addUser({
-      variables: {
-        username,
-      },
-    });
-
-    updateProject({
-      variables: {
-        project: {
-          layout: JSON.stringify(initialLayout),
-          id: projectId.toString(),
-          projectName: 'default',
-          user: {
-            username: username,
-          },
-        },
-      },
-      awaitRefetchQueries: true,
-    });
-
-    router.push(`/project/${projectId}`);
-  };
-
+  // handle loading and error states from graphQL queries
+  if (projectLoading || userLoading) return 'Loading...';
+  if (projectError || userError) {
+    return `Error! ${projectError?.message || ``} ${userError?.message || ``}`;
+  }
+  
   return (
     <>
       <Container className={classes.root}>

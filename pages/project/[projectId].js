@@ -19,6 +19,7 @@ import { useQuery, useMutation, useSubscription } from '@apollo/client';
 // graphql querires and mutations
 import { PROJECT_QUERY, COMPONENTS_QUERY } from '../../lib/apolloQueries';
 import { PROJECT_MUTATION, ADD_COMPONENT } from '../../lib/apolloMutations';
+import { CenterFocusStrong } from '@material-ui/icons';
 
 const useStyles = makeStyles({
   body: {
@@ -26,6 +27,10 @@ const useStyles = makeStyles({
     flexDirection: 'row',
     flexGrow: 1,
   },
+    title: {
+      textAlign: 'center',
+      color: '#bf7472',
+    },
 });
 
 const Container = ({ projectData }) => {
@@ -33,7 +38,8 @@ const Container = ({ projectData }) => {
   const classes = useStyles();
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
-
+  const [toggleName, setToggleName] = useState(true);
+  
   // fetch the project from the db using graphql
   const {
     loading: loadingProject,
@@ -44,29 +50,30 @@ const Container = ({ projectData }) => {
     nextFetchPolicy: "cache-and-network", //all subsequent calls,
     variables: { id: projectId },
   });
-
+  
   const date = new Date();
   let currentDate = date.toDateString() + ' - ' + date.toLocaleTimeString('en-US');    
-
+  
   // when updateProject is invoked elsewhere in the application, it will trigger the PROJECT_MUTATION gql mutation
   const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
-
+  
   const layout = JSON.parse(projectDataGql?.getProject?.layout || '[]');
-
+  const [projectName, setProjectName] = useState(projectDataGql?.getProject?.projectName || 'Name')
+  
   const {
     loading: loadingComponents,
     error: loadingComponentsError,
     data: componentsData,
   } = useSubscription(COMPONENTS_QUERY);
-
+  
   const components = componentsData?.queryComponent || '[]';
-
+  
   // when addComponent is invoked elsewhere in the application, it will trigger the ADD_COMPONENT gql mutation
   const [
     addComponent,
     { data: newComponentData, loading: newComponentLoading, error: newComponentError },
   ] = useMutation(ADD_COMPONENT);
-
+  
   // helper function to remove item from the project layout
   const handleDropToTrashBin = useCallback(
     (dropZone, item) => {
@@ -76,21 +83,7 @@ const Container = ({ projectData }) => {
     [layout, projectId, currentDate, updateProject]
   );
 
-  // const handleRemoveComponent = (item) => {
-  //   const splitItemPath = item.path.split('-');
-  //   const newLayout = handleRemoveItemFromLayout(layout, splitItemPath);
-  //   updateProject({
-  //     variables: {
-  //       project: {
-  //         layout: JSON.stringify(newLayout),
-  //         id: projectId.toString(),
-  //         projectName: 'test',
-  //         modified: currentDate,
-  //       },
-  //     },
-  //   }); 
-  // };
-
+ 
   const handleDrop = useCallback(
     (dropZone, item) => {
       
@@ -198,6 +191,20 @@ const Container = ({ projectData }) => {
     );
   };
 
+  // const renameProject = (newProjectName) => {
+
+  //   alert('doubleClicked')
+  //   console.log(event.target.value)
+    // updateProject({
+    //   variables: {
+    //     project: {
+    //       id: projectId.toString(),
+    //       projectName: newProjectName,
+    //     },
+    //   },
+    // }); 
+  // };
+
   // handle loading and error states from graphQL queries
   if (loadingProject || loadingComponents) return 'Loading...';
   if (loadingProjectError || loadingComponentsError) {
@@ -213,6 +220,28 @@ const Container = ({ projectData }) => {
         layout={layout}
       />
       <div className="pageContainer">
+        {toggleName ? 
+          (<h4 className={classes.title} onDoubleClick={() => setToggleName(false)}>
+            {projectDataGql.getProject.projectName}
+          </h4> ) : (
+          <input
+            type="text"
+            value={projectName}
+            onChange={e => setProjectName(e.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === 'Escape') {
+                console.log(projectName)
+                setToggleName(true)
+                e.preventDefault()
+                e.stopPropagation()
+              }
+            }}
+          
+            />
+          
+          
+          )
+        }
         <div className="page">
           {layout.map((row, index) => {
             const currentPath = `${index}`;
