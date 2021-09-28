@@ -8,19 +8,16 @@ const ACCEPTS = [SIDEBAR_ITEM, COMPONENT, ROW, COLUMN];
 const DropZone = ({ data, onDrop, isLast, className }) => {
   const [{ isOver, canDrop }, drop] = useDrop({
     accept: ACCEPTS,
-    drop: (item, monitor) => {
+    drop: (item) => {
       onDrop(data, item);
     },
-    canDrop: (item, monitor) => {
+    canDrop: (item) => {
       const dropZonePath = data.path;
       const splitDropZonePath = dropZonePath.split('-');
       const itemPath = item.path;
 
       // sidebar items can always be dropped anywhere
       if (!itemPath) {
-        // if (data.childrenCount >= 3) {
-        //  return false;
-        // }
         return true;
       }
 

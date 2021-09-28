@@ -3,7 +3,7 @@ import axios from 'axios';
 export const prettierCode = async (codeToFormat, callback = null) => {
   const formattedCode = await axios
     .post(
-      'http://localhost:3000/api/prettier',
+      '/api/prettier',
       { codeString: codeToFormat },
       {
         headers: {
@@ -11,10 +11,8 @@ export const prettierCode = async (codeToFormat, callback = null) => {
         },
       }
     )
-    .then((body) => body.data.code);
   if (callback) {
-    console.log('callback ', callback)
-    return callback(formattedCode);
+    return callback(formattedCode.data.code);
   }
   return formattedCode;
 };
