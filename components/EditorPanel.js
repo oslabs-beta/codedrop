@@ -56,6 +56,7 @@ export default function EditorPanel({ component, setShowEditor, addComponent }) 
         style: style,
         containerStyle: containerStyle,
       };
+      // Used to throttle the number of database updates when the component's value or style is updated
       const timeOutId = setTimeout(
         () => addComponent({ variables: { component: updatedComponent } }),
         500

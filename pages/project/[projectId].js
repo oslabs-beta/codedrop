@@ -12,7 +12,7 @@ import {
   handleMoveSidebarComponentIntoParent,
   handleRemoveItemFromLayout,
 } from '../../components/dnd/helpers';
-import { SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components/dnd/constants';
+import { SIDEBAR_ITEM, COLUMN } from '../../components/dnd/constants';
 
 // query hooks
 import { useQuery, useMutation } from '@apollo/client';
@@ -83,11 +83,7 @@ const Container = ({ projectId }) => {
       if (item.type === SIDEBAR_ITEM) {
         // 1. Move sidebar item into page
         const newComponentId = shortid.generate();
-        const newItem = {
-          id: newComponentId,
-          type: COMPONENT,
-        };
-        const newLayout = handleMoveSidebarComponentIntoParent(layout, splitDropZonePath, newItem);
+        const newLayout = handleMoveSidebarComponentIntoParent(layout, splitDropZonePath, newComponentId);
         const newComponent = {
           variables: {
             component: {
@@ -105,7 +101,7 @@ const Container = ({ projectId }) => {
         updateProject({
           variables: {
             project: {
-              id: projectId.toString(),
+              id: projectId,
               layout: JSON.stringify(newLayout),
             },
           },
@@ -171,21 +167,6 @@ const Container = ({ projectId }) => {
     [layout, addComponent, projectId, updateProject, projectName]
   );
 
-  const renderRow = (row, currentPath) => {
-    // The current path is the index of the object in the layout. The intial layout comes from components/dnd/initial-data.js
-    return (
-      <Row
-        key={row.id}
-        data={row}
-        handleDrop={handleDrop}
-        components={components}
-        path={currentPath}
-        previewMode={previewMode}
-        setShowEditor={setShowEditor}
-      />
-    );
-  };
-
   if (loadingProject) return 'Loading...';
   if (loadingProjectError) {
     return `Error! ${loadingProjectError?.message || ``}}`;
@@ -214,7 +195,15 @@ const Container = ({ projectId }) => {
                   onDrop={handleDrop}
                   path={currentPath}
                 />
-                {renderRow(row, currentPath)}
+                <Row
+                  key={row.id}
+                  data={row}
+                  handleDrop={handleDrop}
+                  components={components}
+                  path={currentPath}
+                  previewMode={previewMode}
+                  setShowEditor={setShowEditor}
+                />
               </React.Fragment>
             );
           })}
@@ -248,7 +237,7 @@ const Container = ({ projectId }) => {
 };
 
 export async function getStaticPaths() {
-  // not being used right now, but it is required so that getStaticProps works. 
+  // not being used right now, but it is required so that getStaticProps works.
   // ideally, we will pull in a list of the projects here instead of having an empty array.
   const projects = [];
 
