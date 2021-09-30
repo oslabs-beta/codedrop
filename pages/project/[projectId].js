@@ -79,7 +79,7 @@ const Container = ({ projectId }) => {
         },
       },
     });
-  };
+  }
 
   const handleDrop = useCallback(
     (dropZone, item) => {
@@ -113,7 +113,7 @@ const Container = ({ projectId }) => {
             },
           },
         };
-        handleUpdateComponent(newComponent, newLayout);
+        handleUpdateComponent(newComponent, newLayout)
         return;
       }
 
