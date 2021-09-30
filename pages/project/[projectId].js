@@ -19,7 +19,7 @@ import { SIDEBAR_ITEM, COLUMN } from '../../components/dnd/constants';
 import { useQuery, useMutation } from '@apollo/client';
 // graphql querires and mutations
 import { PROJECT_QUERY } from '../../lib/apolloQueries';
-import { PROJECT_MUTATION, ADD_COMPONENT } from '../../lib/apolloMutations';
+import { PROJECT_MUTATION, ADD_COMPONENT, RENAME_PROJECT } from '../../lib/apolloMutations';
 import { CenterFocusStrong } from '@material-ui/icons';
 
 const useStyles = makeStyles({
@@ -57,6 +57,7 @@ const Container = ({ projectId }) => {
   const [updateProject] = useMutation(PROJECT_MUTATION);
   // when addComponent is invoked elsewhere in the application, it will trigger the ADD_COMPONENT gql mutation
   const [addComponent] = useMutation(ADD_COMPONENT);
+  const [renameProject] = useMutation(RENAME_PROJECT);
 
   const [projectNameInput, setProjectNameInput] = useState(false);
 
@@ -205,9 +206,31 @@ const Container = ({ projectId }) => {
       <div className="pageContainer">
       <ProjectNameOrInput 
           value={projectName}
-          inputChange={(event) => setProject({...project, projectName: event.target.value})}
+          inputChange={(event) => {
+            console.log('triggered', event.target.value)
+            setProject({...project, projectName: event.target.value})
+            
+          }
+        }
           doubleClick={() => setProjectNameInput(true)}
-          blur={() => setProjectNameInput(false)}
+          blur={() => {
+            setProjectNameInput(false)
+            renameProject({
+              variables: {
+                project:{
+                  filter:{
+                    id: {
+                      eq: projectId.toString()
+                    },
+                  },
+                  set:{
+                    projectName,
+                  }
+                }
+              }
+            })
+          }
+        }
           active = {projectNameInput}>Double-click to enter a new Title
         </ProjectNameOrInput >
         <div className="page">
