@@ -169,8 +169,12 @@ export const handleMoveToDifferentParent = (layout, splitDropZonePath, splitItem
   return updatedLayout;
 };
 
-export const handleMoveSidebarComponentIntoParent = (layout, splitDropZonePath, item) => {
+export const handleMoveSidebarComponentIntoParent = (layout, splitDropZonePath, newComponentId) => {
   let newLayoutStructure;
+  const item = {
+    id: newComponentId,
+    type: COMPONENT,
+  };
   switch (splitDropZonePath.length) {
     case 1: {
       newLayoutStructure = {
