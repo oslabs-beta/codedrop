@@ -58,8 +58,7 @@ const Container = ({ projectId }) => {
   // when addComponent is invoked elsewhere in the application, it will trigger the ADD_COMPONENT gql mutation
   const [addComponent] = useMutation(ADD_COMPONENT);
 
-  // const [newProjectName, setNewProjectName] = useState(projectDataGql?.getProject?.projectName || 'project name')
-  // const [newProjectNameInput, setNewProjectNameInput] = useState(false);
+  const [projectNameInput, setProjectNameInput] = useState(false);
 
   useEffect(() => {
     if (loadingProject) return;
@@ -205,11 +204,11 @@ const Container = ({ projectId }) => {
       />
       <div className="pageContainer">
       <ProjectNameOrInput 
-          value={newProjectName}
-          inputChange={(event) => setNewProjectName(event.target.value)}
-          doubleClick={() => setNewProjectNameInput(true)}
-          blur={() => setNewProjectNameInput(false)}
-          active = {newProjectNameInput}>Double-click to enter a new Title
+          value={projectName}
+          inputChange={(event) => setProject({...project, projectName: event.target.value})}
+          doubleClick={() => setProjectNameInput(true)}
+          blur={() => setProjectNameInput(false)}
+          active = {projectNameInput}>Double-click to enter a new Title
         </ProjectNameOrInput >
         <div className="page">
           {layout.map((row, index) => {
