@@ -87,6 +87,7 @@ const Container = ({ projectId }) => {
       variables: {
         project: {
           id: projectId,
+          modified: currentDate,
           layout: JSON.stringify(newLayout),
         },
       },
@@ -120,6 +121,7 @@ const Container = ({ projectId }) => {
               projects: {
                 id: projectId,
                 layout: JSON.stringify(newLayout),
+                modified: currentDate,
                 projectName,
               },
             },
@@ -141,7 +143,7 @@ const Container = ({ projectId }) => {
           updateProject({
             variables: {
               project: {
-                id: projectId.toString(),
+                id: projectId,
                 modified: currentDate,
                 layout: JSON.stringify(newLayout),
               },
@@ -161,7 +163,7 @@ const Container = ({ projectId }) => {
         updateProject({
           variables: {
             project: {
-              id: projectId.toString(),
+              id: projectId,
               modified: currentDate,
               layout: JSON.stringify(newLayout),
             },
@@ -180,7 +182,7 @@ const Container = ({ projectId }) => {
       updateProject({
         variables: {
           project: {
-            id: projectId.toString(),
+            id: projectId,
             modified: currentDate,
             layout: JSON.stringify(newLayout),
           },
