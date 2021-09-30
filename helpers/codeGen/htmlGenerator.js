@@ -15,6 +15,7 @@ export const htmlGenerator = (fullComponentDetails, framework) => {
     Button: `<button style={${inlineStyle}} type='' className='' id='${id}'>${value}</button>`,
     Text: `<span style={${inlineStyle}}>${value}</span>`,
     Input: `<input style={${inlineStyle}}>${value}</input>`,
+    Header: `<header style={${inlineStyle}}>${value}</header>`
   }
   
   class React {
@@ -31,7 +32,8 @@ export const htmlGenerator = (fullComponentDetails, framework) => {
     Img: `<img class="fit-picture" src='${src}' alt='${value}' style="${inlineStyleWoLineBreaks}" />`,
     Button: `<button style="${inlineStyleWoLineBreaks}" type='' className='' id='${id}'>${value}</button>`,
     Text: `<span style="${inlineStyleWoLineBreaks}">${value}</span>`,
-    Input: `<input style="${inlineStyleWoLineBreaks}">${value}</input>`
+    Input: `<input style="${inlineStyleWoLineBreaks}">${value}</input>`,
+    Header: `<header style="${inlineStyleWoLineBreaks}">${value}</header>`
   }
 
   class Angular {

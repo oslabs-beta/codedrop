@@ -9,6 +9,7 @@ import ImageIcon from '@material-ui/icons/Image';
 import { greyScheme } from '../util/colorPallete'
 import H1Icon from '../util/Icons/H1Icon';
 import H2Icon from '../util/Icons/H2Icon';
+import HeaderIcon from '../util/Icons/HeaderIcon'
 
 const useStyles = makeStyles({
   sideBarContainer: {
@@ -34,7 +35,7 @@ const SideBarItem = ({ data }) => {
     collect: (monitor) => ({
       opacity: monitor.isDragging() ? 0.4 : 1,
     }),
-  });
+  }); 
 
   const componentElements = {
     'Text': <TextFieldsIcon />,
@@ -42,7 +43,8 @@ const SideBarItem = ({ data }) => {
     'Button': <SmartButtonIcon />,
     'Image': <ImageIcon />,
     'H1': <H1Icon />,
-    'H2': <H2Icon />
+    'H2': <H2Icon />,
+    'Header': <HeaderIcon />
   }
 
   return (

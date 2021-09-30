@@ -83,3 +83,16 @@ margin-bottom: .25em;
 font-size: 1em;
 display: block;`,
 };
+
+export const header = {
+  value: 'Site Header ®',
+  style: `display: inline-block;
+color: palevioletred;
+align-item: center;
+display: block;`,
+  containerStyle: `padding: 0.5rem 1rem;
+display: flex;
+align-items: center;
+flex-direction: column;`,
+
+};

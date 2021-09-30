@@ -10,6 +10,7 @@ import { H1 } from './draggableElements/H1';
 import { H2 } from './draggableElements/H2';
 import { Image } from './draggableElements/Image';
 import { Text } from './draggableElements/Text';
+import { Header } from './draggableElements/Header'
 
 const StyledContainer = styled.div`
   ${(props) => props.cssString};
@@ -45,7 +46,8 @@ const Component = ({ data, components, path, previewMode, setShowEditor }) => {
     'H1': <H1 style={style} value={value} />,
     'H2': <H2 style={style} value={value} />,
     'Image': <Image style={style} alt={value} value={value} src={src} />,
-    'Text': <Text style={style} value={value} />
+    'Text': <Text style={style} value={value} />,
+    'Header': <Header style={style} value={value} />
   }
 
   return (
