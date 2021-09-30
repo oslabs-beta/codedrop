@@ -45,7 +45,7 @@ const Container = ({ projectId }) => {
   });
 
   // when updateProject is invoked elsewhere in the application, it will trigger the PROJECT_MUTATION gql mutation
-  const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
+  const [updateProject] = useMutation(PROJECT_MUTATION);
   // when addComponent is invoked elsewhere in the application, it will trigger the ADD_COMPONENT gql mutation
   const [addComponent] = useMutation(ADD_COMPONENT);
 
@@ -56,7 +56,7 @@ const Container = ({ projectId }) => {
       layout: JSON.parse(projectDataGql.getProject.layout),
     };
     setProject(updatedProject);
-  }, [projectDataGql, loadingProject, data]);
+  }, [projectDataGql, loadingProject]);
 
   const { components, layout, projectName } = project;
 
@@ -68,6 +68,18 @@ const Container = ({ projectId }) => {
     },
     [layout, projectId, updateProject]
   );
+
+  const handleUpdateComponent = async (newComponent, newLayout) => {
+    await addComponent(newComponent);
+    updateProject({
+      variables: {
+        project: {
+          id: projectId,
+          layout: JSON.stringify(newLayout),
+        },
+      },
+    });
+  }
 
   const handleDrop = useCallback(
     (dropZone, item) => {
@@ -83,7 +95,11 @@ const Container = ({ projectId }) => {
       if (item.type === SIDEBAR_ITEM) {
         // 1. Move sidebar item into page
         const newComponentId = shortid.generate();
-        const newLayout = handleMoveSidebarComponentIntoParent(layout, splitDropZonePath, newComponentId);
+        const newLayout = handleMoveSidebarComponentIntoParent(
+          layout,
+          splitDropZonePath,
+          newComponentId
+        );
         const newComponent = {
           variables: {
             component: {
@@ -97,15 +113,7 @@ const Container = ({ projectId }) => {
             },
           },
         };
-        addComponent(newComponent);
-        updateProject({
-          variables: {
-            project: {
-              id: projectId,
-              layout: JSON.stringify(newLayout),
-            },
-          },
-        });
+        handleUpdateComponent(newComponent, newLayout)
         return;
       }
 
