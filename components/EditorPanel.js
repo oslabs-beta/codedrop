@@ -31,7 +31,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function EditorPanel({ component, components, setShowEditor, addComponent }) {
+export default function EditorPanel({ component, setShowEditor, addComponent }) {
   const classes = useStyles();
   const { __typename, ...otherComponentProps } = component;
   const [id, setId] = useState(component.id);
@@ -45,20 +45,21 @@ export default function EditorPanel({ component, components, setShowEditor, addC
       setValue(component.value);
       setStyle(component.style);
       setContainerStyle(component.containerStyle);
-    } else {
+    } else if (
+      value !== component.value ||
+      style !== component.style ||
+      containerStyle !== component.containerStyle
+    ) {
+      const updatedComponent = {
+        ...otherComponentProps,
+        value: value,
+        style: style,
+        containerStyle: containerStyle,
+      };
+      // Used to throttle the number of database updates when the component's value or style is updated
       const timeOutId = setTimeout(
-        () =>
-          addComponent({
-            variables: {
-              component: {
-                ...otherComponentProps,
-                value: value,
-                style: style,
-                containerStyle: containerStyle,
-              },
-            },
-          }),
-        250
+        () => addComponent({ variables: { component: updatedComponent } }),
+        500
       );
       return () => clearTimeout(timeOutId);
     }
@@ -75,10 +76,7 @@ export default function EditorPanel({ component, components, setShowEditor, addC
         <Input value={value} onChange={(e) => setValue(e.target.value)} />
         <h4>Styling</h4>
         <StylingTabs
-          component={otherComponentProps}
-          components={components}
-          addComponent={addComponent}
-          style={style} 
+          style={style}
           setStyle={setStyle}
           containerStyle={containerStyle}
           setContainerStyle={setContainerStyle}

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import shortid from 'shortid';
 import SidebarPanel from '../../components/SidebarPanel';
@@ -12,12 +12,12 @@ import {
   handleMoveSidebarComponentIntoParent,
   handleRemoveItemFromLayout,
 } from '../../components/dnd/helpers';
-import { SIDEBAR_ITEM, COMPONENT, COLUMN } from '../../components/dnd/constants';
+import { SIDEBAR_ITEM, COLUMN } from '../../components/dnd/constants';
 
 // query hooks
-import { useQuery, useMutation, useSubscription } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 // graphql querires and mutations
-import { PROJECT_QUERY, COMPONENTS_QUERY } from '../../lib/apolloQueries';
+import { PROJECT_QUERY } from '../../lib/apolloQueries';
 import { PROJECT_MUTATION, ADD_COMPONENT } from '../../lib/apolloMutations';
 
 const useStyles = makeStyles({
@@ -28,11 +28,11 @@ const useStyles = makeStyles({
   },
 });
 
-const Container = ({ projectData }) => {
-  const projectId = projectData.projectId;
+const Container = ({ projectId }) => {
   const classes = useStyles();
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
+  const [project, setProject] = useState({ layout: [], projectName: '', components: [] });
 
   // fetch the project from the db using graphql
   const {
@@ -40,29 +40,25 @@ const Container = ({ projectData }) => {
     error: loadingProjectError,
     data: projectDataGql,
   } = useQuery(PROJECT_QUERY, {
-    fetchPolicy: "network-only",   // Used for first execution to ensure local data up to date with server
-    nextFetchPolicy: "cache-and-network", //all subsequent calls,
+    fetchPolicy: 'network-only', // Used for first execution to ensure local data up to date with server
     variables: { id: projectId },
   });
 
   // when updateProject is invoked elsewhere in the application, it will trigger the PROJECT_MUTATION gql mutation
-  const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
-
-  const layout = JSON.parse(projectDataGql?.getProject?.layout || '[]');
-
-  const {
-    loading: loadingComponents,
-    error: loadingComponentsError,
-    data: componentsData,
-  } = useSubscription(COMPONENTS_QUERY);
-
-  const components = componentsData?.queryComponent || '[]';
-
+  const [updateProject] = useMutation(PROJECT_MUTATION);
   // when addComponent is invoked elsewhere in the application, it will trigger the ADD_COMPONENT gql mutation
-  const [
-    addComponent,
-    { data: newComponentData, loading: newComponentLoading, error: newComponentError },
-  ] = useMutation(ADD_COMPONENT);
+  const [addComponent] = useMutation(ADD_COMPONENT);
+
+  useEffect(() => {
+    if (loadingProject) return;
+    const updatedProject = {
+      ...projectDataGql.getProject,
+      layout: JSON.parse(projectDataGql.getProject.layout),
+    };
+    setProject(updatedProject);
+  }, [projectDataGql, loadingProject]);
+
+  const { components, layout, projectName } = project;
 
   // helper function to remove item from the project layout
   const handleDropToTrashBin = useCallback(
@@ -73,9 +69,20 @@ const Container = ({ projectData }) => {
     [layout, projectId, updateProject]
   );
 
+  const handleUpdateComponent = async (newComponent, newLayout) => {
+    await addComponent(newComponent);
+    updateProject({
+      variables: {
+        project: {
+          id: projectId,
+          layout: JSON.stringify(newLayout),
+        },
+      },
+    });
+  }
+
   const handleDrop = useCallback(
     (dropZone, item) => {
-      
       const splitDropZonePath = dropZone.path.split('-');
       const pathToDropZone = splitDropZonePath.slice(0, -1).join('-');
 
@@ -87,29 +94,26 @@ const Container = ({ projectData }) => {
       // sidebar into
       if (item.type === SIDEBAR_ITEM) {
         // 1. Move sidebar item into page
+        const newComponentId = shortid.generate();
+        const newLayout = handleMoveSidebarComponentIntoParent(
+          layout,
+          splitDropZonePath,
+          newComponentId
+        );
         const newComponent = {
-          id: shortid.generate(),
-          ...item.component,
-        };
-        const dbComponent = {
           variables: {
-            component: newComponent,
-          },
-        };
-        addComponent(dbComponent);
-        const newItem = {
-          id: newComponent.id,
-          type: COMPONENT,
-        };
-        const newLayout = handleMoveSidebarComponentIntoParent(layout, splitDropZonePath, newItem);
-        updateProject({
-          variables: {
-            project: {
-              id: projectId.toString(),
-              layout: JSON.stringify(newLayout),
+            component: {
+              id: newComponentId,
+              ...item.component,
+              projects: {
+                id: projectId,
+                layout: JSON.stringify(newLayout),
+                projectName,
+              },
             },
           },
-        }); 
+        };
+        handleUpdateComponent(newComponent, newLayout)
         return;
       }
 
@@ -135,7 +139,12 @@ const Container = ({ projectData }) => {
 
         // 2.b. OR move different parent
         // TODO FIX columns. item includes children
-        const newLayout = handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem);
+        const newLayout = handleMoveToDifferentParent(
+          layout,
+          splitDropZonePath,
+          splitItemPath,
+          newItem
+        );
         updateProject({
           variables: {
             project: {
@@ -143,12 +152,17 @@ const Container = ({ projectData }) => {
               layout: JSON.stringify(newLayout),
             },
           },
-        }); 
+        });
         return;
       }
 
       // 3. Move + Create
-      const newLayout = handleMoveToDifferentParent(layout, splitDropZonePath, splitItemPath, newItem);
+      const newLayout = handleMoveToDifferentParent(
+        layout,
+        splitDropZonePath,
+        splitItemPath,
+        newItem
+      );
       updateProject({
         variables: {
           project: {
@@ -156,30 +170,14 @@ const Container = ({ projectData }) => {
             layout: JSON.stringify(newLayout),
           },
         },
-      }); 
+      });
     },
-    [layout, addComponent, projectId, updateProject]
+    [layout, addComponent, projectId, updateProject, projectName]
   );
 
-  const renderRow = (row, currentPath) => {
-    // The current path is the index of the object in the layout. The intial layout comes from components/dnd/initial-data.js
-    return (
-      <Row
-        key={row.id}
-        data={row}
-        handleDrop={handleDrop}
-        components={components}
-        path={currentPath}
-        previewMode={previewMode}
-        setShowEditor={setShowEditor}
-      />
-    );
-  };
-
-  // handle loading and error states from graphQL queries
-  if (loadingProject || loadingComponents) return 'Loading...';
-  if (loadingProjectError || loadingComponentsError) {
-    return `Error! ${loadingProjectError?.message || ``} ${loadingComponentsError?.message || ``}`;
+  if (loadingProject) return 'Loading...';
+  if (loadingProjectError) {
+    return `Error! ${loadingProjectError?.message || ``}}`;
   }
 
   return (
@@ -205,7 +203,15 @@ const Container = ({ projectData }) => {
                   onDrop={handleDrop}
                   path={currentPath}
                 />
-                {renderRow(row, currentPath)}
+                <Row
+                  key={row.id}
+                  data={row}
+                  handleDrop={handleDrop}
+                  components={components}
+                  path={currentPath}
+                  previewMode={previewMode}
+                  setShowEditor={setShowEditor}
+                />
               </React.Fragment>
             );
           })}
@@ -228,12 +234,10 @@ const Container = ({ projectData }) => {
       </div>
       {showEditor && (
         <EditorPanel
-          component={components.find(c => c.id === showEditor.id)}
-          components={components}
+          project={project}
+          component={showEditor}
           addComponent={addComponent}
           setShowEditor={setShowEditor}
-          data={{ layout }}
-          onDrop={handleDropToTrashBin}
         />
       )}
     </div>
@@ -241,7 +245,7 @@ const Container = ({ projectData }) => {
 };
 
 export async function getStaticPaths() {
-  // not being used right now, but it is required so that getStaticProps works. 
+  // not being used right now, but it is required so that getStaticProps works.
   // ideally, we will pull in a list of the projects here instead of having an empty array.
   const projects = [];
 
@@ -260,7 +264,7 @@ export async function getStaticProps(context) {
   const projectId = context.params.projectId;
   return {
     props: {
-      projectData: { projectId },
+      projectId,
     },
   };
 }
