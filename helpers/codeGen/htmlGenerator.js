@@ -1,12 +1,12 @@
-import { parseCSSText } from './parseCSSText';
-import { removeLinebreaks } from './removeLinebreaks';
+import { parseCSSText } from './parseCSSText'
+import { removeLinebreaks } from './removeLinebreaks'
 
 export const htmlGenerator = (fullComponentDetails, framework) => {
-  const { containerStyle, id, style, src, value } = fullComponentDetails;
+  const { containerStyle, id, style, src, value } = fullComponentDetails
   const inlineContainerStyleWoLineBreaks = removeLinebreaks(containerStyle)
-  const inlineContainerStyle = parseCSSText(inlineContainerStyleWoLineBreaks);
-  const inlineStyleWoLineBreaks = removeLinebreaks(style);
-  const inlineStyle = parseCSSText(inlineStyleWoLineBreaks);
+  const inlineContainerStyle = parseCSSText(inlineContainerStyleWoLineBreaks)
+  const inlineStyleWoLineBreaks = removeLinebreaks(style)
+  const inlineStyle = parseCSSText(inlineStyleWoLineBreaks)
 
   const reactElements = {
     H1: `<h1 style={${inlineStyle}}>${value}</h1>`,
@@ -17,12 +17,12 @@ export const htmlGenerator = (fullComponentDetails, framework) => {
     Input: `<input style={${inlineStyle}}>${value}</input>`,
     Header: `<header style={${inlineStyle}}>${value}</header>`
   }
-  
+
   class React {
-    constructor() {}
-    getBody() {
+    constructor () {}
+    getBody () {
       const generateChildHtml = () => reactElements[fullComponentDetails.type]
-      return `<div style={${inlineContainerStyle}}>${generateChildHtml()}</div>`;
+      return `<div style={${inlineContainerStyle}}>${generateChildHtml()}</div>`
     }
   }
 
@@ -37,23 +37,23 @@ export const htmlGenerator = (fullComponentDetails, framework) => {
   }
 
   class Angular {
-    constructor() {}
-    getBody() {
+    constructor () {}
+    getBody () {
       const generateChildHtml = () => AngularElements[fullComponentDetails.type]
-      return `<div style="${inlineContainerStyleWoLineBreaks}">${generateChildHtml()}</div>`;
+      return `<div style="${inlineContainerStyleWoLineBreaks}">${generateChildHtml()}</div>`
     }
   }
 
   const frameworks = {
     'Angular': Angular,
-    'React': React,
+    'React': React
   }
 
   class GenerateCode {
-    constructor(framework) {
-      this.framework = new frameworks[framework]() 
-    } 
-    getBody() {
+    constructor (framework) {
+      this.framework = new frameworks[framework]()
+    }
+    getBody () {
       return this.framework.getBody()
     }
   }
@@ -61,5 +61,5 @@ export const htmlGenerator = (fullComponentDetails, framework) => {
   const formattedCode = new GenerateCode(framework)
 
   return formattedCode.getBody()
-};
+}
 
