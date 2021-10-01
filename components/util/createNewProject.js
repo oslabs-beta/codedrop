@@ -10,7 +10,7 @@ const createNewProject = async (router, addUser, updateProject, username ) => {
   let currentDate = date.toDateString();    
  
   
-  await addUser({
+  addUser({
     variables: {
       username
     },
@@ -20,8 +20,8 @@ const createNewProject = async (router, addUser, updateProject, username ) => {
     variables: {
       project: {
         layout: JSON.stringify(initialLayout),
-        id: projectId.toString(),
-        projectName: 'default',
+        id: projectId,
+        projectName: 'project name',
         modified: currentDate,
         created: currentDate,
         user: {
@@ -29,7 +29,7 @@ const createNewProject = async (router, addUser, updateProject, username ) => {
         }
       },
     },
-    awaitRefetchQueries: true,
+    // awaitRefetchQueries: true,
   }); 
   
   router.push(`/project/${projectId}`)

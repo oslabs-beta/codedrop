@@ -14,17 +14,17 @@ const ProjectNameOrInput = ( props ) => {
   const classes = useStyles();
 
   return (
-      <div className={classes.newProjectName}>
-          {
-          props.active ? 
-              <input value={props.value} onChange={props.inputChange} onBlur={props.blur} autoFocus/> 
-              :
-              <div onDoubleClick={props.doubleClick}>
-                  {props.value}
-              </div>       
-          }
-      </div>
-  )
+    <div className={classes.newProjectName}>
+        {
+        props.active ? 
+            <input value={props.value} onChange={props.inputChange} onBlur={props.blur} autoFocus/> 
+            :
+            <div onDoubleClick={props.doubleClick}>
+                {props.value}
+            </div>       
+        }
+    </div>
+)
 }
 
 export default ProjectNameOrInput;
