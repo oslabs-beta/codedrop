@@ -1,8 +1,9 @@
-import { Typography, Button, Container } from '@material-ui/core';
+import { useState } from 'react'
+import { Typography, Button, CircularProgress, Container } from '@material-ui/core';
 import { useRouter } from 'next/router';
 import { makeStyles } from '@material-ui/styles';
 import { useMutation } from '@apollo/client';
-import { PROJECT_MUTATION, ADD_USER } from '../lib/apolloMutations';
+import { PROJECT_MUTATION } from '../lib/apolloMutations';
 import createNewProject from './util/createNewProject'
 
 const useStyles = makeStyles({
@@ -26,26 +27,21 @@ const useStyles = makeStyles({
     width: 200,
     height: 200,
   },
+  button: {
+    color: '#FFECD6'
+  }
 });
 
 function SplashPage({ session }) {
   const router = useRouter();
   const classes = useStyles();
+  const [loading, setLoading] = useState(false);
 
-  // use updateProject to change all/any properties ona project
-  const [updateProject, { data: projectData, loading: projectLoading, error: projectError }] = useMutation(PROJECT_MUTATION);
-
-  // use addUser to add/check user in database
-  const [addUser, { data: userData, loading: userLoading, error: userError }] =
-    useMutation(ADD_USER);
-
+  // use updateProject to change all/any properties on a project
+  const [updateProject] = useMutation(PROJECT_MUTATION);
+  
+  //check for active session, otherwise use guest
   const username = session ? session.user.email : 'guest';
-
-  // handle loading and error states from graphQL queries
-  if (projectLoading || userLoading) return 'Loading...';
-  if (projectError || userError) {
-    return `Error! ${projectError?.message || ``} ${userError?.message || ``}`;
-  }
   
   return (
     <>
@@ -60,9 +56,10 @@ function SplashPage({ session }) {
           className={classes.roundButton}
           variant="contained"
           color="primary"
-          onClick={() => createNewProject(router, addUser, updateProject, username)}
+          onClick={() => createNewProject(router, updateProject, setLoading, username)}
         >
-          Get Started
+          {loading && <CircularProgress size={72} className={classes.button} />}
+          {!loading && 'Get Started'}
         </Button>
       </Container>
     </>
