@@ -49,7 +49,7 @@ const Container = ({ projectId }) => {
     fetchPolicy: 'network-only', // Used for first execution to ensure local data up to date with server
     variables: { id: projectId },
   });
-  
+
   const date = new Date();
   let currentDate = date.toDateString() + ' - ' + date.toLocaleTimeString('en-US');    
   
@@ -86,7 +86,7 @@ const Container = ({ projectId }) => {
     updateProject({
       variables: {
         project: {
-          id: projectId,
+          id: projectId.toString(),
           modified: currentDate,
           layout: JSON.stringify(newLayout),
         },
@@ -119,7 +119,7 @@ const Container = ({ projectId }) => {
               id: newComponentId,
               ...item.component,
               projects: {
-                id: projectId,
+                id: projectId.toString(),
                 layout: JSON.stringify(newLayout),
                 modified: currentDate,
                 projectName,
@@ -143,7 +143,7 @@ const Container = ({ projectId }) => {
           updateProject({
             variables: {
               project: {
-                id: projectId,
+                id: projectId.toString(),
                 modified: currentDate,
                 layout: JSON.stringify(newLayout),
               },
@@ -163,7 +163,7 @@ const Container = ({ projectId }) => {
         updateProject({
           variables: {
             project: {
-              id: projectId,
+              id: projectId.toString(),
               modified: currentDate,
               layout: JSON.stringify(newLayout),
             },
@@ -182,7 +182,7 @@ const Container = ({ projectId }) => {
       updateProject({
         variables: {
           project: {
-            id: projectId,
+            id: projectId.toString(),
             modified: currentDate,
             layout: JSON.stringify(newLayout),
           },
@@ -294,7 +294,7 @@ export async function getStaticPaths() {
   // not being used right now, but it is required so that getStaticProps works.
   // ideally, we will pull in a list of the projects here instead of having an empty array.
   const projects = [];
-
+  
   return {
     fallback: 'blocking',
     paths: projects.map((project) => ({

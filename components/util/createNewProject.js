@@ -1,22 +1,15 @@
 import { v4 as uuidv4 } from 'uuid';
 import initialData  from '../dnd/initial-data';
 
-const createNewProject = async (router, addUser, updateProject, username ) => {
-  
+const createNewProject = (router, updateProject, setLoading, username) => {
+  setLoading(true)
   const initialLayout = initialData.layout;
   const projectId = uuidv4();
   
   const date = new Date();
-  let currentDate = date.toDateString();    
- 
-  
-  addUser({
-    variables: {
-      username
-    },
-  }); 
+  const currentDate = date.toDateString();    
     
-  await updateProject({
+  updateProject({
     variables: {
       project: {
         layout: JSON.stringify(initialLayout),
@@ -25,11 +18,10 @@ const createNewProject = async (router, addUser, updateProject, username ) => {
         modified: currentDate,
         created: currentDate,
         user: {
-          username: username
+          username
         }
       },
     },
-    // awaitRefetchQueries: true,
   }); 
   
   router.push(`/project/${projectId}`)
