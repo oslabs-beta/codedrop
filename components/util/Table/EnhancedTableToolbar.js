@@ -34,17 +34,13 @@ function EnhancedTableToolbar(props){
   const [addUser] = useMutation(ADD_USER);
   const router = useRouter();
   const classes = useStyles();
-  const { numSelected, selected, username } = props;
+  const { numSelected, selected, username, rows, setRows } = props;
 
-  const handleDeleteProjects = () => selected.forEach(s => deleteProject({ 
-    variables: { id: s },
-    // Refetch doesn't work. Need to investigate further.
-    // refetchQueries:{
-    //   query:PROJECTS_QUERY, 
-    //   variables:{
-    //     username
-    // }}
-  }))
+  const handleDeleteProjects = () => {
+    selected.forEach(s => deleteProject({ variables: { id: s } }))
+    const rowsToKeep = rows.filter((r) => !selected.find(s => s === r.id))
+    setRows(rowsToKeep)
+  }
   
   return (
     <Toolbar className={classes.toolbar}>

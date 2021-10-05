@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
 import { PROJECTS_QUERY } from '../lib/apolloQueries';
@@ -50,9 +50,6 @@ function createData({
   };
 }
 
-
-
-
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) return -1;
   if (b[orderBy] > a[orderBy]) return 1;
@@ -72,6 +69,7 @@ export default function EnhancedTable({ session }) {
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rows, setRows] = useState([])
 
   //check if session exists, if so pull out username
   const username = session ? session.user.email : 'guest';
@@ -89,7 +87,12 @@ export default function EnhancedTable({ session }) {
   );
 
   // projectsArray is an array where each element has an id, and a projectName
-  const rows = data?.getUser.projects.map((row) => createData({ ...row })) || '[]';
+  // const rows = data?.getUser.projects.map((row) => createData({ ...row })) || '[]';
+  
+  useEffect(() => {
+    if (loading) return
+    setRows(data?.getUser.projects.map((row) => createData({ ...row })) || [])
+  }, [loading, data])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -147,7 +150,13 @@ export default function EnhancedTable({ session }) {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar selected={selected} numSelected={selected.length} username={username} />
+        <EnhancedTableToolbar 
+          selected={selected} 
+          numSelected={selected.length} 
+          username={username} 
+          setRows={setRows} 
+          rows={rows} 
+        />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
             <EnhancedTableHead
