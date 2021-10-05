@@ -31,7 +31,6 @@ const useStyles = makeStyles({
 function EnhancedTableToolbar(props){
   const [deleteProject] = useMutation(DELETE_PROJECT);
   const [updateProject] = useMutation(PROJECT_MUTATION);
-  const [addUser] = useMutation(ADD_USER);
   const router = useRouter();
   const classes = useStyles();
   const { numSelected, selected, username, rows, setRows } = props;
@@ -69,7 +68,11 @@ function EnhancedTableToolbar(props){
         )}
       </div>
 
-      <Button variant="contained" color="primary" onClick={() => createNewProject(router, addUser, updateProject, username)}>
+      <Button 
+        variant="contained" 
+        color="primary" 
+        onClick={() => createNewProject(router, updateProject, username)}
+      >
         New Project
       </Button>
     </Toolbar>

@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import initialData  from '../dnd/initial-data';
 
-const createNewProject = (router, updateProject, setLoading, username) => {
-  setLoading(true)
+const createNewProject = (router, updateProject, username) => {
+  
   const initialLayout = initialData.layout;
   const projectId = uuidv4();
   

@@ -56,7 +56,10 @@ function SplashPage({ session }) {
           className={classes.roundButton}
           variant="contained"
           color="primary"
-          onClick={() => createNewProject(router, updateProject, setLoading, username)}
+          onClick={() => {
+            setLoading(true);
+            createNewProject(router, updateProject, username);
+          }}
         >
           {loading && <CircularProgress size={72} className={classes.button} />}
           {!loading && 'Get Started'}
