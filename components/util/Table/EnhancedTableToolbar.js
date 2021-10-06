@@ -1,5 +1,9 @@
 import { useRouter } from 'next/router';
-
+import { v4 as uuidv4 } from 'uuid';
+import { useMutation } from '@apollo/client';
+import initialData  from '../../../components/dnd/initial-data';
+import { PROJECT_MUTATION, ADD_USER, DELETE_PROJECT } from '../../../lib/apolloMutations';
+import { PROJECTS_QUERY } from '../../../lib/apolloQueries';
 import PropTypes from 'prop-types';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -9,6 +13,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/styles';
+import createNewProject from '../createNewProject';
 
 const useStyles = makeStyles({
   toolbar: {
@@ -23,12 +28,19 @@ const useStyles = makeStyles({
     alignItems: 'center',
   },
 });
-
-const EnhancedTableToolbar = (props) => {
+function EnhancedTableToolbar(props){
+  const [deleteProject] = useMutation(DELETE_PROJECT);
+  const [updateProject] = useMutation(PROJECT_MUTATION);
   const router = useRouter();
   const classes = useStyles();
-  const { numSelected } = props;
+  const { numSelected, selected, username, rows, setRows } = props;
 
+  const handleDeleteProjects = () => {
+    selected.forEach(s => deleteProject({ variables: { id: s } }))
+    const rowsToKeep = rows.filter((r) => !selected.find(s => s === r.id))
+    setRows(rowsToKeep)
+  }
+  
   return (
     <Toolbar className={classes.toolbar}>
       <div className={classes.leftToolbar}>
@@ -41,9 +53,8 @@ const EnhancedTableToolbar = (props) => {
             Projects
           </Typography>
         )}
-
         {numSelected > 0 ? (
-          <Tooltip title="Delete">
+          <Tooltip title="Delete" onClick={() => handleDeleteProjects()}>
             <IconButton>
               <DeleteIcon />
             </IconButton>
@@ -57,7 +68,11 @@ const EnhancedTableToolbar = (props) => {
         )}
       </div>
 
-      <Button variant="contained" color="primary" onClick={() => router.push('/project/9')}>
+      <Button 
+        variant="contained" 
+        color="primary" 
+        onClick={() => createNewProject(router, updateProject, username)}
+      >
         New Project
       </Button>
     </Toolbar>
