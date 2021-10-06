@@ -28,13 +28,13 @@ const headCells = [
     id: 'updatedAt',
     numeric: false,
     disablePadding: false,
-    label: 'Updated At',
+    label: 'Last Updated',
   },
   {
     id: 'createdAt',
     numeric: false,
     disablePadding: false,
-    label: 'Created At',
+    label: 'Date Created',
   },
 ];
 

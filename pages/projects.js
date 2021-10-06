@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
 import { PROJECTS_QUERY } from '../lib/apolloQueries';
@@ -21,22 +21,32 @@ import Link from '@material-ui/core/Link';
 
 import { getSession } from 'next-auth/client';
 
+// this is needed to receive and format the array of users returned the projectsQuery
+const parseUser = (user) => {
+  const userArray = [];
+  user.forEach(userObj => {
+    userArray.push(userObj.username)
+  })
+  //return comma separated usernames as string
+  return userArray.join(', ');
+}
+
 //this is where data is mocked, id will be passed in here to give project access
 function createData({
   id,
   projectName,
   shared = true,
-  teamMembers = 'Abid, Emily, Blake and Dan',
-  updatedAt = 'Thursday, August 14th 2021',
-  createdAt = 'Thursday, August 14th 2021',
+  user,
+  created,
+  modified,
 }) {
   return {
     id,
     name: projectName,
     shared,
-    teamMembers,
-    updatedAt,
-    createdAt,
+    teamMembers: parseUser(user),
+    updatedAt: modified,
+    createdAt: created,
   };
 }
 
@@ -59,6 +69,7 @@ export default function EnhancedTable({ session }) {
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rows, setRows] = useState([])
 
   //check if session exists, if so pull out username
   const username = session ? session.user.email : 'guest';
@@ -76,7 +87,12 @@ export default function EnhancedTable({ session }) {
   );
 
   // projectsArray is an array where each element has an id, and a projectName
-  const rows = data?.getUser.projects.map((row) => createData({ ...row })) || '[]';
+  // const rows = data?.getUser.projects.map((row) => createData({ ...row })) || '[]';
+  
+  useEffect(() => {
+    if (loading) return
+    setRows(data?.getUser.projects.map((row) => createData({ ...row })) || [])
+  }, [loading, data])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -86,19 +102,19 @@ export default function EnhancedTable({ session }) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.name);
+      const newSelecteds = rows.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event, id) => {
+    const selectedIndex = selected.indexOf(id);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -120,7 +136,7 @@ export default function EnhancedTable({ session }) {
     setPage(0);
   };
 
-  const isSelected = (name) => selected.indexOf(name) !== -1;
+  const isSelected = (id) => selected.indexOf(id) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -134,7 +150,13 @@ export default function EnhancedTable({ session }) {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar 
+          selected={selected} 
+          numSelected={selected.length} 
+          username={username} 
+          setRows={setRows} 
+          rows={rows} 
+        />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
             <EnhancedTableHead
@@ -151,7 +173,7 @@ export default function EnhancedTable({ session }) {
                 .sort(getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.name);
+                  const isItemSelected = isSelected(row.id);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
@@ -167,14 +189,14 @@ export default function EnhancedTable({ session }) {
                         <Checkbox
                           color="primary"
                           checked={isItemSelected}
-                          onClick={(event) => handleClick(event, row.name)}
+                          onClick={(event) => handleClick(event, row.id)}
                           inputProps={{
                             'aria-labelledby': labelId,
                           }}
                         />
                       </TableCell>
                       <TableCell component="th" id={labelId} scope="row" padding="none">
-                        <Link color="#333333" onClick={() => router.push(`/project/${row.id}`)}>
+                        <Link color="#333333" underline="hover" onClick={() => router.push(`/project/${row.id}`)}>
                           {row.name}
                         </Link>
                       </TableCell>
