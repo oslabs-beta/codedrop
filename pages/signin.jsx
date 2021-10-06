@@ -1,11 +1,15 @@
 import { getCsrfToken } from 'next-auth/client';
 import { useRouter } from 'next/router';
-
+import { useMutation } from '@apollo/client';
+import { useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
+import axios from 'axios';
 import Button from '@material-ui/core/Button';
 import Input from '@material-ui/core/Input';
 import FormLabel from '@material-ui/core/FormLabel';
 import Typography from '@material-ui/core/Typography';
+
+import { RENAME_PROJECT } from '../lib/apolloMutations';
 
 const useStyles = makeStyles({
   signInPageContainer: {
@@ -51,6 +55,37 @@ const useStyles = makeStyles({
 export default function SignIn({ csrfToken }) {
   const classes = useStyles();
   const router = useRouter();
+  const { projectId } = router.query;
+  const [ username, setUsername] = useState('')
+
+  const [renameProject] = useMutation(RENAME_PROJECT);
+
+  const handleSignin = async () => {
+    router.push(`/project/${projectId}`);
+    // WIP - Guest user isn't removed and session doesn't appear to pass through to the project page. This results in the save button appearing when it shouldn't be.
+    await renameProject({
+      variables: {
+        project: {
+          filter: {
+            id: {
+              eq: projectId,
+            },
+          },
+          // remove: {
+          //   user: {
+          //     username: 'default'
+          //   },
+          // },
+          set: {
+            user: {
+              username,
+            },
+          }
+        }
+      }
+    })
+    await axios.post('/api/auth/signin/email', { email: username, csrfToken },)
+  }
 
   return (
     <div className={classes.signInPageContainer}>
@@ -58,14 +93,13 @@ export default function SignIn({ csrfToken }) {
         <Typography variant="h3" className={classes.title} onClick={() => router.push('/')}>
           codedrop
         </Typography>
-        <form className={classes.signInForm} method="post" action="/api/auth/signin/email">
-          <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
+        <div className={classes.signInForm}>
           <FormLabel className={classes.label}>Email address</FormLabel>
-          <Input type="email" id="email" name="email" className={classes.input} />
-          <Button type="submit" variant="outlined" className={classes.button}>
+          <Input type="email" id="email" name="email" className={classes.input} onChange={(e) => setUsername(e.target.value)} />
+          <Button type="submit" variant="outlined" className={classes.button} onClick={handleSignin}>
             Sign in with Email
           </Button>
-        </form>
+        </div>
       </div>
     </div>
   );
@@ -74,6 +108,7 @@ export default function SignIn({ csrfToken }) {
 // This is the recommended way for Next.js 9.3 or newer
 export async function getServerSideProps(context) {
   const csrfToken = await getCsrfToken(context);
+  
   return {
     props: { csrfToken },
   };
