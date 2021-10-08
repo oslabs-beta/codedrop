@@ -200,4 +200,4 @@ Creators:<br>
 [Dan Yeoman](https://github.com/dyeoman2)<br>
 [Blake Myrick](https://github.com/bamche)<br>
 
-A big thank you to [Anne Zhou]() for laying the groundwork on complex nested drag and drop user interfaces!
+A big thank you to [Anne Zhou](https://github.com/annezhou920) for laying the groundwork on complex nested drag and drop user interfaces!
