@@ -20,7 +20,7 @@ export default NextAuth({
           pass: process.env.SENDGRID_PASSWORD,
         },
       },
-      from: 'CodeDrop <dyeoman2@gmail.com>',
+      from: `CodeDrop <${process.env.SENDGRID_FROM}>`,
     }),
   ],
   adapter: FirebaseAdapter(firestore),
