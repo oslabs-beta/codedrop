@@ -9,7 +9,7 @@ import Input from '@material-ui/core/Input';
 import FormLabel from '@material-ui/core/FormLabel';
 import Typography from '@material-ui/core/Typography';
 
-import { RENAME_PROJECT } from '../lib/apolloMutations';
+import { RENAME_PROJECT, REMOVE_PROJECT_FROM_USER } from '../lib/apolloMutations';
 
 const useStyles = makeStyles({
   signInPageContainer: {
@@ -55,14 +55,16 @@ const useStyles = makeStyles({
 export default function SignIn({ csrfToken }) {
   const classes = useStyles();
   const router = useRouter();
+  
   const { projectId } = router.query;
   const [ username, setUsername] = useState('')
 
   const [renameProject] = useMutation(RENAME_PROJECT);
+  const [updateUser] = useMutation(REMOVE_PROJECT_FROM_USER);
 
   const handleSignin = async () => {
+    if (!projectId) return router.push(`/projects`);
     router.push(`/project/${projectId}`);
-    // WIP - Guest user isn't removed and session doesn't appear to pass through to the project page. This results in the save button appearing when it shouldn't be.
     await renameProject({
       variables: {
         project: {
@@ -71,17 +73,17 @@ export default function SignIn({ csrfToken }) {
               eq: projectId,
             },
           },
-          // remove: {
-          //   user: {
-          //     username: 'default'
-          //   },
-          // },
           set: {
             user: {
               username,
             },
           }
         }
+      }
+    })
+    await updateUser({
+      variables: {
+        id: projectId,
       }
     })
     await axios.post('/api/auth/signin/email', { email: username, csrfToken },)
