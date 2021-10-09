@@ -3,8 +3,10 @@ import { Typography, Button, CircularProgress, Container } from '@material-ui/co
 import { useRouter } from 'next/router';
 import { makeStyles } from '@material-ui/styles';
 import { useMutation } from '@apollo/client';
+import { PROJECT_QUERY } from '../lib/apolloQueries';
 import { PROJECT_MUTATION } from '../lib/apolloMutations';
 import createNewProject from './util/createNewProject'
+import initialData  from './dnd/initial-data';
 
 const useStyles = makeStyles({
   root: {
@@ -36,9 +38,30 @@ function SplashPage({ session }) {
   const router = useRouter();
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
+  const initialLayout = JSON.stringify(initialData.layout);
 
   // use updateProject to change all/any properties on a project
-  const [updateProject] = useMutation(PROJECT_MUTATION);
+  const [updateProject] = useMutation(PROJECT_MUTATION,
+    {
+      update(cache, result) {
+        const { data } = result;
+        const project = data.addProject.project[0];
+        const id = project.id
+        const payload = { 
+          getProject: { 
+            ...project, 
+            components: [],
+            layout: initialLayout
+          } 
+        }
+        console.log('payload', payload.getProject)
+        cache.writeQuery({
+          query: PROJECT_QUERY,
+          data: payload,
+          variables: { id }
+        });
+      }
+    });
   
   //check for active session, otherwise use guest
   const username = session ? session.user.email : 'guest';
@@ -58,7 +81,7 @@ function SplashPage({ session }) {
           color="primary"
           onClick={() => {
             setLoading(true);
-            createNewProject(router, updateProject, username);
+            createNewProject(router, updateProject, username, setLoading);
           }}
         >
           {loading && <CircularProgress size={72} className={classes.button} />}
