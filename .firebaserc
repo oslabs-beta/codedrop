@@ -1,5 +1,5 @@
 {
   "projects": {
-    "default": `${process.env.FIREBASE_PROJECT_ID}`
+    "default": "codedrop-bdc35"
   }
 }
