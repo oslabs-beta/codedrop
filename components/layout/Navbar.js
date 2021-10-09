@@ -80,11 +80,6 @@ export default function Navbar() {
           </Menu>
         </>
       )}
-      {!session && !onProjectPage && (
-        <Button variant="contained" color="primary" onClick={() => router.push('/signin')}>
-          Sign Up
-        </Button>
-      )}
     </AppBar>
   );
 }
