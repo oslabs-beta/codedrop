@@ -42,16 +42,18 @@ function SplashPage({ session }) {
   const [updateProject] = useMutation(PROJECT_MUTATION,
     {
       update(cache, result) {
-        console.log('inside update function');
-        const {data} = result;
-        console.log('data', data);
-        const project = data.addProject.project;
+        const { data } = result;
+        const project = data.addProject.project[0];
         const id = project.id
-        console.log('project', project);
-        console.log('id', id)
+        const payload = { 
+          getProject: { 
+            ...project, 
+            components: [],
+          } 
+        }
         cache.writeQuery({
           query: PROJECT_QUERY,
-          data: project,
+          data: payload,
           variables: { id }
         });
       }
@@ -75,7 +77,7 @@ function SplashPage({ session }) {
           color="primary"
           onClick={() => {
             setLoading(true);
-            createNewProject(router, updateProject, username);
+            createNewProject(router, updateProject, username, setLoading);
           }}
         >
           {loading && <CircularProgress size={72} className={classes.button} />}

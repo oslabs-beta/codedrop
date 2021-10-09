@@ -2,13 +2,11 @@ import { v4 as uuidv4 } from 'uuid';
 import initialData  from '../dnd/initial-data';
 
 const createNewProject = (router, updateProject, username) => {
-  
   const initialLayout = initialData.layout;
   const projectId = uuidv4();
-  
   const date = new Date();
-  const currentDate = date.toDateString();    
-    
+  const currentDate = date.toDateString(); 
+
   updateProject({
     variables: {
       project: {
