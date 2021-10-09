@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'next/router';
 import { makeStyles } from '@material-ui/styles';
 import shortid from 'shortid';
 import SidebarPanel from '../../components/SidebarPanel';
@@ -39,6 +40,7 @@ const Container = ({ projectId }) => {
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
   const [project, setProject] = useState({ layout: [], projectName: '', components: [] });
+  const router = useRouter();
 
   // fetch the project from the db using graphql
   const {
@@ -207,12 +209,13 @@ const Container = ({ projectId }) => {
         projectName={projectName}
       />
       <div className="pageContainer">
-      <ProjectNameOrInput 
+      <ProjectNameOrInput
+          projectId={projectId}
+          router={router} 
           value={projectName}
           inputChange={(event) => {
             console.log('triggered', event.target.value)
             setProject({...project, projectName: event.target.value})
-            
           }
         }
           doubleClick={() => setProjectNameInput(true)}
