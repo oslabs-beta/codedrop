@@ -6,6 +6,7 @@ import EditorPanel from '../../components/EditorPanel';
 import DropZone from '../../components/dnd/DropZone';
 import TrashDropZone from '../../components/dnd/TrashDropZone';
 import Row from '../../components/dnd/Row';
+import ProjectNameOrInput from '../../components/ProjectNameOrInput';
 import {
   handleMoveWithinParent,
   handleMoveToDifferentParent,
@@ -18,7 +19,8 @@ import { SIDEBAR_ITEM, COLUMN } from '../../components/dnd/constants';
 import { useQuery, useMutation } from '@apollo/client';
 // graphql querires and mutations
 import { PROJECT_QUERY } from '../../lib/apolloQueries';
-import { PROJECT_MUTATION, ADD_COMPONENT } from '../../lib/apolloMutations';
+import { PROJECT_MUTATION, ADD_COMPONENT, RENAME_PROJECT } from '../../lib/apolloMutations';
+import { CenterFocusStrong } from '@material-ui/icons';
 
 const useStyles = makeStyles({
   body: {
@@ -26,6 +28,10 @@ const useStyles = makeStyles({
     flexDirection: 'row',
     flexGrow: 1,
   },
+    projectName: {
+      textAlign: 'center',
+      color: '#bf7472',
+    },
 });
 
 const Container = ({ projectId }) => {
@@ -44,10 +50,16 @@ const Container = ({ projectId }) => {
     variables: { id: projectId },
   });
 
+  const date = new Date();
+  let currentDate = date.toDateString() + ' - ' + date.toLocaleTimeString('en-US');    
+  
   // when updateProject is invoked elsewhere in the application, it will trigger the PROJECT_MUTATION gql mutation
-  const [updateProject, { data, loading, error }] = useMutation(PROJECT_MUTATION);
+  const [updateProject] = useMutation(PROJECT_MUTATION);
   // when addComponent is invoked elsewhere in the application, it will trigger the ADD_COMPONENT gql mutation
   const [addComponent] = useMutation(ADD_COMPONENT);
+  const [renameProject] = useMutation(RENAME_PROJECT);
+
+  const [projectNameInput, setProjectNameInput] = useState(false);
 
   useEffect(() => {
     if (loadingProject) return;
@@ -56,7 +68,7 @@ const Container = ({ projectId }) => {
       layout: JSON.parse(projectDataGql.getProject.layout),
     };
     setProject(updatedProject);
-  }, [projectDataGql, loadingProject, data]);
+  }, [projectDataGql, loadingProject]);
 
   const { components, layout, projectName } = project;
 
@@ -64,10 +76,23 @@ const Container = ({ projectId }) => {
   const handleDropToTrashBin = useCallback(
     (dropZone, item) => {
       const splitItemPath = item.path.split('-');
-      handleRemoveItemFromLayout(layout, splitItemPath, updateProject, projectId);
+      handleRemoveItemFromLayout(layout, splitItemPath, updateProject, projectId, currentDate);
     },
-    [layout, projectId, updateProject]
+    [layout, projectId, currentDate, updateProject]
   );
+
+  const handleUpdateComponent = async (newComponent, newLayout) => {
+    await addComponent(newComponent);
+    updateProject({
+      variables: {
+        project: {
+          id: projectId.toString(),
+          modified: currentDate,
+          layout: JSON.stringify(newLayout),
+        },
+      },
+    });
+  }
 
   const handleDrop = useCallback(
     (dropZone, item) => {
@@ -83,29 +108,26 @@ const Container = ({ projectId }) => {
       if (item.type === SIDEBAR_ITEM) {
         // 1. Move sidebar item into page
         const newComponentId = shortid.generate();
-        const newLayout = handleMoveSidebarComponentIntoParent(layout, splitDropZonePath, newComponentId);
+        const newLayout = handleMoveSidebarComponentIntoParent(
+          layout,
+          splitDropZonePath,
+          newComponentId
+        );
         const newComponent = {
           variables: {
             component: {
               id: newComponentId,
               ...item.component,
               projects: {
-                id: projectId,
+                id: projectId.toString(),
                 layout: JSON.stringify(newLayout),
+                modified: currentDate,
                 projectName,
               },
             },
           },
         };
-        addComponent(newComponent);
-        updateProject({
-          variables: {
-            project: {
-              id: projectId,
-              layout: JSON.stringify(newLayout),
-            },
-          },
-        });
+        handleUpdateComponent(newComponent, newLayout)
         return;
       }
 
@@ -122,6 +144,7 @@ const Container = ({ projectId }) => {
             variables: {
               project: {
                 id: projectId.toString(),
+                modified: currentDate,
                 layout: JSON.stringify(newLayout),
               },
             },
@@ -141,6 +164,7 @@ const Container = ({ projectId }) => {
           variables: {
             project: {
               id: projectId.toString(),
+              modified: currentDate,
               layout: JSON.stringify(newLayout),
             },
           },
@@ -159,6 +183,7 @@ const Container = ({ projectId }) => {
         variables: {
           project: {
             id: projectId.toString(),
+            modified: currentDate,
             layout: JSON.stringify(newLayout),
           },
         },
@@ -181,6 +206,35 @@ const Container = ({ projectId }) => {
         layout={layout}
       />
       <div className="pageContainer">
+      <ProjectNameOrInput 
+          value={projectName}
+          inputChange={(event) => {
+            console.log('triggered', event.target.value)
+            setProject({...project, projectName: event.target.value})
+            
+          }
+        }
+          doubleClick={() => setProjectNameInput(true)}
+          blur={() => {
+            setProjectNameInput(false)
+            renameProject({
+              variables: {
+                project:{
+                  filter:{
+                    id: {
+                      eq: projectId.toString()
+                    },
+                  },
+                  set:{
+                    projectName,
+                  }
+                }
+              }
+            })
+          }
+        }
+          active = {projectNameInput}>Double-click to enter a new Title
+        </ProjectNameOrInput >
         <div className="page">
           {layout.map((row, index) => {
             const currentPath = `${index}`;
@@ -240,7 +294,7 @@ export async function getStaticPaths() {
   // not being used right now, but it is required so that getStaticProps works.
   // ideally, we will pull in a list of the projects here instead of having an empty array.
   const projects = [];
-
+  
   return {
     fallback: 'blocking',
     paths: projects.map((project) => ({
