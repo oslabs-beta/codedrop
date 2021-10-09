@@ -55,9 +55,9 @@ const useStyles = makeStyles({
 export default function SignIn({ csrfToken }) {
   const classes = useStyles();
   const router = useRouter();
-  
+
   const { projectId } = router.query;
-  const [ username, setUsername] = useState('')
+  const [username, setUsername] = useState('');
 
   const [renameProject] = useMutation(RENAME_PROJECT);
   const [updateUser] = useMutation(REMOVE_PROJECT_FROM_USER);
@@ -77,17 +77,17 @@ export default function SignIn({ csrfToken }) {
             user: {
               username,
             },
-          }
-        }
-      }
-    })
+          },
+        },
+      },
+    });
     await updateUser({
       variables: {
         id: projectId,
-      }
-    })
-    await axios.post('/api/auth/signin/email', { email: username, csrfToken },)
-  }
+      },
+    });
+    await axios.post('/api/auth/signin/email', { email: username, csrfToken });
+  };
 
   return (
     <div className={classes.signInPageContainer}>
@@ -97,8 +97,19 @@ export default function SignIn({ csrfToken }) {
         </Typography>
         <div className={classes.signInForm}>
           <FormLabel className={classes.label}>Email address</FormLabel>
-          <Input type="email" id="email" name="email" className={classes.input} onChange={(e) => setUsername(e.target.value)} />
-          <Button type="submit" variant="outlined" className={classes.button} onClick={handleSignin}>
+          <Input
+            type="email"
+            id="email"
+            name="email"
+            className={classes.input}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <Button
+            type="submit"
+            variant="outlined"
+            className={classes.button}
+            onClick={handleSignin}
+          >
             Sign in with Email
           </Button>
         </div>
@@ -110,7 +121,7 @@ export default function SignIn({ csrfToken }) {
 // This is the recommended way for Next.js 9.3 or newer
 export async function getServerSideProps(context) {
   const csrfToken = await getCsrfToken(context);
-  
+
   return {
     props: { csrfToken },
   };

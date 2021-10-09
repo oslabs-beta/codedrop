@@ -1,11 +1,11 @@
-import { makeStyles } from '@material-ui/styles'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Switch from '@material-ui/core/Switch'
+import { makeStyles } from '@material-ui/styles';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
 
-import CodeDrawer from './CodeDrawer'
-import SideBarItem from './dnd/SideBarItem'
-import { SIDEBAR_ITEMS } from './dnd/constants'
-import { greyScheme } from './util/colorPallete'
+import CodeDrawer from './CodeDrawer';
+import SideBarItem from './dnd/SideBarItem';
+import { SIDEBAR_ITEMS } from './dnd/constants';
+import { greyScheme } from './util/colorPallete';
 
 const useStyles = makeStyles({
   sideBar: {
@@ -15,12 +15,12 @@ const useStyles = makeStyles({
     alignContent: 'flex-start',
     width: '250px',
     padding: '10px',
-    borderRight: `1px solid ${greyScheme.lighterGray}`
-  }
-})
+    borderRight: `1px solid ${greyScheme.lighterGray}`,
+  },
+});
 
 const SidebarPanel = ({ previewMode, setPreviewMode, components, layout }) => {
-  const classes = useStyles()
+  const classes = useStyles();
 
   return (
     <div className={classes.sideBar}>
@@ -32,18 +32,15 @@ const SidebarPanel = ({ previewMode, setPreviewMode, components, layout }) => {
           <Switch
             checked={previewMode}
             onChange={() => setPreviewMode(!previewMode)}
-            name='previewMode'
-            color='primary'
+            name="previewMode"
+            color="primary"
           />
         }
-        label='Preview'
+        label="Preview"
       />
-      <CodeDrawer
-        components={components}
-        layout={layout}
-      />
+      <CodeDrawer components={components} layout={layout} />
     </div>
-  )
-}
+  );
+};
 
-export default SidebarPanel
+export default SidebarPanel;

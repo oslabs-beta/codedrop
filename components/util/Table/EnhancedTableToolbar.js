@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { v4 as uuidv4 } from 'uuid';
 import { useMutation } from '@apollo/client';
-import initialData  from '../../../components/dnd/initial-data';
+import initialData from '../../../components/dnd/initial-data';
 import { PROJECT_MUTATION, ADD_USER, DELETE_PROJECT } from '../../../lib/apolloMutations';
 import { PROJECTS_QUERY } from '../../../lib/apolloQueries';
 import PropTypes from 'prop-types';
@@ -28,7 +28,7 @@ const useStyles = makeStyles({
     alignItems: 'center',
   },
 });
-function EnhancedTableToolbar(props){
+function EnhancedTableToolbar(props) {
   const [deleteProject] = useMutation(DELETE_PROJECT);
   const [updateProject] = useMutation(PROJECT_MUTATION);
   const router = useRouter();
@@ -36,11 +36,11 @@ function EnhancedTableToolbar(props){
   const { numSelected, selected, username, rows, setRows } = props;
 
   const handleDeleteProjects = () => {
-    selected.forEach(s => deleteProject({ variables: { id: s } }))
-    const rowsToKeep = rows.filter((r) => !selected.find(s => s === r.id))
-    setRows(rowsToKeep)
-  }
-  
+    selected.forEach((s) => deleteProject({ variables: { id: s } }));
+    const rowsToKeep = rows.filter((r) => !selected.find((s) => s === r.id));
+    setRows(rowsToKeep);
+  };
+
   return (
     <Toolbar className={classes.toolbar}>
       <div className={classes.leftToolbar}>
@@ -68,16 +68,16 @@ function EnhancedTableToolbar(props){
         )}
       </div>
 
-      <Button 
-        variant="contained" 
-        color="primary" 
+      <Button
+        variant="contained"
+        color="primary"
         onClick={() => createNewProject(router, updateProject, username)}
       >
         New Project
       </Button>
     </Toolbar>
   );
-};
+}
 
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
