@@ -48,7 +48,7 @@ const Container = ({ projectId }) => {
     error: loadingProjectError,
     data: projectDataGql,
   } = useQuery(PROJECT_QUERY, {
-    // fetch policy is defaulting to cache-first
+    fetchPolicy: 'network-only', // Used for first execution to ensure local data up to date with server
     variables: { id: projectId },
   });
 

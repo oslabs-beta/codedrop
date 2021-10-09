@@ -15,6 +15,14 @@ const useStyles = makeStyles({
     flexDirection: 'row',
     justifyContent: 'center',
   },
+  input: {
+    border: 'none',
+    outline: 'none',
+    textAlign: 'center',
+    fontSize: '1.9rem',
+    padding: '4',
+    appearance: 'none',
+  },
 });
 
 // this component selectively renders the project name or an input to change the name, in [projectId].js
@@ -27,7 +35,13 @@ const ProjectNameOrInput = (props) => {
     <div className={classes.newProjectName}>
       {active ? (
         <div>
-          <input value={value} onChange={inputChange} onBlur={blur} autoFocus />
+          <input
+            value={value}
+            onChange={inputChange}
+            onBlur={blur}
+            autoFocus
+            className={classes.input}
+          />
           <RiSaveLine style={{ height: '.75em' }} onClick={blur} />
         </div>
       ) : (
