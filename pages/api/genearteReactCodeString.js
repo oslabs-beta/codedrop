@@ -3,7 +3,7 @@ import { htmlGenerator } from '../../helpers/codeGen/htmlGenerator';
 export default function genearteReactCodeString(req, res) {
   const prettier = require('prettier');
   try {
-    const { layout, components, framework } = req.body;
+    const { layout, components, framework, projectName } = req.body;
     const result = [];
     
     const parseComponents = (coms, components) => {
@@ -32,6 +32,7 @@ export default function genearteReactCodeString(req, res) {
     const createComp = (props) => {
       const div = props !== null ? props.join('') : '<div />';
 
+      console.log('projectName ', projectName)
       // framework specific logic
       const frameworks = {
         "React": { head: `import React from 'react';export const SamplePro = () => { return (<div>`, tail: `</div>)}` },

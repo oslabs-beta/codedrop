@@ -19,7 +19,7 @@ const useStyles = makeStyles({
   }
 })
 
-const SidebarPanel = ({ previewMode, setPreviewMode, components, layout }) => {
+const SidebarPanel = ({ previewMode, setPreviewMode, components, layout, projectName }) => {
   const classes = useStyles()
 
   return (
@@ -41,6 +41,7 @@ const SidebarPanel = ({ previewMode, setPreviewMode, components, layout }) => {
       <CodeDrawer
         components={components}
         layout={layout}
+        projectName={projectName}
       />
     </div>
   )

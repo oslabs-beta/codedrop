@@ -204,6 +204,7 @@ const Container = ({ projectId }) => {
         setPreviewMode={setPreviewMode}
         components={components}
         layout={layout}
+        projectName={projectName}
       />
       <div className="pageContainer">
       <ProjectNameOrInput 

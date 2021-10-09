@@ -12,7 +12,7 @@ import { FaAngular } from 'react-icons/fa';
 import Editor from './Editor';
 import ReactIcon from './util/Icons/ReactIcon';
 
-export default function CodeDrawer({ layout, components }) {
+export default function CodeDrawer({ layout, components, projectName }) {
   const [showCode, setShowCode] = useState(false);
   const [codeString, setCodeString] = useState(``);
   const [currentFrameworkTab, setCurrentFrameworkTab] = useState(0);
@@ -45,6 +45,7 @@ export default function CodeDrawer({ layout, components }) {
       layout,
       framework: frameworkName,
       callback: setCodeString,
+      projectName
     });
   };
 
