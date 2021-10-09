@@ -6,6 +6,7 @@ import { useMutation } from '@apollo/client';
 import { PROJECT_QUERY } from '../lib/apolloQueries';
 import { PROJECT_MUTATION } from '../lib/apolloMutations';
 import createNewProject from './util/createNewProject'
+import initialData  from './dnd/initial-data';
 
 const useStyles = makeStyles({
   root: {
@@ -37,6 +38,7 @@ function SplashPage({ session }) {
   const router = useRouter();
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
+  const initialLayout = JSON.stringify(initialData.layout);
 
   // use updateProject to change all/any properties on a project
   const [updateProject] = useMutation(PROJECT_MUTATION,
@@ -49,8 +51,10 @@ function SplashPage({ session }) {
           getProject: { 
             ...project, 
             components: [],
+            layout: initialLayout
           } 
         }
+        console.log('payload', payload.getProject)
         cache.writeQuery({
           query: PROJECT_QUERY,
           data: payload,
