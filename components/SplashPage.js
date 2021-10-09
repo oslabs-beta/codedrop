@@ -54,7 +54,6 @@ function SplashPage({ session }) {
             layout: initialLayout
           } 
         }
-        console.log('payload', payload.getProject)
         cache.writeQuery({
           query: PROJECT_QUERY,
           data: payload,
