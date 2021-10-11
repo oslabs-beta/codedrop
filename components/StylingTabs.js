@@ -12,6 +12,35 @@ import AlignHorizontalRightIcon from '@material-ui/icons/AlignHorizontalRight';
 
 import Editor from './Editor';
 
+const useStyles = makeStyles(() => ({
+  root: {
+    flexGrow: 1,
+    width: '100%',
+    height: '365px',
+    backgroundColor: 'white',
+  },
+  tabPanelIcons: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    padding: 10,
+  }, 
+  alignmentIcon: {
+    display: 'flex',
+    border: '1px solid',
+    paddingTop: 5,
+    paddingBottom: 5,
+    height: 60,
+    width: 60, 
+    flexDirection: 'column',
+    alignItems: 'center',
+    borderRadius: 4,
+    '&:hover': {
+      backgroundColor: '#DDDDDD',  
+    },
+  }
+}));
+
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -44,15 +73,6 @@ function a11yProps(index) {
     'aria-controls': `scrollable-auto-tabpanel-${index}`,
   };
 }
-
-const useStyles = makeStyles(() => ({
-  root: {
-    flexGrow: 1,
-    width: '100%',
-    height: '365px',
-    backgroundColor: 'white',
-  },
-}));
 
 export default function StylingTabs({ style, setStyle, containerStyle, setContainerStyle }) {
   const classes = useStyles();
@@ -100,15 +120,20 @@ export default function StylingTabs({ style, setStyle, containerStyle, setContai
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>
-        <AlignHorizontalLeftIcon
-          onClick={() => handleConatinerStyleUpdate({ newStyleString: leftAlignStyle })}
-        />
-        <AlignHorizontalCenterIcon
-          onClick={() => handleConatinerStyleUpdate({ newStyleString: centerAlignStyle })}
-        />
-        <AlignHorizontalRightIcon
-          onClick={() => handleConatinerStyleUpdate({ newStyleString: rightAlignStyle })}
-        />
+        <div className={classes.tabPanelIcons}>
+          <AlignHorizontalLeftIcon
+            className={classes.alignmentIcon}
+            onClick={() => handleConatinerStyleUpdate({ newStyleString: leftAlignStyle })}
+          />
+          <AlignHorizontalCenterIcon
+            className={classes.alignmentIcon}
+            onClick={() => handleConatinerStyleUpdate({ newStyleString: centerAlignStyle })}
+          />
+          <AlignHorizontalRightIcon
+            className={classes.alignmentIcon}
+            onClick={() => handleConatinerStyleUpdate({ newStyleString: rightAlignStyle })}
+          />
+        </div>
       </TabPanel>
       <TabPanel value={value} index={1}>
         <Editor language="css" displayName="CSS" value={style} onChange={(e) => setStyle(e)} />

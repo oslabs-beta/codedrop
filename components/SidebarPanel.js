@@ -22,7 +22,6 @@ const useStyles = makeStyles({
     alignContent: 'flex-start',
     width: '250px',
     padding: '10px',
-  
   },
   sidebarPreview: {
     paddingLeft: 20,
