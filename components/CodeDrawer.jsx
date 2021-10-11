@@ -35,6 +35,7 @@ export default function CodeDrawer({ layout, components, projectName }) {
       layout,
       framework: 'React',
       callback: setCodeString,
+      projectName: projectName
     });
     setShowCode(!showCode);
   };
@@ -45,10 +46,9 @@ export default function CodeDrawer({ layout, components, projectName }) {
       layout,
       framework: frameworkName,
       callback: setCodeString,
-      projectName
+      projectName: projectName
     });
   };
-
   return (
     <Fragment key={drawerDirection}>
       <Button onClick={toggleDrawer} variant="contained" color="secondary" startIcon={<CodeIcon />}>
