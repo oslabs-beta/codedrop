@@ -24,9 +24,10 @@ export default function genearteReactCodeString(req, res) {
     };
 
     // generateCode start point.
-    if (Array.isArray(layout) && layout[0].children.length !== 0) {
+    if (Array.isArray(layout)) {
       for (let i = 0; i < layout.length; i++) {
         const firstRowsColumns = layout[i].children
+        console.log('layout inside ', firstRowsColumns)
         parseCols(firstRowsColumns, components)
       }
     }
