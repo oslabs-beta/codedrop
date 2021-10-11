@@ -9,7 +9,6 @@ import createNewProject from './util/createNewProject'
 const useStyles = makeStyles({
   root: {
     maxWidth: '100%',
-    backgroundColor: '#FFECD6',
     width: '100%',
     paddingLeft: 80,
   },
@@ -17,6 +16,10 @@ const useStyles = makeStyles({
     paddingTop: 150,
   },
   createText: {
+    paddingTop: 40,
+    paddingBottom: 50,
+  },
+  getStartedText: {
     paddingTop: 40,
     paddingBottom: 50,
   },
@@ -55,14 +58,17 @@ function SplashPage({ session }) {
         <Button
           className={classes.roundButton}
           variant="contained"
-          color="primary"
+          color="secondary"
           onClick={() => {
             setLoading(true);
             createNewProject(router, updateProject, username);
           }}
         >
-          {loading && <CircularProgress size={72} className={classes.button} />}
-          {!loading && 'Get Started'}
+          {loading && <CircularProgress size={72} className={classes.roundButton} />}
+          {!loading && 
+            <Typography className={classes.getStartedText} variant="h5">
+              Get Started
+            </Typography>}
         </Button>
       </Container>
     </>

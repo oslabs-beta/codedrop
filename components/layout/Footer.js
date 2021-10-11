@@ -22,7 +22,6 @@ const useStyles = makeStyles({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FFECD6',
     minHeight: '50px',
     boxShadow: '0px -1px 2px rgb(0 0 0 / 20%)'
   },

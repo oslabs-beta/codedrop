@@ -9,7 +9,8 @@ import ImageIcon from '@material-ui/icons/Image'
 import { greyScheme } from '../util/colorPallete'
 import H1Icon from '../util/Icons/H1Icon'
 import H2Icon from '../util/Icons/H2Icon'
-import HeaderIcon from '../util/Icons/HeaderIcon'
+import H3Icon from '../util/Icons/H3Icon'
+import { SocialDistance } from '@material-ui/icons'
 
 const useStyles = makeStyles({
   sideBarContainer: {
@@ -19,10 +20,18 @@ const useStyles = makeStyles({
   },
   sideBarItem: {
     display: 'flex',
+    border: '1px solid',
+    paddingTop: 5,
+    height: 60,
+    width: 60, 
     flexDirection: 'column',
     alignItems: 'center',
-    color: greyScheme.darkestGray
-  }
+    color: greyScheme.darkestGray,
+    borderRadius: 4,
+    '&:hover': {
+      backgroundColor: '#DDDDDD',  
+    }
+  },
 })
 
 const SideBarItem = ({ data }) => {
@@ -44,7 +53,7 @@ const SideBarItem = ({ data }) => {
     'Image': <ImageIcon />,
     'H1': <H1Icon />,
     'H2': <H2Icon />,
-    'Header': <HeaderIcon />
+    'H3': <H3Icon />
   }
 
   return (

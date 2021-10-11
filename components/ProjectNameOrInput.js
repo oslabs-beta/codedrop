@@ -3,9 +3,10 @@ import { makeStyles } from '@material-ui/styles';
 
 const useStyles = makeStyles({
   newProjectName: {
-    fontSize: '30px',
+    fontSize: 30,
     textAlign: 'center',
-    color: '#bf7472',
+    marginTop: 16,
+    // color: '#bf7472',
   },
 });
 

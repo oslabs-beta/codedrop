@@ -39,18 +39,21 @@ body {
 
 .dropZone.active,
 .trashDropZone.active {
-  background: #00a2ff;
+  background: #bcc8ce;
   transition: 100ms all;
+  border-radius: 4px;
 }
 
 .component {
   height: 60px;
   padding: 10px;
-  background: #aaa;
+  background: #92A4AE;
+  border-radius: 4px;
 }
 
 .column {
-  border: 1px solid blue;
+  border: 1px solid #92A4AE;
+  border-radius: 4px;
   flex: 1 1 100%;
   padding: 10px;
 }
@@ -71,7 +74,8 @@ body {
 }
 
 .row {
-  border: 1px solid red;
+  border: 1px solid #263238;
+  border-radius: 4px;
   padding: 0;
 }
 
@@ -82,7 +86,8 @@ body {
   margin: 0 auto;
   width: 100px;
   height: 100px;
-  border: 1px solid purple;
+  border: 1px solid #263238;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;

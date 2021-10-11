@@ -7,7 +7,10 @@ import Component from './Component';
 const Column = ({ data, components, handleDrop, path, previewMode, setShowEditor }) => {
   const ref = useRef(null);
 
-  const style = { borderStyle: previewMode ? 'hidden' : 'dashed' };
+  const style = {
+    borderRadius: 4,
+    borderStyle: previewMode ? 'hidden' : 'dashed',
+  };
 
   const [{ isDragging }, drag] = useDrag({
     item: {

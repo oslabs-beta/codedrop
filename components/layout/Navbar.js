@@ -12,17 +12,24 @@ import { signOut, useSession } from 'next-auth/client';
 
 const useStyles = makeStyles({
   title: {
-    color: '#bf7472',
+    // color
   },
   navbarItems: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    background: '#FFECD6',
+    background: '#455A64',
     height: '7vh',
     padding: '0 30px',
     boxShadow: '0px 2px 4px -1px rgb(0 0 0 / 20%)',
+  },
+  signUpButton: {
+    '&:hover': {
+      border: 'solid',
+      borderWidth: 1,
+      borderColor: 'FFFFFF',
+    },
   },
 });
 
@@ -78,7 +85,7 @@ export default function Navbar() {
         </>
       )}
       {!session && (
-        <Button variant="contained" color="primary" onClick={() => router.push('/signin')}>
+        <Button variant="contained" color="primary" className={classes.signUpButton} onClick={() => router.push('/signin')}>
           Sign Up
         </Button>
       )}

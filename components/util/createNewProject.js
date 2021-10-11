@@ -14,7 +14,7 @@ const createNewProject = (router, updateProject, username) => {
       project: {
         layout: JSON.stringify(initialLayout),
         id: projectId,
-        projectName: 'project name',
+        projectName: 'Project name',
         modified: currentDate,
         created: currentDate,
         user: {

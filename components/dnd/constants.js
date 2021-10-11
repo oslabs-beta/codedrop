@@ -60,7 +60,7 @@ export const SIDEBAR_ITEMS = [
     id: shortid.generate(),
     type: SIDEBAR_ITEM,
     component: {
-      type: 'Header',
+      type: 'H3',
       ...header
     }
   }
