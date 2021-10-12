@@ -6,7 +6,6 @@ import CodeDrawer from './CodeDrawer'
 import SideBarItem from './dnd/SideBarItem'
 import { SIDEBAR_ITEMS } from './dnd/constants'
 import { greyScheme } from './util/colorPallete'
-import { Block } from '@material-ui/icons'
 import { borderRadius } from '@material-ui/system'
 
 const useStyles = makeStyles({
@@ -58,7 +57,7 @@ const useStyles = makeStyles({
 })
 
 const SidebarPanel = ({ previewMode, setPreviewMode, components, layout }) => {
-  const classes = useStyles()
+  const classes = useStyles();
 
   return (
     <div className={classes.sidePanel}>
@@ -89,7 +88,7 @@ const SidebarPanel = ({ previewMode, setPreviewMode, components, layout }) => {
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SidebarPanel
+export default SidebarPanel;

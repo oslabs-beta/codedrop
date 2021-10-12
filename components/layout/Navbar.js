@@ -24,13 +24,6 @@ const useStyles = makeStyles({
     padding: '0 30px',
     boxShadow: '0px 2px 4px -1px rgb(0 0 0 / 20%)',
   },
-  signUpButton: {
-    '&:hover': {
-      border: 'solid',
-      borderWidth: 1,
-      borderColor: 'FFFFFF',
-    },
-  },
 });
 
 export default function Navbar() {
@@ -39,6 +32,9 @@ export default function Navbar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [session] = useSession();
+
+  //checks to see if current page is a project page
+  const onProjectPage = router.pathname === '/project/[projectId]';
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -83,11 +79,6 @@ export default function Navbar() {
             <MenuItem onClick={() => signOut({ callbackUrl: `/signin` })}>Logout</MenuItem>
           </Menu>
         </>
-      )}
-      {!session && (
-        <Button variant="contained" color="primary" className={classes.signUpButton} onClick={() => router.push('/signin')}>
-          Sign Up
-        </Button>
       )}
     </AppBar>
   );

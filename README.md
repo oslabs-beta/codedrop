@@ -29,7 +29,7 @@ This project requires:
 
 - [Dgraph](https://dgraph.io/) database to store components and projects
 - [Firebase](https://firebase.google.com/) database for authorization 
-- [NextAuth.js](https://next-auth.js.org/) as a secure third party authenticator
+- [SendGrid](https://sendgrid.com/) as a secure third party authenticator for email deliver
 
 Follow the instructions below to create a file for your environment variables and set up each service. 
 
@@ -199,3 +199,5 @@ Creators:<br>
 [Abid Ramay](https://github.com/aramay)<br>
 [Dan Yeoman](https://github.com/dyeoman2)<br>
 [Blake Myrick](https://github.com/bamche)<br>
+
+A big thank you to [Anne Zhou](https://github.com/annezhou920) for laying the groundwork on complex nested drag and drop user interfaces!

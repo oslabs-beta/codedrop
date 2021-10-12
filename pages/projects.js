@@ -24,22 +24,15 @@ import { getSession } from 'next-auth/client';
 // this is needed to receive and format the array of users returned the projectsQuery
 const parseUser = (user) => {
   const userArray = [];
-  user.forEach(userObj => {
-    userArray.push(userObj.username)
-  })
+  user.forEach((userObj) => {
+    userArray.push(userObj.username);
+  });
   //return comma separated usernames as string
   return userArray.join(', ');
-}
+};
 
 //this is where data is mocked, id will be passed in here to give project access
-function createData({
-  id,
-  projectName,
-  shared = true,
-  user,
-  created,
-  modified,
-}) {
+function createData({ id, projectName, shared = true, user, created, modified }) {
   return {
     id,
     name: projectName,
@@ -69,30 +62,27 @@ export default function EnhancedTable({ session }) {
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [rows, setRows] = useState([])
+  const [rows, setRows] = useState([]);
 
   //check if session exists, if so pull out username
   const username = session ? session.user.email : 'guest';
 
   //query to pull list of projects
-  const { loading, error, data } = useQuery(
-    PROJECTS_QUERY,
-    {
-      variables: {
-        username,
-      },
-      fetchPolicy: 'network-only', // Used for first execution
-      nextFetchPolicy: 'cache-and-network', //all subsequent calls,
-    }
-  );
+  const { loading, error, data } = useQuery(PROJECTS_QUERY, {
+    variables: {
+      username,
+    },
+    fetchPolicy: 'network-only', // Used for first execution
+    nextFetchPolicy: 'cache-and-network', //all subsequent calls,
+  });
 
   // projectsArray is an array where each element has an id, and a projectName
   // const rows = data?.getUser.projects.map((row) => createData({ ...row })) || '[]';
-  
+
   useEffect(() => {
-    if (loading) return
-    setRows(data?.getUser.projects.map((row) => createData({ ...row })) || [])
-  }, [loading, data])
+    if (loading) return;
+    setRows(data?.getUser.projects.map((row) => createData({ ...row })) || []);
+  }, [loading, data]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -150,12 +140,12 @@ export default function EnhancedTable({ session }) {
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar 
-          selected={selected} 
-          numSelected={selected.length} 
-          username={username} 
-          setRows={setRows} 
-          rows={rows} 
+        <EnhancedTableToolbar
+          selected={selected}
+          numSelected={selected.length}
+          username={username}
+          setRows={setRows}
+          rows={rows}
         />
         <TableContainer>
           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size="medium">
@@ -196,7 +186,11 @@ export default function EnhancedTable({ session }) {
                         />
                       </TableCell>
                       <TableCell component="th" id={labelId} scope="row" padding="none">
-                        <Link color="#333333" underline="hover" onClick={() => router.push(`/project/${row.id}`)}>
+                        <Link
+                          color="#333333"
+                          underline="hover"
+                          onClick={() => router.push(`/project/${row.id}`)}
+                        >
                           {row.name}
                         </Link>
                       </TableCell>

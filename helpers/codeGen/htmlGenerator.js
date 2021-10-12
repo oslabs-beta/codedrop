@@ -1,12 +1,12 @@
-import { parseCSSText } from './parseCSSText'
-import { removeLinebreaks } from './removeLinebreaks'
+import { parseCSSText } from './parseCSSText';
+import { removeLinebreaks } from './removeLinebreaks';
 
 export const htmlGenerator = (fullComponentDetails, framework) => {
-  const { containerStyle, id, style, src, value } = fullComponentDetails
-  const inlineContainerStyleWoLineBreaks = removeLinebreaks(containerStyle)
-  const inlineContainerStyle = parseCSSText(inlineContainerStyleWoLineBreaks)
-  const inlineStyleWoLineBreaks = removeLinebreaks(style)
-  const inlineStyle = parseCSSText(inlineStyleWoLineBreaks)
+  const { containerStyle, id, style, src, value } = fullComponentDetails;
+  const inlineContainerStyleWoLineBreaks = removeLinebreaks(containerStyle);
+  const inlineContainerStyle = parseCSSText(inlineContainerStyleWoLineBreaks);
+  const inlineStyleWoLineBreaks = removeLinebreaks(style);
+  const inlineStyle = parseCSSText(inlineStyleWoLineBreaks);
 
   const reactElements = {
     H1: `<h1 style={${inlineStyle}}>${value}</h1>`,
@@ -19,10 +19,10 @@ export const htmlGenerator = (fullComponentDetails, framework) => {
   }
 
   class React {
-    constructor () {}
-    getBody () {
-      const generateChildHtml = () => reactElements[fullComponentDetails.type]
-      return `<div style={${inlineContainerStyle}}>${generateChildHtml()}</div>`
+    constructor() {}
+    getBody() {
+      const generateChildHtml = () => reactElements[fullComponentDetails.type];
+      return `<div style={${inlineContainerStyle}}>${generateChildHtml()}</div>`;
     }
   }
 
@@ -37,29 +37,28 @@ export const htmlGenerator = (fullComponentDetails, framework) => {
   }
 
   class Angular {
-    constructor () {}
-    getBody () {
-      const generateChildHtml = () => AngularElements[fullComponentDetails.type]
-      return `<div style="${inlineContainerStyleWoLineBreaks}">${generateChildHtml()}</div>`
+    constructor() {}
+    getBody() {
+      const generateChildHtml = () => AngularElements[fullComponentDetails.type];
+      return `<div style="${inlineContainerStyleWoLineBreaks}">${generateChildHtml()}</div>`;
     }
   }
 
   const frameworks = {
-    'Angular': Angular,
-    'React': React
-  }
+    Angular: Angular,
+    React: React,
+  };
 
   class GenerateCode {
-    constructor (framework) {
-      this.framework = new frameworks[framework]()
+    constructor(framework) {
+      this.framework = new frameworks[framework]();
     }
-    getBody () {
-      return this.framework.getBody()
+    getBody() {
+      return this.framework.getBody();
     }
   }
 
-  const formattedCode = new GenerateCode(framework)
+  const formattedCode = new GenerateCode(framework);
 
-  return formattedCode.getBody()
-}
-
+  return formattedCode.getBody();
+};

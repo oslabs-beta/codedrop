@@ -18,13 +18,12 @@ const EditorContainer = styled.div`
   flex-direction: column;
 `;
 
-
 export default function Editor({ language, onChange, value, readOnly = false, height = '350px' }) {
   const codemirrorRef = useRef();
   const handleChange = (editor, data, value) => onChange(value);
 
   useEffect(() => {
-    const current = codemirrorRef.current.editor.display.wrapper.style.height = height;
+    const current = (codemirrorRef.current.editor.display.wrapper.style.height = height);
   });
 
   return (

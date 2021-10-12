@@ -62,7 +62,7 @@ const Column = ({ data, components, handleDrop, path, previewMode, setShowEditor
           </React.Fragment>
         );
       }) || ``}
-      {data?.children && (
+      {(data?.children && (
         <DropZone
           data={{
             path: `${path}-${data.children.length}`,
@@ -71,7 +71,8 @@ const Column = ({ data, components, handleDrop, path, previewMode, setShowEditor
           onDrop={handleDrop}
           isLast
         />
-      ) || ``}
+      )) ||
+        ``}
     </div>
   );
 };

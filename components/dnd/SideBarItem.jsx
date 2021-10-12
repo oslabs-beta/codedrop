@@ -1,10 +1,10 @@
-import React from 'react'
-import { useDrag } from 'react-dnd'
-import { makeStyles } from '@material-ui/styles'
-import TextFieldsIcon from '@material-ui/icons/TextFields'
-import SmartButtonIcon from '@material-ui/icons/SmartButton'
-import InputIcon from '@material-ui/icons/Input'
-import ImageIcon from '@material-ui/icons/Image'
+import React from 'react';
+import { useDrag } from 'react-dnd';
+import { makeStyles } from '@material-ui/styles';
+import TextFieldsIcon from '@material-ui/icons/TextFields';
+import SmartButtonIcon from '@material-ui/icons/SmartButton';
+import InputIcon from '@material-ui/icons/Input';
+import ImageIcon from '@material-ui/icons/Image';
 
 import { greyScheme } from '../util/colorPallete'
 import H1Icon from '../util/Icons/H1Icon'
@@ -16,7 +16,7 @@ const useStyles = makeStyles({
   sideBarContainer: {
     flexGrow: 1,
     width: '50px',
-    margin: '10px'
+    margin: '10px',
   },
   sideBarItem: {
     display: 'flex',
@@ -35,16 +35,16 @@ const useStyles = makeStyles({
 })
 
 const SideBarItem = ({ data }) => {
-  const { component, type } = data
-  const classes = useStyles()
+  const { component, type } = data;
+  const classes = useStyles();
 
   const [{ opacity }, drag] = useDrag({
     item: data,
     type: type,
     collect: (monitor) => ({
-      opacity: monitor.isDragging() ? 0.4 : 1
-    })
-  })
+      opacity: monitor.isDragging() ? 0.4 : 1,
+    }),
+  });
 
   const componentElements = {
     'Text': <TextFieldsIcon />,
@@ -63,6 +63,6 @@ const SideBarItem = ({ data }) => {
         <div>{data.component.type}</div>
       </div>
     </div>
-  )
-}
-export default SideBarItem
+  );
+};
+export default SideBarItem;

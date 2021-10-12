@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useRouter } from 'next/router';
 import { makeStyles } from '@material-ui/styles';
 import shortid from 'shortid';
 import SidebarPanel from '../../components/SidebarPanel';
@@ -28,10 +29,10 @@ const useStyles = makeStyles({
     flexDirection: 'row',
     flexGrow: 1,
   },
-    projectName: {
-      textAlign: 'center',
-      color: '#bf7472',
-    },
+  projectName: {
+    textAlign: 'center',
+    color: '#bf7472',
+  },
 });
 
 const Container = ({ projectId }) => {
@@ -39,6 +40,7 @@ const Container = ({ projectId }) => {
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
   const [project, setProject] = useState({ layout: [], projectName: '', components: [] });
+  const router = useRouter();
 
   // fetch the project from the db using graphql
   const {
@@ -51,8 +53,8 @@ const Container = ({ projectId }) => {
   });
 
   const date = new Date();
-  let currentDate = date.toDateString() + ' - ' + date.toLocaleTimeString('en-US');    
-  
+  let currentDate = date.toDateString() + ' - ' + date.toLocaleTimeString('en-US');
+
   // when updateProject is invoked elsewhere in the application, it will trigger the PROJECT_MUTATION gql mutation
   const [updateProject] = useMutation(PROJECT_MUTATION);
   // when addComponent is invoked elsewhere in the application, it will trigger the ADD_COMPONENT gql mutation
@@ -92,7 +94,7 @@ const Container = ({ projectId }) => {
         },
       },
     });
-  }
+  };
 
   const handleDrop = useCallback(
     (dropZone, item) => {
@@ -127,7 +129,7 @@ const Container = ({ projectId }) => {
             },
           },
         };
-        handleUpdateComponent(newComponent, newLayout)
+        handleUpdateComponent(newComponent, newLayout);
         return;
       }
 
@@ -206,35 +208,33 @@ const Container = ({ projectId }) => {
         layout={layout}
       />
       <div className="pageContainer">
-      <ProjectNameOrInput 
+        <ProjectNameOrInput
+          projectId={projectId}
+          router={router}
           value={projectName}
-          inputChange={(event) => {
-            console.log('triggered', event.target.value)
-            setProject({...project, projectName: event.target.value})
-            
-          }
-        }
+          inputChange={(event) => setProject({ ...project, projectName: event.target.value })}
           doubleClick={() => setProjectNameInput(true)}
           blur={() => {
-            setProjectNameInput(false)
+            setProjectNameInput(false);
             renameProject({
               variables: {
-                project:{
-                  filter:{
+                project: {
+                  filter: {
                     id: {
-                      eq: projectId.toString()
+                      eq: projectId.toString(),
                     },
                   },
-                  set:{
+                  set: {
                     projectName,
-                  }
-                }
-              }
-            })
-          }
-        }
-          active = {projectNameInput}>Double-click to enter a new Title
-        </ProjectNameOrInput >
+                  },
+                },
+              },
+            });
+          }}
+          active={projectNameInput}
+        >
+          Double-click to enter a new Title
+        </ProjectNameOrInput>
         <div className="page">
           {layout.map((row, index) => {
             const currentPath = `${index}`;
@@ -294,7 +294,7 @@ export async function getStaticPaths() {
   // not being used right now, but it is required so that getStaticProps works.
   // ideally, we will pull in a list of the projects here instead of having an empty array.
   const projects = [];
-  
+
   return {
     fallback: 'blocking',
     paths: projects.map((project) => ({
