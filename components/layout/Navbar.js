@@ -33,9 +33,6 @@ export default function Navbar() {
   const open = Boolean(anchorEl);
   const [session] = useSession();
 
-  //checks to see if current page is a project page
-  const onProjectPage = router.pathname === '/project/[projectId]';
-
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
