@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { makeStyles } from '@material-ui/styles';
-import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Typography from '@material-ui/core/Typography';
 import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
@@ -11,9 +10,6 @@ import Menu from '@material-ui/core/Menu';
 import { signOut, useSession } from 'next-auth/client';
 
 const useStyles = makeStyles({
-  title: {
-    // color
-  },
   navbarItems: {
     display: 'flex',
     flexDirection: 'row',

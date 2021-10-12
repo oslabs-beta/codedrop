@@ -85,7 +85,7 @@ font-size: 1em;
 display: block;`,
 };
 
-export const header = {
+export const h3 = {
   value: 'Heading 3',
   style: `display: inline-block;
 color: palevioletred;

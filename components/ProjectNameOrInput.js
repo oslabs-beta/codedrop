@@ -8,7 +8,6 @@ const useStyles = makeStyles({
     fontSize: 30,
     textAlign: 'center',
     marginTop: 16,
-    // color: '#bf7472',
   },
   projectNameContainer: {
     display: 'flex',
