@@ -15,8 +15,8 @@ export const htmlGenerator = (fullComponentDetails, framework) => {
     Button: `<button style={${inlineStyle}} type='' className='' id='${id}'>${value}</button>`,
     Text: `<span style={${inlineStyle}}>${value}</span>`,
     Input: `<input style={${inlineStyle}}>${value}</input>`,
-    Header: `<header style={${inlineStyle}}>${value}</header>`,
-  };
+    H3: `<h3 style={${inlineStyle}}>${value}</h3>`
+  }
 
   class React {
     constructor() {}
@@ -33,8 +33,8 @@ export const htmlGenerator = (fullComponentDetails, framework) => {
     Button: `<button style="${inlineStyleWoLineBreaks}" type='' className='' id='${id}'>${value}</button>`,
     Text: `<span style="${inlineStyleWoLineBreaks}">${value}</span>`,
     Input: `<input style="${inlineStyleWoLineBreaks}">${value}</input>`,
-    Header: `<header style="${inlineStyleWoLineBreaks}">${value}</header>`,
-  };
+    H3: `<h3 style="${inlineStyleWoLineBreaks}">${value}</h3>`
+  }
 
   class Angular {
     constructor() {}

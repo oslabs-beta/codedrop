@@ -1,7 +1,8 @@
 export const button = {
-  value: 'Click me!',
+  value: 'Button',
   style: `display: inline-block;
-color: palevioletred;
+color: #FFFFFF;
+background-color: #90A4AE;
 font-size: 1em;
 margin: 1em;
 padding: 0.25em 1em;
@@ -84,8 +85,8 @@ font-size: 1em;
 display: block;`,
 };
 
-export const header = {
-  value: 'Site Header ®',
+export const h3 = {
+  value: 'Heading 3',
   style: `display: inline-block;
 color: palevioletred;
 align-item: center;
