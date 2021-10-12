@@ -1,6 +1,6 @@
 import shortid from 'shortid';
 
-import { button, input, h1, h2, text, image, header } from './draggableElements/initialData';
+import { button, input, h1, h2, text, image, h3 } from './draggableElements/initialData';
 
 export const SIDEBAR_ITEM = 'sidebarItem';
 export const ROW = 'row';
@@ -61,7 +61,7 @@ export const SIDEBAR_ITEMS = [
     type: SIDEBAR_ITEM,
     component: {
       type: 'H3',
-      ...header
+      ...h3
     }
   }
 ]
