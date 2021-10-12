@@ -5,9 +5,9 @@ import { useSession } from 'next-auth/client';
 
 const useStyles = makeStyles({
   newProjectName: {
-    fontSize: '30px',
+    fontSize: 30,
     textAlign: 'center',
-    color: '#bf7472',
+    marginTop: 16,
   },
   projectNameContainer: {
     display: 'flex',

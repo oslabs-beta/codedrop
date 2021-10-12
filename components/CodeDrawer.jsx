@@ -11,8 +11,19 @@ import { FaAngular } from 'react-icons/fa';
 
 import Editor from './Editor';
 import ReactIcon from './util/Icons/ReactIcon';
+import { makeStyles } from '@material-ui/styles'
+
+const useStyles = makeStyles({
+  toggleDrawerButton: {
+    width: '100%',
+    '&:hover': {
+      backgroundColor: '#90A4AE',
+    }
+  }
+})
 
 export default function CodeDrawer({ layout, components }) {
+  const classes = useStyles();
   const [showCode, setShowCode] = useState(false);
   const [codeString, setCodeString] = useState(``);
   const [currentFrameworkTab, setCurrentFrameworkTab] = useState(0);
@@ -50,7 +61,7 @@ export default function CodeDrawer({ layout, components }) {
 
   return (
     <Fragment key={drawerDirection}>
-      <Button onClick={toggleDrawer} variant="contained" color="secondary" startIcon={<CodeIcon />}>
+      <Button onClick={toggleDrawer} variant="contained" color="secondary" className={classes.toggleDrawerButton} startIcon={<CodeIcon />}>
         View Code
       </Button>
       <Drawer anchor={drawerDirection} open={showCode} onClose={toggleDrawer}>
