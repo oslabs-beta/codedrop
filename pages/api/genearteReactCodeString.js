@@ -27,7 +27,6 @@ export default function genearteReactCodeString(req, res) {
     if (Array.isArray(layout)) {
       for (let i = 0; i < layout.length; i++) {
         const firstRowsColumns = layout[i].children
-        console.log('layout inside ', firstRowsColumns)
         parseCols(firstRowsColumns, components)
       }
     }
