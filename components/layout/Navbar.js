@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { makeStyles } from '@material-ui/styles';
+import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import Typography from '@material-ui/core/Typography';
 import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
@@ -28,6 +30,9 @@ export default function Navbar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [session] = useSession();
+
+  //checks to see if current page is a project page
+  const onHomePage = router.pathname === '/';
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -72,6 +77,15 @@ export default function Navbar() {
             <MenuItem onClick={() => signOut({ callbackUrl: `/signin` })}>Logout</MenuItem>
           </Menu>
         </>
+      )}
+      {onHomePage && (
+        <Link href="https://github.com/oslabs-beta/codedrop" passHref>
+          <a target="_blank">
+            <Button variant="contained" color="primary">
+              Github
+            </Button>
+          </a>
+        </Link>
       )}
     </AppBar>
   );
