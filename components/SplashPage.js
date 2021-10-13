@@ -3,13 +3,14 @@ import { Typography, Button, CircularProgress, Container } from '@material-ui/co
 import { useRouter } from 'next/router';
 import { makeStyles } from '@material-ui/styles';
 import { useMutation } from '@apollo/client';
+import { PROJECT_QUERY } from '../lib/apolloQueries';
 import { PROJECT_MUTATION } from '../lib/apolloMutations';
 import createNewProject from './util/createNewProject'
+import initialData  from './dnd/initial-data';
 
 const useStyles = makeStyles({
   root: {
     maxWidth: '100%',
-    backgroundColor: '#FFECD6',
     width: '100%',
     paddingLeft: 80,
   },
@@ -17,6 +18,10 @@ const useStyles = makeStyles({
     paddingTop: 150,
   },
   createText: {
+    paddingTop: 40,
+    paddingBottom: 50,
+  },
+  getStartedText: {
     paddingTop: 40,
     paddingBottom: 50,
   },
@@ -36,9 +41,29 @@ function SplashPage({ session }) {
   const router = useRouter();
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
+  const initialLayout = JSON.stringify(initialData.layout);
 
   // use updateProject to change all/any properties on a project
-  const [updateProject] = useMutation(PROJECT_MUTATION);
+  const [updateProject] = useMutation(PROJECT_MUTATION,
+    {
+      update(cache, result) {
+        const { data } = result;
+        const project = data.addProject.project[0];
+        const id = project.id
+        const payload = { 
+          getProject: { 
+            ...project, 
+            components: [],
+            layout: initialLayout
+          } 
+        }
+        cache.writeQuery({
+          query: PROJECT_QUERY,
+          data: payload,
+          variables: { id }
+        });
+      }
+    });
   
   //check for active session, otherwise use guest
   const username = session ? session.user.email : 'guest';
@@ -55,14 +80,17 @@ function SplashPage({ session }) {
         <Button
           className={classes.roundButton}
           variant="contained"
-          color="primary"
+          color="secondary"
           onClick={() => {
             setLoading(true);
-            createNewProject(router, updateProject, username);
+            createNewProject(router, updateProject, username, setLoading);
           }}
         >
-          {loading && <CircularProgress size={72} className={classes.button} />}
-          {!loading && 'Get Started'}
+          {loading && <CircularProgress size={72} className={classes.roundButton} />}
+          {!loading && 
+            <Typography className={classes.getStartedText} variant="h5">
+              Get Started
+            </Typography>}
         </Button>
       </Container>
     </>

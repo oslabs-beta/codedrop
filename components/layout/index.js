@@ -13,7 +13,7 @@ const useStyles = makeStyles({
     display: 'flex',
     flexGrow: 1,
     backgroundColor: 'white',
-  }
+  },
 });
 
 export default function Layout({ children }) {

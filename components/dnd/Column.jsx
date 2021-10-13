@@ -7,7 +7,10 @@ import Component from './Component';
 const Column = ({ data, components, handleDrop, path, previewMode, setShowEditor }) => {
   const ref = useRef(null);
 
-  const style = { borderStyle: previewMode ? 'hidden' : 'dashed' };
+  const style = {
+    borderRadius: 4,
+    borderStyle: previewMode ? 'hidden' : 'dashed',
+  };
 
   const [{ isDragging }, drag] = useDrag({
     item: {
@@ -59,7 +62,7 @@ const Column = ({ data, components, handleDrop, path, previewMode, setShowEditor
           </React.Fragment>
         );
       }) || ``}
-      {data?.children && (
+      {(data?.children && (
         <DropZone
           data={{
             path: `${path}-${data.children.length}`,
@@ -68,7 +71,8 @@ const Column = ({ data, components, handleDrop, path, previewMode, setShowEditor
           onDrop={handleDrop}
           isLast
         />
-      ) || ``}
+      )) ||
+        ``}
     </div>
   );
 };

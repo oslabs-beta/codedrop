@@ -5,12 +5,12 @@ export default function genearteReactCodeString(req, res) {
   try {
     const { layout, components, framework } = req.body;
     const result = [];
-    
+
     const parseComponents = (coms, components) => {
       for (const component of coms) {
         const fullComponentDetails = components.find((c) => c.id === component.id);
         if (fullComponentDetails) {
-          result.push(htmlGenerator(fullComponentDetails, framework))
+          result.push(htmlGenerator(fullComponentDetails, framework));
         }
       }
     };
@@ -37,13 +37,17 @@ export default function genearteReactCodeString(req, res) {
 
       // framework specific logic
       const frameworks = {
-        "React": { head: `import React from 'react';export const SamplePro = () => { return (<div>`, tail: `</div>)}` },
-        "Angular": { 
-          head: "import { Component } from '@angular/core'; @Component ({ selector: 'my-app', template: `<div>", 
-          tail: "</div>`}) export class AppComponent { appTitle: string = 'Welcome';}" },
-      }
+        React: {
+          head: `import React from 'react';export const SamplePro = () => { return (<div>`,
+          tail: `</div>)}`,
+        },
+        Angular: {
+          head: "import { Component } from '@angular/core'; @Component ({ selector: 'my-app', template: `<div>",
+          tail: "</div>`}) export class AppComponent { appTitle: string = 'Welcome';}",
+        },
+      };
       // generate framework specific code string
-      return `${frameworks[framework].head}${div}${frameworks[framework].tail}`
+      return `${frameworks[framework].head}${div}${frameworks[framework].tail}`;
     };
 
     const generatedCodeStr = createComp(result);

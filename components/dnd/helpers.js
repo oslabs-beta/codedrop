@@ -200,7 +200,13 @@ export const handleMoveSidebarComponentIntoParent = (layout, splitDropZonePath, 
   return addChildToChildren(layout, splitDropZonePath, newLayoutStructure);
 };
 
-export const handleRemoveItemFromLayout = (layout, splitItemPath, updateProject, projectId, currentDate) => {
+export const handleRemoveItemFromLayout = (
+  layout,
+  splitItemPath,
+  updateProject,
+  projectId,
+  currentDate
+) => {
   const newLayout = removeChildFromChildren(layout, splitItemPath);
   updateProject({
     variables: {
@@ -210,5 +216,5 @@ export const handleRemoveItemFromLayout = (layout, splitItemPath, updateProject,
         modified: currentDate,
       },
     },
-  }); 
+  });
 };

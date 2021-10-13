@@ -1,7 +1,8 @@
 export const button = {
-  value: 'Click me!',
+  value: 'Button',
   style: `display: inline-block;
-color: palevioletred;
+color: #FFFFFF;
+background-color: #90A4AE;
 font-size: 1em;
 margin: 1em;
 padding: 0.25em 1em;
@@ -11,8 +12,8 @@ display: block;`,
   containerStyle: `padding: 0.5rem 1rem;
 display: flex;
 align-items: center;
-flex-direction: column;`
-}
+flex-direction: column;`,
+};
 
 export const h1 = {
   value: 'Heading 1',
@@ -23,8 +24,8 @@ display: block;`,
   containerStyle: `padding: 0.5rem 1rem;
 display: flex;
 align-items: center;
-flex-direction: column;`
-}
+flex-direction: column;`,
+};
 
 export const h2 = {
   value: 'Heading 2',
@@ -35,8 +36,8 @@ display: block;`,
   containerStyle: `padding: 0.5rem 1rem;
 display: flex;
 align-items: center;
-flex-direction: column;`
-}
+flex-direction: column;`,
+};
 
 export const image = {
   value: 'Alt label',
@@ -47,8 +48,8 @@ display: block;`,
   containerStyle: `padding: 0.5rem 1rem;
 display: flex;
 align-items: center;
-flex-direction: column;`
-}
+flex-direction: column;`,
+};
 
 export const text = {
   value: 'Text',
@@ -59,8 +60,8 @@ display: block;`,
   containerStyle: `padding: 0.5rem 1rem;
 display: flex;
 align-items: center;
-flex-direction: column;`
-}
+flex-direction: column;`,
+};
 
 export const input = {
   value: 'Input Label',
@@ -81,11 +82,11 @@ flex-direction: column;`,
 color: palevioletred;
 margin-bottom: .25em;
 font-size: 1em;
-display: block;`
-}
+display: block;`,
+};
 
-export const header = {
-  value: 'Site Header ®',
+export const h3 = {
+  value: 'Heading 3',
   style: `display: inline-block;
 color: palevioletred;
 align-item: center;
@@ -93,6 +94,5 @@ display: block;`,
   containerStyle: `padding: 0.5rem 1rem;
 display: flex;
 align-items: center;
-flex-direction: column;`
-
-}
+flex-direction: column;`,
+};
