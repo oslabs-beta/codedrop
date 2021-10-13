@@ -133,6 +133,7 @@ To get started go to [Firebase](https://firebase.google.com/).
 - Next, create an app in your project by clicking on the web icon '</>'.
 - Add a nickname and click 'Register app'.
 - Copy the information from the firebaseConfig object, to your .env file
+- Replace codedrop-bdc35 in the .firebaserc file with your Firebase project
 
 ```
 FIREBASE_API_KEY=YOUR_apiKey
@@ -190,6 +191,14 @@ This project was created using node.js version 16.4.2 and npm version 7.19.1. To
 npm install
 ```
 
+</details><br>
+
+# Deploy
+<details><summary>Show instructions for deploying with Vercel</summary><br>
+
+- Create an account with [Vercel](https://vercel.com/signup) using your GitHub account
+- Click the Import button for the forked Codedrop repo
+- Follow the on-screen instructions to deploy your site
 </details><br>
 
 # Contributors
