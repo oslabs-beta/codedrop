@@ -10,34 +10,57 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'flex-end',
     minHeight: '50px',
-    boxShadow: '0px -1px 2px rgb(0 0 0 / 20%)',
   },
   creatorsLink: {
     paddingTop: 10,
     paddingRight: 10,
     paddingBottom: 10,
     paddingLeft: 10,
+    marginLeft: 50,
     textDecoration: 'none',
     '&:hover': {
       borderBottom: '1px solid #455A64'
     }
   },
   copyright: {
-    paddingLeft: 50,
-    paddingRight: 10,
+    paddingTop: 10,
+    marginLeft: 50,
+    marginRight: 10,
+    paddingBottom: 10,
+    cursor: 'pointer',
+    '&:hover': {
+      borderBottom: '1px solid #455A64'
+    }
   },
   copyrightLink: {
-    paddingTop: 10,
-    paddingBottom: 10,
     textDecoration: 'none',
   },
+  github: {
+    paddingTop: 10,
+    marginLeft: 50,
+    marginRight: 10,
+    paddingBottom: 10,
+    cursor: 'pointer',
+    '&:hover': {
+      borderBottom: '1px solid #455A64'
+    } 
+  }
 });
 
 export default function StickyFooter() {
   const classes = useStyles();
 
+  const directToGithub = (e) => {
+    window.open("https://github.com/oslabs-beta/codedrop","")
+  }
+
   return (
     <footer className={classes.footer}>
+            <span className={classes.creators}>
+        <Typography variant="body2" color="textSecondary" onClick={directToGithub} className={classes.github} >
+          Github
+        </Typography>
+      </span>
       <span className={classes.creators}>
         <Typography variant="body2" color="textSecondary">
           <Link className={classes.creatorsLink} color="inherit" href="creators">  

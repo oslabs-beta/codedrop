@@ -26,7 +26,7 @@ function Creators () {
         </CreatorCard>
         <CreatorCard
             name={'Blake Myrick'}
-            photo={'/Blake.jpg'}
+            photo={'/Blake.png'}
             github={'https://github.com/bamche'}
             linkedIn={'https://www.linkedin.com/in/blake-myrick/'}
           >
