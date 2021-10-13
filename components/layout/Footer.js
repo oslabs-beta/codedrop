@@ -17,12 +17,9 @@ const useStyles = makeStyles({
     paddingRight: 10,
     paddingBottom: 10,
     paddingLeft: 10,
-    border: '1px solid #455A64',
-    borderRadius: 4,
     textDecoration: 'none',
     '&:hover': {
-      backgroundColor: '#455A64',
-      color: '#FFFFFF',
+      borderBottom: '1px solid #455A64'
     }
   },
   copyright: {
