@@ -78,7 +78,7 @@ export default function Navbar() {
           </Menu>
         </>
       )}
-      {onHomePage && (
+      {!session && onHomePage && (
         <Link href="https://github.com/oslabs-beta/codedrop" passHref>
           <a target="_blank">
             <Button variant="contained" color="primary">
