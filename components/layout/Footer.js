@@ -63,7 +63,7 @@ export default function StickyFooter() {
       </span>
       <span className={classes.creators}>
         <Typography variant="body2" color="textSecondary">
-          <Link className={classes.creatorsLink} color="inherit" href="creators">  
+          <Link className={classes.creatorsLink} color="inherit" href="/creators">  
             Creators
           </Link>
         </Typography>
