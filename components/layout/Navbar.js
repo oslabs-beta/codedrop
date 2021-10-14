@@ -19,7 +19,10 @@ const useStyles = makeStyles({
     padding: '0 30px',
     boxShadow: '0px 2px 4px -1px rgb(0 0 0 / 20%)',
   },
-  codedropLogo: {
+  menuRoundedIcon: {
+    color: '#FFFFFF',
+    height: 40,
+    width: 40,
   }
 });
 
@@ -51,11 +54,11 @@ export default function Navbar() {
       {session && (
         <>
           <MenuRoundedIcon
+            className={classes.menuRoundedIcon}
             aria-label="account of current user"
             aria-controls="menu-appbar"
             aria-haspopup="true"
             onClick={handleMenu}
-            color="inherit"
           >
             <AccountCircle />
           </MenuRoundedIcon>
