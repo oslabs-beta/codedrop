@@ -23,6 +23,22 @@ const useStyles = makeStyles({
     padding: '4',
     appearance: 'none',
   },
+  icon:{
+    borderRadius:'50%',
+    cursor: 'pointer',
+    height: 40,
+    width: 40,
+    paddingTop: 2,
+    paddingBottom: 2,
+    paddingLeft: 2,
+    paddingRight: 2,
+    marginLeft: 5,
+    '&:hover': {
+      backgroundColor: '#DDDDDD',
+      borderRadius: 100,
+      border: 'solid 1px black',
+    }
+  },
 });
 
 // this component selectively renders the project name or an input to change the name, in [projectId].js
@@ -42,15 +58,17 @@ const ProjectNameOrInput = (props) => {
             autoFocus
             className={classes.input}
           />
-          <RiSaveLine style={{ height: '.75em' }} onClick={blur} />
+            <RiSaveLine 
+              className={classes.icons}
+              onClick={blur} /> 
         </div>
       ) : (
         <div onDoubleClick={doubleClick} className={classes.projectNameContainer}>
           {value}
-          <RiFileEditLine style={{ height: '.75em' }} onClick={doubleClick} />
+          <RiFileEditLine className={classes.icon} onClick={doubleClick} />
           {!session && (
             <RiSaveLine
-              style={{ height: '.75em' }}
+              className={classes.icon}
               onClick={() => router.push({ pathname: '/signin', query: { projectId } })}
             />
           )}
