@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { makeStyles } from '@material-ui/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Typography from '@material-ui/core/Typography';
 import MenuRoundedIcon from '@material-ui/icons/MenuRounded';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import { signOut, useSession } from 'next-auth/client';
+import Image from 'next/image';
 
 const useStyles = makeStyles({
   navbarItems: {
@@ -16,10 +15,12 @@ const useStyles = makeStyles({
     justifyContent: 'space-between',
     alignItems: 'center',
     background: '#455A64',
-    height: '7vh',
+    height: 70,
     padding: '0 30px',
     boxShadow: '0px 2px 4px -1px rgb(0 0 0 / 20%)',
   },
+  codedropLogo: {
+  }
 });
 
 export default function Navbar() {
@@ -38,10 +39,15 @@ export default function Navbar() {
   };
 
   return (
-    <AppBar className={classes.navbarItems} position="static">
-      <Typography variant="h4" className={classes.title} onClick={() => router.push('/')}>
-        codedrop
-      </Typography>
+    <div className={classes.navbarItems}>
+      <Image 
+        className={classes.codedropLogo}
+        src='/newLogo.svg' 
+        width='300' 
+        height='70' 
+        alt='logo' 
+        onClick={() => router.push('/')} 
+      />
       {session && (
         <>
           <MenuRoundedIcon
@@ -73,6 +79,6 @@ export default function Navbar() {
           </Menu>
         </>
       )}
-    </AppBar>
+    </div>
   );
 }
