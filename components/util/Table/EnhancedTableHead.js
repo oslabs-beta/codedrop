@@ -13,6 +13,12 @@ const headCells = [
     label: 'Project',
   },
   {
+    id: 'shared',
+    numeric: false,
+    disablePadding: false,
+    label: 'Shared',
+  },
+  {
     id: 'teamMembers',
     numeric: false,
     disablePadding: false,

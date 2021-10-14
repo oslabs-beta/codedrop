@@ -202,6 +202,10 @@ export default function EnhancedTable({ session }) {
                           {row.name}
                         </Link>
                       </TableCell>
+                      <TableCell align="left">
+                        {/*this is not connected to any action in the database - future feature to add*/}
+                        <Switch checked={row.shared} />
+                      </TableCell>
                       <TableCell align="left">{row.teamMembers}</TableCell>
                       <TableCell align="left">{row.updatedAt}</TableCell>
                       <TableCell align="left">{row.createdAt}</TableCell>
