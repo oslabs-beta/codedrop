@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Typography, Button, CircularProgress, Container } from '@material-ui/core';
+import { Typography, Button, CircularProgress, Container} from '@material-ui/core';
 import { useRouter } from 'next/router';
 import { makeStyles } from '@material-ui/styles';
 import { useMutation } from '@apollo/client';
@@ -22,8 +22,6 @@ const useStyles = makeStyles({
     paddingBottom: 50,
   },
   getStartedText: {
-    paddingTop: 40,
-    paddingBottom: 50,
   },
   roundButton: {
     fontSize: '180%',
@@ -69,8 +67,8 @@ function SplashPage({ session }) {
   const username = session ? session.user.email : 'guest';
   
   return (
-    <>
-      <Container className={classes.root}>
+    <div className={classes.root}>
+      <Container>
         <Typography className={classes.productivityText} variant="h2">
           Increase your productivity
         </Typography>
@@ -85,15 +83,16 @@ function SplashPage({ session }) {
             setLoading(true);
             createNewProject(router, updateProject, username, setLoading);
           }}
-        >
+        >        
           {loading && <CircularProgress size={72} className={classes.roundButton} />}
-          {!loading && 
+          {!loading &&           
             <Typography className={classes.getStartedText} variant="h5">
               Get Started
-            </Typography>}
+            </Typography>
+          }
         </Button>
       </Container>
-    </>
+    </ div>
   );
 }
 

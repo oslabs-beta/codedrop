@@ -20,7 +20,13 @@ import Switch from '@material-ui/core/Switch';
 import Link from '@material-ui/core/Link';
 
 import { getSession } from 'next-auth/client';
+import { makeStyles } from '@material-ui/styles';
 
+const useStyles = makeStyles({
+  projectName:{
+    cursor: 'pointer',
+  }
+})
 // this is needed to receive and format the array of users returned the projectsQuery
 const parseUser = (user) => {
   const userArray = [];
@@ -63,6 +69,7 @@ export default function EnhancedTable({ session }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState([]);
+  const classes = useStyles();
 
   //check if session exists, if so pull out username
   const username = session ? session.user.email : 'guest';
@@ -187,6 +194,7 @@ export default function EnhancedTable({ session }) {
                       </TableCell>
                       <TableCell component="th" id={labelId} scope="row" padding="none">
                         <Link
+                          className={classes.projectName}
                           color="#333333"
                           underline="hover"
                           onClick={() => router.push(`/project/${row.id}`)}
@@ -195,6 +203,7 @@ export default function EnhancedTable({ session }) {
                         </Link>
                       </TableCell>
                       <TableCell align="left">
+                        {/*this is not connected to any action in the database - future feature to add*/}
                         <Switch checked={row.shared} />
                       </TableCell>
                       <TableCell align="left">{row.teamMembers}</TableCell>
