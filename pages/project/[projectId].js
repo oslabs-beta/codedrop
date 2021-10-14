@@ -35,11 +35,15 @@ const useStyles = makeStyles({
   },
 });
 
+const INITIAL_LAYOUT = [
+  { type: 'row', id: 'row0', children: [{ type: 'column', id: 'column0', children: [] }] },
+];
+
 const Container = ({ projectId }) => {
   const classes = useStyles();
   const [previewMode, setPreviewMode] = useState(false);
   const [showEditor, setShowEditor] = useState(null);
-  const [project, setProject] = useState({ layout: [], projectName: '', components: [] });
+  const [project, setProject] = useState({ layout: INITIAL_LAYOUT, projectName: '', components: [] });
   const router = useRouter();
 
   // fetch the project from the db using graphql
