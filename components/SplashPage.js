@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/styles';
 import { useMutation } from '@apollo/client';
 import { PROJECT_QUERY } from '../lib/apolloQueries';
 import { PROJECT_MUTATION } from '../lib/apolloMutations';
-import createNewProject from './util/createNewProject'
+import createNewProject from './util/createNewProject';
 import initialData  from './dnd/initial-data';
 
 const useStyles = makeStyles({
